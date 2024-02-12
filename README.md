@@ -10,6 +10,7 @@ TEAM MEMBERS
 * Ethan
 
 Project Overview
+
 Our aim is to create a web application for skateboarders to discover new skate spots and organize meetups with fellow skaters. Users will be able to add new skate spots to a map, view other spots and schedule meetups. 
 
 Features
