@@ -6,6 +6,7 @@ TEAM MEMBERS/Created by
 * Euel
 * Sinclair DeYoung
 * Joseph Lebron
+* Ethan Harris
 
 Project Overview
 
