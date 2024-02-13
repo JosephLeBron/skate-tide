@@ -7,6 +7,7 @@ TEAM MEMBERS/Created by
 * Sinclair DeYoung
 * Joseph Lebron
 * Ethan Harris
+* Andrew Teague
 
 Project Overview
 
