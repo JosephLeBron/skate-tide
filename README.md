@@ -5,6 +5,7 @@ Welcome to the Skate the Tide web app. This README provides an overview of the p
 TEAM MEMBERS/Created by
 * Euel
 * Sinclair DeYoung
+* Joseph Lebron
 
 Project Overview
 
