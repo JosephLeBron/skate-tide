@@ -8,6 +8,7 @@ TEAM MEMBERS/Created by
 * Joseph Lebron
 * Ethan Harris
 * Andrew Teague
+* William Troscher
 
 Project Overview
 
