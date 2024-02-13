@@ -3,7 +3,7 @@ Skate the Tide
 Welcome to the Skate the Tide web app. This README provides an overview of the project and instructions for getting started with development and usage
 
 TEAM MEMBERS/Created by
-* Euel
+* Euel Gebreselassei
 * Sinclair DeYoung
 * Joseph Lebron
 * Ethan Harris
