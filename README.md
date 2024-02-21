@@ -3,7 +3,7 @@ Skate the Tide
 Welcome to the Skate the Tide web app. This README provides an overview of the project and instructions for getting started with development and usage
 
 TEAM MEMBERS/Created by
-* Euel Gebreselassei
+* Euel Gebreselassie 
 * Sinclair DeYoung
 * Joseph Lebron
 * Ethan Harris
@@ -23,3 +23,11 @@ Technologies used
 * Vue JS
 * Node.js
 * Firestorm
+
+  Roles
+* Euel Gebreselassie (Profile page/map features)
+* Sinclair DeYoung (Login page/map features)
+* Joseph Lebron (Map API/linking)
+* Ethan Harris (Map features)
+* Andrew Teague (Map features)
+* William Troscher (Map features)
