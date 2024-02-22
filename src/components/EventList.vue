@@ -1,0 +1,1 @@
+<!-- To contain a component that lists EventItems -->
