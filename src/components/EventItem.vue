@@ -1,13 +1,25 @@
+<script lang="ts">
+export default {
+  data() {
+    return {
+      name: 'Default Event',
+      desc: 'This is the default event description.',
+      date: new Date(),
+      pins: [],
+      users_attending: []
+    }
+  }
+}
+</script>
+
 <template>
-  <h1 class="name">Event Title</h1> <!-- add dynamic class binding here -->
+  <h2 class="name">{{ name }} - {{ date.toDateString() }}</h2>
+  <h3>{{ desc }}</h3>
 </template>
 
 <style>
 .name {
-  color:cadetblue;
-}
-.location {
-  color:blueviolet;
+  color: hsla(160, 100%, 37%, 1);
 }
 .description {
   color:black;
