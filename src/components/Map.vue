@@ -7,8 +7,7 @@ import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
 const center = { lat: 34.225727, lng: -77.94471 } /// centered on wilmington
 
 /// List of Pins
-// Data for the markers consisting of a name and LatLng objects
-// In actual implementation, this will be 
+// Data for the markers consisting of a name and LatLng pairs
 const spots = [
   {
     name: 'College', 
