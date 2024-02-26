@@ -16,4 +16,7 @@ import TheWelcome from '../components/TheWelcome.vue'
     align-items: center;
   }
 }
+body{
+  background-color: lightseagreen;
+}
 </style>

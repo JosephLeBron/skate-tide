@@ -27,7 +27,7 @@ export default {
       // Implemented hardcoded login
       if (this.username === 'user' && this.password === 'password') {
         // Redirect to home page after login
-        this.$router.push('/home')
+        this.$router.push('/')
       } else {
         alert('Invalid credentials')
       }
@@ -38,4 +38,7 @@ export default {
 
 <style scoped>
 /* Add styles here in css */
+body{
+  background-color: lightseagreen;
+}
 </style>

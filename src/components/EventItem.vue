@@ -24,4 +24,7 @@ export default {
 .description {
   color:black;
 }
+body{
+  background-color: lightseagreen;
+}
 </style>
