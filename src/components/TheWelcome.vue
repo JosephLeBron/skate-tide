@@ -16,7 +16,5 @@ import WelcomeItem from './WelcomeItem.vue'
 </template>
 
 <style>
-  body{
-    background-color: lightseagreen;
-  }
+  body{background-color: lightseagreen;}
 </style>

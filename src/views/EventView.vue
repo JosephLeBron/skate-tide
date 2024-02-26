@@ -18,6 +18,6 @@ const components = {EventItem};
   }
 }
 body{
-  background-color: lightseagreen;
+  background-color: green;
 }
 </style>
