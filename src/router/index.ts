@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Map from '../components/Map.vue'
+import HomeMap from '@/components/HomeMap.vue'
 import LoginView from '@/views/LoginView.vue'
 import EventView from '@/views/EventView.vue'
 
@@ -10,7 +10,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Map
+      component: HomeMap
     },
     {
       path: '/events',
