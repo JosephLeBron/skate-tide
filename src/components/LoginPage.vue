@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 // Holdes the data for the blank spaces
 export default {
   data() {

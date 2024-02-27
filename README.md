@@ -24,7 +24,7 @@ Technologies used
 * Node.js
 * Firestorm
 
-  Roles
+Roles
 * Euel Gebreselassie (Profile page/map features)
 * Sinclair DeYoung (Login page/map features)
 * Joseph Lebron (Map API/linking)
