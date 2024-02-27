@@ -4,9 +4,9 @@
     <div class="wrapper">
       <HelloWorld v-if="showTitle"/>
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-        <RouterLink to="/events">Events</RouterLink>
+        <RouterLink to="/" class="button">Home</RouterLink>
+        <RouterLink to="/login" class="button">Login</RouterLink>
+        <RouterLink to="/events" class="button">Events</RouterLink>
       </nav>
     </div>
   </header>
@@ -29,6 +29,13 @@ header {
   left: 0;
   width: 100%;
   box-sizing: border-box;
+}
+
+.button{
+  color:white;
+}
+.button:hover{
+  color: red;
 }
 
 .wrapper {
@@ -65,7 +72,7 @@ header {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-    color: dimgray;
+    color: white;
     padding: 1rem 0;
     margin-top: 1rem;
   }
