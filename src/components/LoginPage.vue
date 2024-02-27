@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 // Holdes the data for the blank spaces
 export default {
   data() {
@@ -55,9 +55,6 @@ export default {
 
 <style scoped>
 /* Add styles here in css */
-body {
-  background-color: lightseagreen;
-}
 h1 {
   color: black;
   background-color: bisque;
