@@ -22,9 +22,9 @@ export default {
   color: hsla(160, 100%, 37%, 1);
 }
 .description {
-  color:black;
+  color: black;
 }
-body{
+body {
   background-color: lightseagreen;
 }
 </style>

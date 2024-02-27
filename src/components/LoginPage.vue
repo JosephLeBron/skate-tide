@@ -3,15 +3,27 @@
     <h2>Login</h2>
     <form @submit.prevent="login">
       <h1>
-      <h3>
-      <label for="username">Username:</label>
-      <input :class="{'invalid': invalidLogin }" v-model="username" type="text" id="username" required />
+        <h3>
+          <label for="username">Username:</label>
+          <input
+            :class="{ invalid: invalidLogin }"
+            v-model="username"
+            type="text"
+            id="username"
+            required
+          />
 
-      <label for="password">Password:</label>
-      <input :class="{'invalid': invalidLogin }" v-model="password" type="password" id="password" required />
-      </h3>
-      <button type="submit">Login</button>
-      <button type="button" @click="createAccount">Create Account</button>
+          <label for="password">Password:</label>
+          <input
+            :class="{ invalid: invalidLogin }"
+            v-model="password"
+            type="password"
+            id="password"
+            required
+          />
+        </h3>
+        <button type="submit">Login</button>
+        <button type="button" @click="createAccount">Create Account</button>
       </h1>
     </form>
   </div>
@@ -36,17 +48,17 @@ export default {
         alert('Invalid credentials')
       }
     },
-    createAccount(){
-
-    }
+    createAccount() {}
   }
 }
 </script>
 
 <style scoped>
 /* Add styles here in css */
-body{background-color: lightseagreen;}
-h1{
+body {
+  background-color: lightseagreen;
+}
+h1 {
   color: black;
   background-color: bisque;
   width: 300px;
@@ -54,19 +66,18 @@ h1{
   padding: 25px;
   margin: 10px;
 }
-h3{
+h3 {
   color: black;
   display: grid;
   height: auto;
-  width:auto;
+  width: auto;
   background-color: bisque;
-  
 }
-h2{
+h2 {
   color: black;
   display: flex;
 }
-button{
+button {
   background-color: dimgray; /* Green */
   border: black;
   color: white;
@@ -78,5 +89,4 @@ button{
   border-radius: 8px;
   justify-content: space-between;
 }
-
 </style>

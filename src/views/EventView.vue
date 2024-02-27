@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import EventItem from '../components/EventItem.vue'
-const components = {EventItem};
+const components = { EventItem }
 </script>
 
 <style>
@@ -17,7 +17,7 @@ const components = {EventItem};
     align-items: center;
   }
 }
-body{
+body {
   background-color: green;
 }
 </style>

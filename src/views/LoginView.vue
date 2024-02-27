@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import LoginPage from '../components/LoginPage.vue'
-const components = {LoginPage};
+const components = { LoginPage }
 </script>
 
 <style>
@@ -17,7 +17,7 @@ const components = {LoginPage};
     align-items: center;
   }
 }
-body{
+body {
   background-color: lightseagreen;
 }
 </style>

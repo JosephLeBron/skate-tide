@@ -2,7 +2,7 @@
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld v-if="showTitle"/>
+      <HelloWorld v-if="showTitle" />
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
         <RouterLink to="/" class="button">Home</RouterLink>
         <RouterLink to="/login" class="button">Login</RouterLink>
@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './HelloWorld.vue'; // Assuming you have a HelloWorld component
+import HelloWorld from './HelloWorld.vue' // Assuming you have a HelloWorld component
 
-const showTitle = window.innerWidth >= 1024; // Adjust the breakpoint as needed
+const showTitle = window.innerWidth >= 1024 // Adjust the breakpoint as needed
 </script>
 
 <style scoped>
@@ -31,10 +31,10 @@ header {
   box-sizing: border-box;
 }
 
-.button{
-  color:white;
+.button {
+  color: white;
 }
-.button:hover{
+.button:hover {
   color: red;
 }
 

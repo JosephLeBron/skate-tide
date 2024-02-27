@@ -94,7 +94,7 @@ body {
     margin-top: 1rem;
   }
 
-  .navbar{
+  .navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -103,7 +103,6 @@ body {
     color: white;
     padding: 10px;
     margin-top: 0;
-
   }
 }
 </style>

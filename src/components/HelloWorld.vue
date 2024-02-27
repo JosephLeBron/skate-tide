@@ -11,7 +11,7 @@ defineProps<{
 </template>
 
 <style scoped>
-body{
+body {
   background-color: lightseagreen;
 }
 

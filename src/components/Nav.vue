@@ -8,21 +8,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const isFullScreen = ref(window.innerWidth >= 1026);
+const isFullScreen = ref(window.innerWidth >= 1026)
 
 const handleResize = () => {
-  isFullScreen.value = window.innerWidth >= 1026;
-};
+  isFullScreen.value = window.innerWidth >= 1026
+}
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
-});
+  window.addEventListener('resize', handleResize)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize);
-});
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>
@@ -38,7 +38,9 @@ onBeforeUnmount(() => {
   margin-top: 0;
   display: flex;
   justify-content: space-around;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .navbar a {
