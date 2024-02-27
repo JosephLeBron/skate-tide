@@ -2,7 +2,7 @@
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld v-if="showTitle" :msg="pageTitle" />
+      <HelloWorld v-if="showTitle"/>
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/login">Login</RouterLink>
@@ -16,7 +16,6 @@
 import HelloWorld from './HelloWorld.vue'; // Assuming you have a HelloWorld component
 
 const showTitle = window.innerWidth >= 1024; // Adjust the breakpoint as needed
-const pageTitle = "Home"; // Set your desired page title dynamically
 </script>
 
 <style scoped>
@@ -56,7 +55,7 @@ header {
   }
 
   .wrapper {
-    margin-top: calc(var(--section-gap) + 10px); /* Adjust as needed */
+    margin-top: 18px; /* Adjust as needed */
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
