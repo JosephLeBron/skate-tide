@@ -5,13 +5,13 @@
       <h1>
       <h3>
       <label for="username">Username:</label>
-      <input v-model="username" type="text" id="username" required />
+      <input :class="{'invalid': invalidLogin }" v-model="username" type="text" id="username" required />
 
       <label for="password">Password:</label>
-      <input v-model="password" type="password" id="password" required />
+      <input :class="{'invalid': invalidLogin }" v-model="password" type="password" id="password" required />
       </h3>
       <button type="submit">Login</button>
-      <button type="submit">create account</button>
+      <button type="button" @click="createAccount">Create Account</button>
       </h1>
     </form>
   </div>
@@ -35,6 +35,9 @@ export default {
       } else {
         alert('Invalid credentials')
       }
+    },
+    createAccount(){
+
     }
   }
 }
