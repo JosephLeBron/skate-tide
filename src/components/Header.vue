@@ -38,6 +38,13 @@ header {
   color: red;
 }
 
+.button:active{
+  color: black;
+}
+.button:focus{
+  color:dimgray;
+}
+
 .wrapper {
   max-width: 1024px; /* Set a max-width for the wrapper */
   margin: 0 auto; /* Center the wrapper */
