@@ -1,9 +1,20 @@
+<template>
+  <div class="login">
+    <LoginPage />
+  </div>
+</template>
+
 <script setup lang="ts">
-import LoginPage from '../components/LoginPage.vue'
+import loginPage from '../components/LoginPage.vue'
+const components = { LoginPage }
 </script>
 
-<template>
-  <main>
-    <LoginPage />
-  </main>
-</template>
+<style>
+@media (min-width: 1024px){
+  .login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
+</style>

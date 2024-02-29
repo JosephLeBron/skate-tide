@@ -1,47 +1,39 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
+import Header from './components/Header.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/events">Events</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div class="content-wrapper">
+    <Header />
+  <RouterView /> 
+  </div>
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 nav {
+  background-color: #f4f4f4;
+  padding: 10px;
+  position: fixed;
+  top: 60px; /* Adjust value based on your header height */
+  left: 0;
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  box-sizing: border-box;
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: black;
 }
 
 nav a.router-link-exact-active:hover {
@@ -51,11 +43,25 @@ nav a.router-link-exact-active:hover {
 nav a {
   display: inline-block;
   padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid black;
+  color: black;
 }
 
 nav a:first-of-type {
   border: 0;
+}
+
+.wrapper {
+  margin-top: 0;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.content-wrapper {
+  margin-top: 80px; /* Adjust this value based on your header and nav height */
+  padding: 20px;
 }
 
 @media (min-width: 1024px) {
@@ -63,13 +69,17 @@ nav a:first-of-type {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
+    color: black;
   }
 
   header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .wrapper {
+    margin-top: calc(var(--section-gap) + 10px); /* Adjust as needed */
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
@@ -79,9 +89,20 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
+    color: dimgray;
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: lightgray;
+    color: white;
+    padding: 10px;
+    margin-top: 0;
   }
 }
 </style>
