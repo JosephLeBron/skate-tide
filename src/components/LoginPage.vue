@@ -30,21 +30,24 @@
 </template>
 
 <script>
+import User from './User'
 // Holdes the data for the blank spaces
 export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      invalidLogin: false
     }
   },
   methods: {
     login() {
-      // Implemented hardcoded login
-      if (this.username === 'user' && this.password === 'password') {
+      const user = new User(this.username, this.password)
+      if (userInfo.isValidCredentials()) {
         // Redirect to home page after login
         this.$router.push('/')
       } else {
+        this.invalidLogin = true
         alert('Invalid credentials')
       }
     },
