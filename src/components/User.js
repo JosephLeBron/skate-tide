@@ -5,6 +5,6 @@ export default class User {
   }
 
   isValidCredentials() {
-    return this.username === 'user' && this.password == 'password'
+    return this.username === 'user@example.com' && this.password == 'password'
   }
 }

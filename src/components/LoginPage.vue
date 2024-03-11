@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Login</h2>
-    <form @submit.prevent="login">
+    <form @submit.prevent="login" novalidate>
       <h1>
         <h3>
           <label for="username">Username:</label>
@@ -37,16 +37,28 @@ export default {
     return {
       username: '',
       password: '',
-      invalidLogin: false
+      invalidLogin: false,
+      userInfo: {},
     }
   },
   methods: {
     login() {
-      const user = new User(this.username, this.password)
-      if (userInfo.isValidCredentials()) {
+      if (!this.username || !this.password) {
+        alert('Please enter both username and password.');
+        return;
+      }
+
+      const user = new User(this.username, this.password);
+      if (user.isValidCredentials()) {
+        this.userInfo = {
+          email: 'user@example.com',
+          password: this.password,
+        }
         // Redirect to home page after login
+        console.log('Login successful. Redirecting to the home page.');
         this.$router.push('/')
       } else {
+        console.log('Invalid credentials');
         this.invalidLogin = true
         alert('Invalid credentials')
       }
@@ -88,5 +100,15 @@ button {
   font-size: 13px;
   border-radius: 8px;
   justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: gray;
+  }
+
+  &:active {
+    background-color: black;
+  }
 }
 </style>
