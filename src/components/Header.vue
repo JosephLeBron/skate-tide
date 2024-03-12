@@ -38,11 +38,11 @@ header {
   color: red;
 }
 
-.button:active{
+.button:active {
   color: black;
 }
-.button:focus{
-  color:dimgray;
+.button:focus {
+  color: dimgray;
 }
 
 .wrapper {

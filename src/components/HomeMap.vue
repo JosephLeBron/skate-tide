@@ -13,7 +13,7 @@ const center = { lat: 34.225727, lng: -77.94471 } /// centered on wilmington
 // order in which these markers should display on top of each other.
 const spots = [
   {
-    name: 'College', 
+    name: 'College',
     pos: { lat: 34.21024948286535, lng: -77.88700419732456 },
     zIndex: 0
   },
@@ -22,17 +22,17 @@ const spots = [
     pos: { lat: 34.22436205407568, lng: -77.86955828356946 },
     zIndex: 1
   },
-  { 
+  {
     name: 'Wrightsville',
     pos: { lat: 34.206377648975206, lng: -77.79588596113699 },
     zIndex: 2
   },
-  { 
+  {
     name: 'Wade Park',
     pos: { lat: 34.179610791808145, lng: -77.87975362825102 },
     zIndex: 3
   },
-  { 
+  {
     name: 'Greenfield',
     pos: { lat: 34.21581910891144, lng: -77.94252873358592 },
     zIndex: 4
@@ -48,20 +48,22 @@ const shape = {
 }
 
 // Marker sizes are expressed as a Size of X,Y where the origin of the image
-// (0,0) is located in the top left of the image.   
+// (0,0) is located in the top left of the image.
 // Origins, anchor positions and coordinates of the marker increase in the X
 // direction to the right and in the Y direction down.
-const markerIcon = computed(() => mapRef.value?.ready
-  ? {
-    url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
-    // This marker is 20 pixels wide by 32 pixels high.
-    size: new google.maps.Size(20, 32),
-    // The origin for this image is (0, 0).
-    origin: new google.maps.Point(0, 0),
-    // The anchor for this image is the base of the flagpole at (0, 32).
-    anchor: new google.maps.Point(0, 32)
-  }
-  : null)
+const markerIcon = computed(() =>
+  mapRef.value?.ready
+    ? {
+        url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(20, 32),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+      }
+    : null
+)
 </script>
 
 <template>
@@ -79,14 +81,14 @@ const markerIcon = computed(() => mapRef.value?.ready
         v-for="(spot, i) in spots"
         :key="i"
         :options="{
-        position: spot['pos'],
-        map: map,
-        // label: spot['name'][0],
-        icon: markerIcon,
-        shape: shape,
-        title: spot['name'],
-        zIndex: spot['zIndex']
-      }"
+          position: spot['pos'],
+          map: map,
+          // label: spot['name'][0],
+          icon: markerIcon,
+          shape: shape,
+          title: spot['name'],
+          zIndex: spot['zIndex']
+        }"
       />
     </MarkerCluster>
   </GoogleMap>
