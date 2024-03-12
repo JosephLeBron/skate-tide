@@ -22,10 +22,9 @@ Features
 - User profiles
 
 Technologies used
-
-- Vue JS
-- Node.js
-- Firestorm
+* Vue JS
+* Node.js
+* better-sqlite3
 
 Roles
 
