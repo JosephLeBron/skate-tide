@@ -22,7 +22,7 @@ Features
 Technologies used
 * Vue JS
 * Node.js
-* Firestorm
+* better-sqlite3
 
 Roles
 * Euel Gebreselassie (Profile page/map features)
