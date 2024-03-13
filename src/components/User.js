@@ -5,6 +5,16 @@ export default class User {
   }
 
   isValidCredentials() {
-    return this.username === 'user@example.com' && this.password == 'password'
+    const users = [
+      {email: 'user@example.com', password: 'password'},
+      {email: 'user1@example.com', password: 'password1'}
+    ];
+
+    for (const user in users){
+      if (this.username == user.email && this.password == user.password){
+        return true
+      }
+    }
+    return false
   }
 }

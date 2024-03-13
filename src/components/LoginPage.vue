@@ -51,7 +51,7 @@ export default {
       const user = new User(this.username, this.password);
       if (user.isValidCredentials()) {
         this.userInfo = {
-          email: 'user@example.com',
+          email: this.username,
           password: this.password,
         }
         // Redirect to home page after login
