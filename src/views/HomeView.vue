@@ -1,11 +1,13 @@
 <template>
   <div class="welcome">
     <h1>This is the welcome page</h1>
+    <HomeMap />
   </div>
 </template>
 
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import HomeMap from '../components/HomeMap.vue'
+const components = { HomeMap }
 </script>
 
 <style>
@@ -18,5 +20,8 @@ import TheWelcome from '../components/TheWelcome.vue'
 }
 body {
   background-color: lightseagreen;
+}
+map {
+  align-items: center;
 }
 </style>
