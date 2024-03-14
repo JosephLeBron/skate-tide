@@ -10,8 +10,11 @@ export default class User {
       {email: 'user1@example.com', password: 'password1'}
     ];
 
-    for (const user in users){
-      return this.username == user.email && this.password == user.password
+    for (const user of users){
+      if (this.username == user.email && this.password == user.password){
+        return true;
       }
     }
+    return false;
   }
+}
