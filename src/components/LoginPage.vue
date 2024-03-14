@@ -60,7 +60,7 @@ export default {
       } else {
         console.log('Invalid credentials');
         this.invalidLogin = true
-        alert('Invalid credentials')
+        alert('Invalid email or password credentials')
       }
     },
     createAccount() {}
@@ -106,7 +106,6 @@ button {
   &:hover {
     background-color: gray;
   }
-
   &:active {
     background-color: black;
   }

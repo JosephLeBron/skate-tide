@@ -11,10 +11,7 @@ export default class User {
     ];
 
     for (const user in users){
-      if (this.username == user.email && this.password == user.password){
-        return true
+      return this.username == user.email && this.password == user.password
       }
     }
-    return false
   }
-}
