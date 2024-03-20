@@ -22,8 +22,8 @@
             required
           />
         </h3>
-        <button type="submit">Login</button>
-        <button type="button" @click="createAccount">Create Account</button>
+        <button type="submit" @clic.prevent="login">Login</button>
+        <button type="button" @clic="createAccount">Create Account</button>
       </h1>
     </form>
   </div>
