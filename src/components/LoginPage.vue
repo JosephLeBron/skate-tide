@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <h2>Login</h2>
+  <div> 
     <form @submit.prevent="login" novalidate>
       <h1>
         <h3>
-          <label for="username">Username:</label>
+          <label for="username">Email:</label>
           <input
             :class="{ invalid: invalidLogin }"
             v-model="username"
@@ -63,7 +62,9 @@ export default {
         alert('Invalid email or password credentials')
       }
     },
-    createAccount() {}
+    createAccount() {
+      this.$router.push('/CreateAccountPage')
+    }
   }
 }
 </script>
@@ -72,34 +73,31 @@ export default {
 /* Add styles here in css */
 h1 {
   color: black;
-  background-color: bisque;
+  background-color: rgb(13, 226, 180);
   width: 300px;
   border: 15px solid black;
   padding: 25px;
   margin: 10px;
+  justify-content: center;
 }
 h3 {
   color: black;
   display: grid;
   height: auto;
   width: auto;
-  background-color: bisque;
-}
-h2 {
-  color: black;
-  display: flex;
+  justify-content: center;
+  background-color: rgb(13, 226, 180);
 }
 button {
   background-color: dimgray; /* Green */
   border: black;
   color: white;
-  padding: 7px 16px;
+  padding: 5px 13px;
   text-align: center;
   text-decoration: none;
   display: inline-flex;
   font-size: 13px;
-  border-radius: 8px;
-  justify-content: space-between;
+  border-radius: 18px;
   cursor: pointer;
   transition: background-color 0.3s;
 
