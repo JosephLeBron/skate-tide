@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import Header from './components/Header.vue'
+import { isLoggedIn } from '@/components/Auth'
+
+const router = useRouter();
+
+if(!isLoggedIn){
+  router.push('/login');
+}
 </script>
 
 <template>

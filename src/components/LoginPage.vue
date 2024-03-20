@@ -1,9 +1,9 @@
 <template>
   <div> 
     <div v-if="!isLoggedIn">
-    <form @submit.prevent="login" novalidate>
-      <h1>
-        <h3>
+      <form @submit.prevent="login" novalidate>
+        <h1>Login</h1>
+        <div>
           <label for="username">Email:</label>
           <input
             :class="{ invalid: invalidLogin }"
@@ -12,7 +12,8 @@
             id="username"
             required
           />
-
+        </div>
+        <div>
           <label for="password">Password:</label>
           <input
             :class="{ invalid: invalidLogin }"
@@ -21,11 +22,10 @@
             id="password"
             required
           />
-        </h3>
-        <button type="submit" @click.prevent="login">Login</button>
+        </div>
+        <button type="submit">Login</button>
         <button type="button" @click="createAccount">Create Account</button>
-      </h1>
-    </form>
+      </form>
     </div>
     <div v-else>
       <h1>Welcome {{ username }}!</h1>
@@ -63,10 +63,11 @@ export default {
         // Redirect to home page after login
         console.log('Login successful. Redirecting to the home page.');
         this.isLoggedIn = true;
-        this.$router.push('/login')
+        this.$router.push('/')
       } else {
         console.log('Invalid credentials');
         this.invalidLogin = true
+        this.clearPassword();
         alert('Invalid email or password credentials')
       }
     },
@@ -76,6 +77,9 @@ export default {
     },
     createAccount() {
       this.$router.push({ name: 'CreateAccount' })
+    },
+    clearPassword() {
+      this.password = '';
     }
   }
 }
@@ -99,6 +103,9 @@ h3 {
   width: auto;
   justify-content: center;
   background-color: rgb(13, 226, 180);
+}
+.invalid {
+  border-block: red;
 }
 button {
   background-color: dimgray; /* Green */
