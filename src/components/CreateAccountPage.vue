@@ -16,6 +16,9 @@
             <button type="submit">Create Account</button>
             <button type="button" @click="cancel">Cancel</button>
             </div>
+            <div v-if="invalidInput" class="error-message">
+            Invalid email or password. Please try again.
+            </div>
         </h2>
         </div>
       </form>
@@ -42,15 +45,16 @@ methods: {
   
     const user = new User(this.email, this.password);
     if (user.isValidCredentials()) {
+        //api call goes here
         console.log('Account created successfully.');
-        this.$router.push('/');
+        this.$router.push('/login');
     } else {
         console.log('Invalid input');
         this.invalidInput = true;
         alert('Invalid email or password. Please try again.');
         }
     },
-    redirectToLogin() {
+    cancel() {
         this.$router.push('/login');
         }
     }
@@ -75,6 +79,10 @@ methods: {
     width: auto;
     justify-content: center;
     background-color: rgb(13, 226, 180);
+  }
+  .error-message {
+    color: red;
+    margin-top: 5px;
   }
   button {
     background-color: dimgray; /* Green */

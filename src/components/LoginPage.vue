@@ -1,5 +1,6 @@
 <template>
   <div> 
+    <div v-if="!isLoggedIn">
     <form @submit.prevent="login" novalidate>
       <h1>
         <h3>
@@ -21,10 +22,15 @@
             required
           />
         </h3>
-        <button type="submit" @clic.prevent="login">Login</button>
-        <button type="button" @clic="createAccount">Create Account</button>
+        <button type="submit" @click.prevent="login">Login</button>
+        <button type="button" @click="createAccount">Create Account</button>
       </h1>
     </form>
+    </div>
+    <div v-else>
+      <h1>Welcome {{ username }}!</h1>
+      <button @click.prevent="logout">Logout</button>
+    </div>
   </div>
 </template>
 
@@ -34,6 +40,7 @@ import User from './User'
 export default {
   data() {
     return {
+      isLoggedIn: false,
       username: '',
       password: '',
       invalidLogin: false,
@@ -55,15 +62,20 @@ export default {
         }
         // Redirect to home page after login
         console.log('Login successful. Redirecting to the home page.');
-        this.$router.push('/')
+        this.isLoggedIn = true;
+        this.$router.push('/login')
       } else {
         console.log('Invalid credentials');
         this.invalidLogin = true
         alert('Invalid email or password credentials')
       }
     },
+    logout() {
+        this.isLoggedIn = false;
+        this.$router.push('/');
+    },
     createAccount() {
-      this.$router.push('/CreateAccountPage')
+      this.$router.push({ name: 'CreateAccount' })
     }
   }
 }
