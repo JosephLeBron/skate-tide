@@ -13,8 +13,8 @@
             <input type="password" v-model="password" required>
             </div>
             <div>
-            <label for="password">Repeat Password:</label>
-            <input type="password" v-model="password" required>
+            <label for="repeatPassword">Repeat Password:</label>
+            <input type="password" v-model="repeatPassword" required>
             </div>
             <div>
             <button type="submit">Create Account</button>
@@ -37,16 +37,22 @@ export default {
         return {
             email: '', 
             password: '',
+            repeatPassword: '',
             invalidInput: false,
             };
         },
 methods: {
     createAccount() {
-    if (!this.email || !this.password) {
-        alert('Please enter both email and password.');
+    if (!this.email || !this.password || !this.repeatPassword) {
+        alert('Please enter your email and create a password.');
         return;
         }
-  
+    
+    if (this.password !== this.repeatPassword){
+      alert('Passwords do not match. Please try again.');
+      return;
+    }
+    
     const user = new User(this.email, this.password);
     if (user.isValidCredentials()) {
         //api call goes here
@@ -56,12 +62,17 @@ methods: {
         console.log('Invalid input');
         this.invalidInput = true;
         alert('Invalid email or password. Please try again.');
+        this.clearPasswords();
         }
     },
     cancel() {
-        this.$router.push('/login');
-        }
-    }
+      this.$router.push('/login');
+    },
+    clearPasswords(){
+      this.password = '';
+      this.repeatPassword = '';
+    } 
+  }
 };
 </script>
 

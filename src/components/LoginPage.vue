@@ -36,6 +36,7 @@
 
 <script>
 import User from './User'
+import { login, isLoggedIn } from './Auth';
 // Holdes the data for the blank spaces
 export default {
   data() {
@@ -53,31 +54,22 @@ export default {
         alert('Please enter both username and password.');
         return;
       }
-
-      const user = new User(this.username, this.password);
-      if (user.isValidCredentials()) {
-        this.userInfo = {
-          email: this.username,
-          password: this.password,
-        }
-        // Redirect to home page after login
-        console.log('Login successful. Redirecting to the home page.');
-        this.isLoggedIn = true;
-        this.$router.push('/')
-      } else {
-        console.log('Invalid credentials');
-        this.invalidLogin = true
-        this.clearPassword();
-        alert('Invalid email or password credentials')
-      }
+      // logging auth logic
+      login('auth-token');
+      this.isLoggedIn = true;
+      this.$router.push('/')
     },
+    // logging out auth logic
     logout() {
-        this.isLoggedIn = false;
-        this.$router.push('/');
+      logout()
+      this.isLoggedIn = false;
+      this.$router.push('/login');
     },
+    // moves to the create account page
     createAccount() {
       this.$router.push({ name: 'CreateAccount' })
     },
+    // clears the password
     clearPassword() {
       this.password = '';
     }
@@ -107,8 +99,11 @@ h3 {
 .invalid {
   border-block: red;
 }
+label {
+  color: black;
+}
 button {
-  background-color: dimgray; /* Green */
+  background-color: dimgray;
   border: black;
   color: white;
   padding: 5px 13px;
