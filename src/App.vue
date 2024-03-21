@@ -11,7 +11,7 @@ import Header from './components/Header.vue'
 </template>
 
 <style scoped>
-/* header {
+header {
   background-color: #333;
   color: white;
   padding: 10px;
@@ -20,7 +20,7 @@ import Header from './components/Header.vue'
   left: 0;
   width: 100%;
   box-sizing: border-box;
-} */
+}
 
 nav {
   background-color: #f4f4f4;
