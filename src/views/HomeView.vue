@@ -19,11 +19,13 @@ import HomeMap from '../components/HomeMap.vue'
 @media (min-width: 1024px) {
   .map {
     top: 112px;
+    max-height: calc(100vh - 112px);
   }
 }
 @media (max-width: 1024px) {
   .map {
     top: 44px;
+    max-height: calc(100vh - 44px);
   }
 }
 </style>
