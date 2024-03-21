@@ -1,6 +1,5 @@
 <template>
-  <div class="welcome">
-    <h1>This is the welcome page</h1>
+  <div class="map">
     <HomeMap />
   </div>
 </template>
@@ -18,10 +17,11 @@ const components = { HomeMap }
     align-items: center;
   }
 }
-body {
+/* body {
   background-color: lightseagreen;
-}
-map {
+} */
+.map {
+  width: 500px;
   align-items: center;
 }
 </style>

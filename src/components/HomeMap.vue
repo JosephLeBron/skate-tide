@@ -70,7 +70,7 @@ const markerIcon = computed(() =>
   <GoogleMap
     ref="mapRef"
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
-    style="width: 100%; height: 500px"
+    style="width: 100%; height:500px"
     class="map"
     :center="center"
     :zoom="13"
@@ -97,16 +97,16 @@ const markerIcon = computed(() =>
 <style scoped>
 /* Always set the map height explicitly to define the size of the div
      * element that contains the map. */
-.map {
+/* .map {
   position: relative;
   width: 100%;
   height: 500px;
-}
+} */
 /* Optional: Makes the sample page fill the window. */
-html,
+/* html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-}
+} */
 </style>

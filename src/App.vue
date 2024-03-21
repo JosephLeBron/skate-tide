@@ -11,7 +11,7 @@ import Header from './components/Header.vue'
 </template>
 
 <style scoped>
-header {
+/* header {
   background-color: #333;
   color: white;
   padding: 10px;
@@ -20,7 +20,7 @@ header {
   left: 0;
   width: 100%;
   box-sizing: border-box;
-}
+} */
 
 nav {
   background-color: #f4f4f4;
@@ -60,8 +60,8 @@ body {
 }
 
 .content-wrapper {
-  margin-top: 80px; /* Adjust this value based on your header and nav height */
-  padding: 20px;
+  margin-top: 0px; /* Adjust this value based on your header and nav height */
+  padding: 0px;
 }
 
 @media (min-width: 1024px) {
