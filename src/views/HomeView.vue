@@ -1,22 +1,31 @@
 <template>
-  <div class="welcome">
-    <h1>This is the welcome page</h1>
-  </div>
+  <map>
+    <HomeMap />
+  </map>
 </template>
 
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import HomeMap from '../components/HomeMap.vue'
+// const components = { HomeMap }
 </script>
 
 <style>
+.map {
+  position: fixed;
+  left: 0px;
+  z-index: 1;
+}
+
 @media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+  .map {
+    top: 112px;
+    max-height: calc(100vh - 112px);
   }
 }
-body {
-  background-color: lightseagreen;
+@media (max-width: 1024px) {
+  .map {
+    top: 44px;
+    max-height: calc(100vh - 44px);
+  }
 }
 </style>
