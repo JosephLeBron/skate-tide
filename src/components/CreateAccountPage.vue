@@ -13,6 +13,10 @@
             <input type="password" v-model="password" required>
             </div>
             <div>
+            <label for="password">Repeat Password:</label>
+            <input type="password" v-model="password" required>
+            </div>
+            <div>
             <button type="submit">Create Account</button>
             <button type="button" @click="cancel">Cancel</button>
             </div>
