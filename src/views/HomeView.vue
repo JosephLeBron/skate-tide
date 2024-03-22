@@ -2,18 +2,44 @@
   <map>
     <HomeMap />
   </map>
+  <div class="test" @click="onClick">
+    {{ count }}
+  </div>
 </template>
 
-<script setup lang="ts">
-import HomeMap from '../components/HomeMap.vue'
-// const components = { HomeMap }
+<script>
+import HomeMap from '../components/HomeMap.vue';
+
+export default {
+  data() {
+    return {
+      count: 0
+    }
+  },
+  components: {
+    HomeMap
+  },
+  methods: {
+    onClick() {
+      this.count = this.count + 1
+    }
+  },
+  mounted() {
+    this.$root.$on('marker-click-event', this.onClick)
+  }
+}
 </script>
 
 <style>
 .map {
   position: fixed;
-  left: 0px;
+  left: 100px;  /* Change back to 0px when finished testing */
   z-index: 1;
+}
+.test {
+  position: fixed;
+  left: 10px;
+  color:black;
 }
 
 @media (min-width: 1024px) {

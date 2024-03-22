@@ -51,19 +51,22 @@ const shape = {
 // (0,0) is located in the top left of the image.
 // Origins, anchor positions and coordinates of the marker increase in the X
 // direction to the right and in the Y direction down.
-const markerIcon = computed(() =>
-  mapRef.value?.ready
-    ? {
-        url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
-        // This marker is 20 pixels wide by 32 pixels high.
-        size: new google.maps.Size(20, 32),
-        // The origin for this image is (0, 0).
-        origin: new google.maps.Point(0, 0),
-        // The anchor for this image is the base of the flagpole at (0, 32).
-        anchor: new google.maps.Point(0, 32)
-      }
-    : null
+const markerIcon = computed(() => mapRef.value?.ready
+  ? {
+    url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+    // This marker is 20 pixels wide by 32 pixels high.
+    size: new google.maps.Size(20, 32),
+    // The origin for this image is (0, 0).
+    origin: new google.maps.Point(0, 0),
+    // The anchor for this image is the base of the flagpole at (0, 32).
+    anchor: new google.maps.Point(0, 32)
+  }
+  : null
 )
+
+// function onClick() {
+//   this.$root.$emit('marker-click-event')
+// }
 </script>
 
 <template>
@@ -74,6 +77,7 @@ const markerIcon = computed(() =>
     class="map"
     :center="center"
     :zoom="13"
+    @click="$emit('marker-click-event', 1)"
   >
     <!-- MarkerCluster -->
     <MarkerCluster>
