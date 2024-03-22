@@ -1,6 +1,6 @@
 <template>
     <div>
-      <form @submit.prevent="create-account" novalidate>
+      <form @submit.prevent="createAccount" novalidate>
         <h1>Create Account</h1>
         <div>
         <h2>
@@ -30,48 +30,63 @@
 </template>
   
 <script>
-import User from './User';
+//import User from './User';
+import axios from 'axios';
   
 export default {
     data() {
         return {
-            email: '', 
-            password: '',
-            repeatPassword: '',
-            invalidInput: false,
-            };
+          email: '', 
+          password: '',
+          repeatPassword: '',
+          invalidInput: false,
+          };
         },
 methods: {
-    createAccount() {
-    if (!this.email || !this.password || !this.repeatPassword) {
-        alert('Please enter your email and create a password.');
+    async createAccount() {
+      console.log('Button Clicked');
+      if (!this.email || !this.password || !this.repeatPassword) {
+          alert('Please enter your email and create a password.');
+          return;
+          }
+      
+      if (this.password !== this.repeatPassword){
+        alert('Passwords do not match. Please try again.');
         return;
-        }
-    
-    if (this.password !== this.repeatPassword){
-      alert('Passwords do not match. Please try again.');
-      return;
-    }
-    
-    const user = new User(this.email, this.password);
-    if (user.isValidCredentials()) {
-        //api call goes here
+      }
+      
+      try {
+        const response = await axios.post('api/create-account',{
+          email: this.email,
+          password: this.password
+        });
         console.log('Account created successfully.');
-        this.$router.push('/login');
-    } else {
-        console.log('Invalid input');
+        this.$rounter.push('/');
+      }catch (error) {
+        console.error('Error creating account: ', error);
         this.invalidInput = true;
-        alert('Invalid email or password. Please try again.');
+        alert('Error creating account. Please try again.');
         this.clearPasswords();
-        }
-    },
-    cancel() {
-      this.$router.push('/login');
-    },
-    clearPasswords(){
-      this.password = '';
-      this.repeatPassword = '';
-    } 
+      }
+      // const user = new User(this.email, this.password);
+      // if (user.isValidCredentials()) {
+      //     //api call goes here
+      //     console.log('Account created successfully.');
+      //     this.$router.push('/login');
+      // } else {
+      //     console.log('Invalid input');
+      //     this.invalidInput = true;
+      //     alert('Invalid email or password. Please try again.');
+      //     this.clearPasswords();
+      //     }
+      },
+      cancel() {
+        this.$router.push('/login');
+      },
+      clearPasswords(){
+        this.password = '';
+        this.repeatPassword = '';
+      } 
   }
 };
 </script>
@@ -112,12 +127,12 @@ methods: {
     cursor: pointer;
     transition: background-color 0.3s;
   
-&:hover {
+  &:hover {
     background-color: gray;
-}
-&:active {
+    }
+  &:active {
     background-color: black;
-}
+    }
 }
 </style>
   

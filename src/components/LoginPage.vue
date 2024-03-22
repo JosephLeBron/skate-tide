@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import User from './User'
+import axios from 'axios';
 import { login, isLoggedIn } from './Auth';
 // Holdes the data for the blank spaces
 export default {
@@ -49,30 +49,44 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       if (!this.username || !this.password) {
         alert('Please enter both username and password.');
         return;
       }
-      // logging auth logic
-      login('auth-token');
-      this.isLoggedIn = true;
-      this.$router.push('/')
-    },
-    // logging out auth logic
-    logout() {
-      logout()
-      this.isLoggedIn = false;
-      this.$router.push('/login');
-    },
+      try {
+        const response = await axios.post('/api/login', {
+          email: this.email,
+          password: this.password
+        });
+        console.log('Login successful');
+        login(response.data.token);
+        this.$rounter.push('/');
+      } catch (error) {
+        console.error('Error logging in: ', error);
+        this.invalidInput = true;
+        alert('Invalid  email or password, Please try again.')
+      }
+    //   }
+    //   // logging auth logic
+    //   login('auth-token');
+    //   this.isLoggedIn = true;
+    //   this.$router.push('/')
+    // },
+    // // logging out auth logic
+    // logout() {
+    //   logout()
+    //   this.isLoggedIn = false;
+    //   this.$router.push('/login');
+      },
     // moves to the create account page
-    createAccount() {
-      this.$router.push({ name: 'CreateAccount' })
-    },
-    // clears the password
-    clearPassword() {
-      this.password = '';
-    }
+      createAccount() {
+        this.$router.push({ name: 'CreateAccount' })
+      },
+      // clears the password
+      clearPassword() {
+        this.password = '';
+      }
   }
 }
 </script>
