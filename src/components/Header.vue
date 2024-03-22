@@ -13,8 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './HelloWorld.vue' // Assuming you have a HelloWorld component
-
 const showTitle = window.innerWidth >= 1024 // Adjust the breakpoint as needed
 </script>
 

@@ -67,8 +67,8 @@ body {
 }
 
 .content-wrapper {
-  margin-top: 80px; /* Adjust this value based on your header and nav height */
-  padding: 20px;
+  margin-top: 0px; /* Adjust this value based on your header and nav height */
+  padding: 0px;
 }
 
 @media (min-width: 1024px) {
