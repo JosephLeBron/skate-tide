@@ -43,6 +43,10 @@
           <button>Follow</button>
         </nav>
 
+        <!-- File input button added here -->
+        <input type = "file" @change="handleFileUpload" accept="image/*" />
+        <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" /> <!-- Display the selected image here -->
+
         <div class="photos">
           <img src="../img/img_1.webp" alt="Photo" />
           <img src="../img/img_2.avif" alt="Photo" />
@@ -59,7 +63,29 @@
 
 <script>
 export default {
-  name: 'CombinedComponent'
+  name: 'ProfilePage',
+  data() {
+    return {
+      profilePicture: null
+    };
+  },
+  methods: {
+    handleFileUpload(event) {
+      const file = event.target.files[0]; // Get the selected file
+      if (file) {
+        // Generate a temporary URL for the selected image
+        this.profilePicture = URL.createObjectURL(file);
+        
+        // Simulate updating the database (replace with your actual database update logic)
+        // For demonstration, we'll just store the file name
+        const fileName = file.name;
+        console.log('Updating database with profile picture:', fileName);
+      } else {
+        // Handle case where no file is selected
+        this.profilePicture = null;
+      }
+    }
+  }
 }
 </script>
 
@@ -211,4 +237,5 @@ a {
   cursor: pointer;
   transition: 0.3s;
 }
+
 </style>
