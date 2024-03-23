@@ -1,7 +1,6 @@
 // Import modules
 import express from 'express';
-//import * as db from 'database'; // Import database.js file
-import { db } from './assets/database';
+import db from './assets/database';
 
 // Create Express application
 const app = express();
