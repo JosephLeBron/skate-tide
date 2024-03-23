@@ -10,6 +10,9 @@ app.use(express.json());
 
 // Handle POST request to create-account endpoint
 app.post('/api/create-account', (req, res) => {
+  // log tje request body
+  console.log('Request body: ' , req.body);
+
   const { email, password } = req.body;
 
   // Example: Insert new user into users table
@@ -30,7 +33,7 @@ app.post('/api/create-account', (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5173;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
