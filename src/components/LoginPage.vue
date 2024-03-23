@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <h2>Login</h2>
-    <form @submit.prevent="login" novalidate>
-      <h1>
-        <h3>
-          <label for="username">Username:</label>
+  <div> 
+    <div v-if="!isLoggedIn">
+      <form @submit.prevent="login" novalidate>
+        <h1>Login</h1>
+        <div>
+          <label for="username">Email:</label>
           <input
             :class="{ invalid: invalidLogin }"
             v-model="username"
@@ -12,7 +12,8 @@
             id="username"
             required
           />
-
+        </div>
+        <div>
           <label for="password">Password:</label>
           <input
             :class="{ invalid: invalidLogin }"
@@ -21,20 +22,26 @@
             id="password"
             required
           />
-        </h3>
+        </div>
         <button type="submit">Login</button>
         <button type="button" @click="createAccount">Create Account</button>
-      </h1>
-    </form>
+      </form>
+    </div>
+    <div v-else>
+      <h1>Welcome {{ username }}!</h1>
+      <button @click.prevent="logout">Logout</button>
+    </div>
   </div>
 </template>
 
 <script>
-import User from './User'
+import axios from 'axios';
+import { login, isLoggedIn } from './Auth';
 // Holdes the data for the blank spaces
 export default {
   data() {
     return {
+      isLoggedIn: false,
       username: '',
       password: '',
       invalidLogin: false,
@@ -42,28 +49,44 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       if (!this.username || !this.password) {
         alert('Please enter both username and password.');
         return;
       }
-
-      const user = new User(this.username, this.password);
-      if (user.isValidCredentials()) {
-        this.userInfo = {
-          email: 'user@example.com',
-          password: this.password,
-        }
-        // Redirect to home page after login
-        console.log('Login successful. Redirecting to the home page.');
-        this.$router.push('/')
-      } else {
-        console.log('Invalid credentials');
-        this.invalidLogin = true
-        alert('Invalid credentials')
+      try {
+        const response = await axios.post('/api/login', {
+          email: this.email,
+          password: this.password
+        });
+        console.log('Login successful');
+        login(response.data.token);
+        this.$rounter.push('/');
+      } catch (error) {
+        console.error('Error logging in: ', error);
+        this.invalidInput = true;
+        alert('Invalid  email or password, Please try again.')
       }
-    },
-    createAccount() {}
+    //   }
+    //   // logging auth logic
+    //   login('auth-token');
+    //   this.isLoggedIn = true;
+    //   this.$router.push('/')
+    // },
+    // // logging out auth logic
+    // logout() {
+    //   logout()
+    //   this.isLoggedIn = false;
+    //   this.$router.push('/login');
+      },
+    // moves to the create account page
+      createAccount() {
+        this.$router.push({ name: 'CreateAccount' })
+      },
+      // clears the password
+      clearPassword() {
+        this.password = '';
+      }
   }
 }
 </script>
@@ -72,41 +95,43 @@ export default {
 /* Add styles here in css */
 h1 {
   color: black;
-  background-color: bisque;
+  background-color: rgb(13, 226, 180);
   width: 300px;
   border: 15px solid black;
   padding: 25px;
   margin: 10px;
+  justify-content: center;
 }
 h3 {
   color: black;
   display: grid;
   height: auto;
   width: auto;
-  background-color: bisque;
+  justify-content: center;
+  background-color: rgb(13, 226, 180);
 }
-h2 {
+.invalid {
+  border-block: red;
+}
+label {
   color: black;
-  display: flex;
 }
 button {
-  background-color: dimgray; /* Green */
+  background-color: dimgray;
   border: black;
   color: white;
-  padding: 7px 16px;
+  padding: 5px 13px;
   text-align: center;
   text-decoration: none;
   display: inline-flex;
   font-size: 13px;
-  border-radius: 8px;
-  justify-content: space-between;
+  border-radius: 18px;
   cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
     background-color: gray;
   }
-
   &:active {
     background-color: black;
   }
