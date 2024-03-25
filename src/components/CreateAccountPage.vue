@@ -56,14 +56,14 @@ methods: {
       }
       
       try {
-        const response = await axios.post('api/create-account',{
+        const response = await axios.post('http://localhost:5173/api/create-account',{
           email: this.email,
           password: this.password
         });
         console.log('Account created successfully.');
-        this.$rounter.push('/');
+        this.$router.push('/');
       }catch (error) {
-        console.error('Error creating account: ', error);
+        console.error('Error creating account : ', error);
         this.invalidInput = true;
         alert('Error creating account. Please try again.');
         this.clearPasswords();
