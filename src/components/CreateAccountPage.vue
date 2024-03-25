@@ -1,27 +1,27 @@
 <template>
-    <div>
+    <div class="container">
       <form @submit.prevent="createAccount" novalidate>
         <h1>Create Account</h1>
         <div>
         <h2>
             <div>
-            <label for="username">Email:</label>
-            <input type="email" v-model="email" required>
+              <label for="username">Enter an Email:</label>
+              <input type="email" v-model="email" required>
             </div>
             <div>
-            <label for="password">Password:</label>
-            <input type="password" v-model="password" required>
+              <label for="password">Enter Password:</label>
+              <input type="password" v-model="password" required>
             </div>
             <div>
-            <label for="repeatPassword">Repeat Password:</label>
-            <input type="password" v-model="repeatPassword" required>
+              <label for="repeatPassword">Repeat Password:</label>
+              <input type="password" v-model="repeatPassword" required>
             </div>
-            <div>
-            <button type="submit">Create Account</button>
-            <button type="button" @click="cancel">Cancel</button>
+            <div class="button-container">
+              <button type="submit">Create Account</button>
+              <button type="button" @click="cancel">Cancel</button>
             </div>
             <div v-if="invalidInput" class="error-message">
-            Invalid email or password. Please try again.
+              Invalid email or password. Please try again.
             </div>
         </h2>
         </div>
@@ -97,22 +97,32 @@ methods: {
     color: black;
     background-color: rgb(13, 226, 180);
     width: 300px;
-    border: 15px solid black;
-    padding: 25px;
-    margin: 10px;
+    border: 15px dotted gold;
+    padding: 5px;
+    margin: 5px;
     justify-content: center;
   }
-  h2 {
-    color: black;
-    display: grid;
-    height: auto;
-    width: auto;
-    justify-content: center;
-    background-color: rgb(13, 226, 180);
-  }
+
   .error-message {
     color: red;
     margin-top: 5px;
+  }
+  .container {
+    color: black;
+    display: grid;
+    grid-gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border: 3px solid teal;
+    height: auto;
+    width: auto;
+    background-color: rgb(13, 226, 180);
+  }
+  .button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   button {
     background-color: dimgray; /* Green */
