@@ -31,14 +31,14 @@ i {
   width: 32px;
   height: 32px;
 
-  color: var(--color-text);
+  color: black;
 }
 
 h3 {
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 0.4rem;
-  color: var(--color-heading);
+  color: black;
 }
 
 @media (min-width: 1024px) {
@@ -51,8 +51,8 @@ h3 {
     top: calc(50% - 25px);
     left: -26px;
     position: absolute;
-    border: 1px solid var(--color-border);
-    background: var(--color-background);
+    border: 100px solid black;
+    background: lightseagreen;
     border-radius: 8px;
     width: 50px;
     height: 50px;

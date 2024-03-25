@@ -12,4 +12,7 @@
     align-items: center;
   }
 }
+body {
+  background-color: lightseagreen;
+}
 </style>
