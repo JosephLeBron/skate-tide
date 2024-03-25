@@ -6,7 +6,17 @@ import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
 const mapRef = ref(null)
-const center = { lat: 34.225727, lng: -77.94471 } /// centered on wilmington
+const center = { lat: 34.210249, lng: -77.887004 } /// centered on wilmington
+const mapStyles = [
+  {
+    // Disable points of interest, assign this to a custom toggle in the future?
+    featureType: "poi",
+    elementType: "labels",
+    stylers: [
+      { visibility:'off' }
+    ]
+  }
+]
 
 /// List of Pins
 // Data for the markers consisting of a name, a LatLng and a zIndex for the
@@ -14,27 +24,27 @@ const center = { lat: 34.225727, lng: -77.94471 } /// centered on wilmington
 const spots = [
   {
     name: 'College',
-    pos: { lat: 34.21024948286535, lng: -77.88700419732456 },
+    pos: { lat: 34.210249, lng: -77.887004 },
     zIndex: 0
   },
   {
     name: 'UNCW',
-    pos: { lat: 34.22436205407568, lng: -77.86955828356946 },
+    pos: { lat: 34.224362, lng: -77.869558 },
     zIndex: 1
   },
   {
     name: 'Wrightsville',
-    pos: { lat: 34.206377648975206, lng: -77.79588596113699 },
+    pos: { lat: 34.206377, lng: -77.795885 },
     zIndex: 2
   },
   {
     name: 'Wade Park',
-    pos: { lat: 34.179610791808145, lng: -77.87975362825102 },
+    pos: { lat: 34.179610, lng: -77.879753 },
     zIndex: 3
   },
   {
     name: 'Greenfield',
-    pos: { lat: 34.21581910891144, lng: -77.94252873358592 },
+    pos: { lat: 34.215819, lng: -77.942528 },
     zIndex: 4
   }
 ]
@@ -63,10 +73,6 @@ const markerIcon = computed(() => mapRef.value?.ready
   }
   : null
 )
-
-// function onClick() {
-//   this.$root.$emit('marker-click-event')
-// }
 </script>
 
 <template>
@@ -77,7 +83,7 @@ const markerIcon = computed(() => mapRef.value?.ready
     class="map"
     :center="center"
     :zoom="13"
-    @click="$emit('marker-click-event', 1)"
+    :styles="mapStyles"
   >
     <!-- MarkerCluster -->
     <MarkerCluster>
@@ -93,6 +99,7 @@ const markerIcon = computed(() => mapRef.value?.ready
           title: spot['name'],
           zIndex: spot['zIndex']
         }"
+        @click="$emit('marker-click', spots[i])"
       />
     </MarkerCluster>
   </GoogleMap>
