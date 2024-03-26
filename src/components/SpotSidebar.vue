@@ -3,28 +3,34 @@
 defineProps(['spot'])
 </script>
 
-
 <template>
-    <div class="sidebar-img-container">
-        <div class="box">
-            test
-        </div>
-        <h1>Spot: {{ spot['name'] }}</h1>
+    <div class="sidebar-container" @click="$emit('close-button')">
+        <button class="close-button">X</button>
+        <img :src="spot['img']" class="sidebar-img" />
+        <h1>{{ spot['name'] }}</h1>
         <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
     </div>
 </template>
 
 <style>
-.sidebar-img-container {
+.close-button {
+    position: absolute;
+    right: 80%;
+}
+.sidebar-img {
+    align-items: center;
     width: 100%;
-    height: 15%;
-    border: 1px;
+    height: 30%;
+    border: 5px;
+    border-color: black;
+    background-color: white;
 }
 .sidebar-container {
-    display: grid;
+    display: flexbox;
+    text-align: center;
     width: 100%;
     height: 100%;
-    color: black;
-    background-color: plum;
+    color: white;
+    /* background-color: gray; */
 }
 </style>

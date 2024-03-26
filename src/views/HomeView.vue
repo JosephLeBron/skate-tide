@@ -6,6 +6,10 @@ import SpotSideBar from '../components/SpotSidebar.vue'
 const showSidebar = ref(false)
 const spot = ref(null)
 
+function onCloseBtnClick() {
+  showSidebar.value = false
+}
+
 function onMarkerClick(selected) {
   showSidebar.value = true
   spot.value = selected
@@ -15,7 +19,7 @@ function onMarkerClick(selected) {
 <template>
   <div v-if="showSidebar" class="homeview-container">
     <div class="sidebar" style="width: 20%"> 
-      <SpotSideBar :spot="spot" />
+      <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
     </div>
     <div class="map" style="width: 80%"> 
       <HomeMap @marker-click="onMarkerClick"/>
