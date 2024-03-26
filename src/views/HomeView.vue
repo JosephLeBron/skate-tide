@@ -1,33 +1,35 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import HomeMap from '../components/HomeMap.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
 
 const showSidebar = ref(false)
 const spot = ref(null)
 
+const mapWidth = computed(() => {
+  // Map is styled at 80% width if sidebar is open, 100% otherwise
+  return showSidebar.value ? '80%' : '100%'
+})
+
 function onCloseBtnClick() {
+  // Function to run when pressing the X button in the sidebar
   showSidebar.value = false
 }
 
 function onMarkerClick(selected) {
+  // Function to run when clicking a marker on the map, selected
+  // is the spot object associated with that marker
   showSidebar.value = true
   spot.value = selected
 }
 </script>
 
 <template>
-  <div v-if="showSidebar" class="homeview-container">
-    <div class="sidebar" style="width: 20%"> 
+  <div class="homeview-container">
+    <div v-if="showSidebar" class="sidebar" style="width: 20%"> 
       <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
     </div>
-    <div class="map" style="width: 80%"> 
-      <HomeMap @marker-click="onMarkerClick"/>
-    </div>
-  </div>
-
-  <div v-else class="homeview-container">
-    <div class="map" style="width: 100%"> 
+    <div class="map" :style="{ width: mapWidth }">
       <HomeMap @marker-click="onMarkerClick"/>
     </div>
   </div>
@@ -38,13 +40,12 @@ function onMarkerClick(selected) {
   height: 100%;
 }
 .map {
-  width: 80%;
   height: 100%;
 }
 .homeview-container {
   display: flex;
   position: fixed;
-  left: 0;  /* Change back to 0px when finished testing */
+  left: 0;
   right: 0;
   bottom: 0;
   z-index: 1;

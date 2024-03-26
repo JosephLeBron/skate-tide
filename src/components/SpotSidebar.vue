@@ -4,8 +4,8 @@ defineProps(['spot'])
 </script>
 
 <template>
-    <div class="sidebar-container" @click="$emit('close-button')">
-        <button class="close-button">X</button>
+    <div class="sidebar-container">
+        <button class="close-button" @click="$emit('close-button')">X</button>
         <img :src="spot['img']" class="sidebar-img" />
         <h1>{{ spot['name'] }}</h1>
         <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
@@ -21,8 +21,6 @@ defineProps(['spot'])
     align-items: center;
     width: 100%;
     height: 30%;
-    border: 5px;
-    border-color: black;
     background-color: white;
 }
 .sidebar-container {
