@@ -54,11 +54,13 @@ function onMarkerClick(selected) {
 @media (min-width: 1024px) {
   .homeview-container {
     top: 112px;
+    max-height: calc(100vh - 112px);
   }
 }
 @media (max-width: 1024px) {
   .homeview-container {
     top: 44px;
+    max-height: calc(100vh - 44px);
   }
 }
 </style>

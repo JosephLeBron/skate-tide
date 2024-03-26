@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import Header from './components/Header.vue'
+import { isLoggedIn } from '@/components/Auth'
+
+const router = useRouter();
+
+if(!isLoggedIn){
+  router.push('/login');
+}
 </script>
 
 <template>
@@ -52,7 +59,7 @@ nav a:first-of-type {
 }
 
 .wrapper {
-  margin-top: 0;
+  margin-top: 0;  
 }
 body {
   margin: 0;
@@ -60,8 +67,11 @@ body {
 }
 
 .content-wrapper {
-  margin-top: 0px; /* Adjust this value based on your header and nav height */
-  padding: 0px;
+  margin-top: 0px; /* Adjust value based on your header height */
+  padding-top: 0px; /* Adjust value based on your header height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (min-width: 1024px) {
