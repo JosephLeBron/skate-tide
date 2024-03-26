@@ -31,6 +31,6 @@ defineProps(['spot'])
     width: 100%;
     height: 100%;
     color: white;
-    /* background-color: gray; */
+    background-color: darkcyan;
 }
 </style>
