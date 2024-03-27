@@ -101,12 +101,11 @@ methods: {
     padding: 5px;
     margin: 5px;
     justify-content: center;
-  }
-
+    }
   .error-message {
     color: red;
     margin-top: 5px;
-  }
+    }
   .container {
     color: black;
     display: grid;
@@ -118,12 +117,12 @@ methods: {
     height: auto;
     width: auto;
     background-color: rgb(13, 226, 180);
-  }
+    }
   .button-container{
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
-  }
+    }
   button {
     background-color: dimgray; /* Green */
     border: black;
@@ -136,13 +135,12 @@ methods: {
     border-radius: 18px;
     cursor: pointer;
     transition: background-color 0.3s;
-  
+    }
   &:hover {
     background-color: gray;
     }
   &:active {
     background-color: black;
     }
-}
 </style>
   
