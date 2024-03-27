@@ -30,4 +30,24 @@ app.post('/api/create-account', (req, res) => {
   }
 });
 
+// Handle POST request to login endpoint
+app.post('/api/login', (req, res) => {
+  // log the request body
+  console.log('Login Request:', req.body);
+
+  const { email, password } = req.body;
+
+  // Query the database to check if user exist
+  const userQuery = ' SELECT * FROM tableUsers WHERE email = ? AND password = ? ';
+  const user = db.prepare(userQuery).get(email, password);
+
+  if (user) {
+    // User exists and password is correct
+    res.status(200).json({ message: 'Login successful', user });
+  }else {
+    // User does not exist or password is incorrect
+    res.status(401).json({ message: 'Invalid email or password'})
+  }
+});
+
 export default app;
