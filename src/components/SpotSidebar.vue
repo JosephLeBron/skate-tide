@@ -1,34 +1,49 @@
 <script setup>
-// import { ref } from 'vue'
 defineProps(['spot'])
 </script>
 
 <template>
     <div class="sidebar-container">
-        <button class="close-button" @click="$emit('close-button')">X</button>
-        <img :src="spot['img']" class="sidebar-img" />
-        <h1>{{ spot['name'] }}</h1>
-        <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
+        <img class="sidebar-img" :src="spot['img']" />
+        <div class="sidebar-contents">
+            <h1>{{ spot['name'] }}</h1>
+            <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
+        </div>
+        <button class="close-button" @click="$emit('close-button')"><</button>
     </div>
 </template>
 
 <style>
 .close-button {
-    position: absolute;
-    right: 80%;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    border: 0;
+    cursor: pointer;
+    transition-duration: 0.3s;
+    background-color: #f0f0f0;
+}
+.close-button:hover {
+    background-color: #e5e5e5;
 }
 .sidebar-img {
-    align-items: center;
+    grid-column: 1;
+    grid-row: 1;
+    object-fit: cover;
     width: 100%;
-    height: 30%;
+    min-height: 100%;
     background-color: white;
 }
-.sidebar-container {
-    display: flexbox;
-    text-align: center;
-    width: 100%;
-    height: 100%;
+.sidebar-contents {
+    grid-column: 1;
+    grid-row: 2;
     color: white;
     background-color: darkcyan;
+}
+.sidebar-container {
+    display: grid;
+    grid-template-columns: calc(100% - 20px) 20px; 
+    grid-template-rows: 40% 60%;
+    text-align: center;
+    height: 100%;
 }
 </style>

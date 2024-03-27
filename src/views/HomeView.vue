@@ -37,7 +37,7 @@ function onMarkerClick(selected) {
 
 <style>
 .sidebar {
-  height: 100%;
+  min-width: 400px;
 }
 .map {
   height: 100%;
@@ -53,11 +53,13 @@ function onMarkerClick(selected) {
 
 @media (min-width: 1024px) {
   .homeview-container {
+    /* Accounts for current header size change */
     top: 112px;
   }
 }
 @media (max-width: 1024px) {
   .homeview-container {
+    /* Accounts for current header size change */
     top: 44px;
   }
 }

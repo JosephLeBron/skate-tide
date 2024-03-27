@@ -84,7 +84,6 @@ const markerIcon = computed(() => mapRef.value?.ready
   <GoogleMap
     ref="mapRef"
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
-    style="width: 100%; height:100%"
     class="map"
     :center="center"
     :zoom="13"
@@ -98,7 +97,6 @@ const markerIcon = computed(() => mapRef.value?.ready
         :options="{
           position: spot['pos'],
           map: map,
-          // label: spot['name'][0],
           icon: markerIcon,
           shape: shape,
           title: spot['name'],
