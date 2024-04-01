@@ -30,6 +30,11 @@
 </template>
   
 <script>
+/**
+ * @author Sinclair DeYoung 
+ * @purpose Create Account page to handle password checks and email checks 
+ * @date Apr 1, 2024
+ */
 //import User from './User';
 import axios from 'axios';
   
@@ -67,18 +72,7 @@ methods: {
         this.invalidInput = true;
         alert('Error creating account. Please try again.');
         this.clearPasswords();
-      }
-      // const user = new User(this.email, this.password);
-      // if (user.isValidCredentials()) {
-      //     //api call goes here
-      //     console.log('Account created successfully.');
-      //     this.$router.push('/login');
-      // } else {
-      //     console.log('Invalid input');
-      //     this.invalidInput = true;
-      //     alert('Invalid email or password. Please try again.');
-      //     this.clearPasswords();
-      //     }
+        }
       },
       cancel() {
         this.$router.push('/login');
@@ -91,56 +85,56 @@ methods: {
 };
 </script>
 
-  <style scoped>
-  /* Add styles here in css */
-  h1 {
-    color: black;
-    background-color: rgb(13, 226, 180);
-    width: 300px;
-    border: 15px dotted gold;
-    padding: 5px;
-    margin: 5px;
-    justify-content: center;
-    }
-  .error-message {
-    color: red;
-    margin-top: 5px;
-    }
-  .container {
-    color: black;
-    display: grid;
-    grid-gap: 10px;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    border: 3px solid teal;
-    height: auto;
-    width: auto;
-    background-color: rgb(13, 226, 180);
-    }
-  .button-container{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    }
-  button {
-    background-color: dimgray; /* Green */
-    border: black;
-    color: white;
-    padding: 5px 13px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-flex;
-    font-size: 13px;
-    border-radius: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    }
-  &:hover {
-    background-color: gray;
-    }
-  &:active {
-    background-color: black;
-    }
+<style scoped>
+/* Add styles here in css */
+h1 {
+  color: black;
+  background-color: rgb(13, 226, 180);
+  width: 300px;
+  border: 15px dotted gold;
+  padding: 5px;
+  margin: 5px;
+  justify-content: center;
+  }
+.error-message {
+  color: red;
+  margin-top: 5px;
+  }
+.container {
+  color: black;
+  display: grid;
+  grid-gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border: 3px solid teal;
+  height: auto;
+  width: auto;
+  background-color: rgb(13, 226, 180);
+  }
+.button-container{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  }
+button {
+  background-color: dimgray; /* Green */
+  border: black;
+  color: white;
+  padding: 5px 13px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  font-size: 13px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  }
+&:hover {
+  background-color: gray;
+  }
+&:active {
+  background-color: black;
+  }
 </style>
   

@@ -1,4 +1,3 @@
-<!-- Nav.vue -->
 <template>
   <nav class="navbar" :class="{ 'full-screen': isFullScreen }">
     <RouterLink to="/">Home</RouterLink>
@@ -9,6 +8,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @author Sinclair DeYoung 
+ * @purpose Token system for logged in users to track them logged in on different pages
+ * @date Apr 1, 2024
+ */
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const isFullScreen = ref(window.innerWidth >= 1026)

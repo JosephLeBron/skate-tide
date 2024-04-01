@@ -5,6 +5,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @author Sinclair DeYoung 
+ * @purpose Login page view path
+ * @date Apr 1, 2024
+ */
 import LoginPage from '../components/LoginPage.vue'
 const components = { LoginPage }
 </script>
