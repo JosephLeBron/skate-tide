@@ -1,3 +1,8 @@
+/**
+ * @author Sinclair DeYoung 
+ * @purpose User class used in hardcoded testing
+ * @date Apr 1, 2024
+ */
 export default class User {
   constructor(username, password) {
     this.username = username

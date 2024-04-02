@@ -39,6 +39,11 @@
 </template>
 
 <script>
+/**
+ * @author Sinclair DeYoung 
+ * @purpose Login page that handles users login system and create account page button
+ * @date Apr 1, 2024
+ */
 import axios from 'axios';
 import { login, isLoggedIn } from './Auth';
 // Holdes the data for the blank spaces
