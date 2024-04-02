@@ -15,7 +15,7 @@ const createTables = () =>{
                 picture BLOB NOT NULL,
                 difficulty STRING NOT NULL
             );
-            CREATE UNIQUE INDEX coordinates On pins (lat, lon)
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates On pins (lat, lon)
         `;
         const tableUsers = `
             CREATE TABLE IF NOT EXISTS users (
