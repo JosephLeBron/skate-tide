@@ -32,7 +32,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* Nav component styles go here */
-.navbar {
+.navbar a {
   position: fixed;
   top: 0;
   left: 0;
