@@ -1,84 +1,116 @@
+// database.js
+
 import Database from 'better-sqlite3';
-// const Database = require('better-sqlite3');
+import fs from 'fs';
+
 const db = new Database('database.db');
-// Using better-sqlite3 package to implement the Database API
 
-//create table
-const table = `
-    CREATE TABLE pins (
-        name STRING PRIMARY KEY,
-        lat DECIMAL NOT NULL,
-        lon DECIMAL NOT NULL,
-        rating INTEGER NOT NULL,
-        picture BLOB NOT NULL,
-        difficulty STRING NOT NULL
-    );
-    CREATE UNIQUE INDEX coordinates On pins (lat, lon)
-`;
-const table1 = `
-    CREATE TABLE users (
-        email STRING PRIMARY KEY,
-        profilepicture BLOB,
-        bio STRING,
-        password STRING NOT NULL
-    )
-`;
-const table2 = `
-    CREATE TABLE events (
-        eventID STRING PRIMARY KEY,
-        signedup BOOLEAN NOT NULL,
-        date STRING NOT NULL,
-        time INTEGER NOT NULL,
-        description STRING NOT NULL
-    )
-`;
-const table3 = `
-    CREATE TABLE createEvent (
-        eventID STRING NOT NULL REFERENCES events,
-        name STRING NOT NULL REFERENCES pins
-    )
-`;
-const table4 = `
-    CREATE TABLE interacts (
-        name STRING NOT NULL REFERENCES pins,
-        email STRING NOT NULL REFERENCES users
-    )
-`;
-const table5 = `
-    CREATE TABLE signUp (
-        email STRING NOT NULL REFERENCES users,
-        eventID STRING NOT NULL REFERENCES events
-    )
-`;
+// Function to read image file and return BLOB data
+const readImage = (path) => {
+    try {
+        const buffer = fs.readFileSync(path);
+        return buffer;
+    } catch (error) {
+        console.error("Error reading image file:", error);
+        return null;
+    }
+};
 
+// Create tables
+const createTables = () => {
+    try {
+        // Table creation queries
+        const tablePins = `
+            CREATE TABLE IF NOT EXISTS pins (
+                name STRING PRIMARY KEY,
+                lat DECIMAL NOT NULL,
+                lon DECIMAL NOT NULL,
+                rating INTEGER NOT NULL,
+                picture BLOB NOT NULL,
+                difficulty STRING NOT NULL
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates ON pins (lat, lon)
+        `;
+        const tableUsers = `
+            CREATE TABLE IF NOT EXISTS users (
+                email STRING PRIMARY KEY,
+                profilepicture BLOB,
+                bio STRING,
+                password STRING NOT NULL
+            )
+        `;
+        const tableEvents = `
+            CREATE TABLE IF NOT EXISTS events (
+                eventID STRING PRIMARY KEY,
+                signedup BOOLEAN NOT NULL,
+                date STRING NOT NULL,
+                time INTEGER NOT NULL,
+                description STRING NOT NULL
+            )
+        `;
+        const tableCreateEvent = `
+            CREATE TABLE IF NOT EXISTS createEvent (
+                eventID STRING NOT NULL REFERENCES events,
+                name STRING NOT NULL REFERENCES pins
+            )
+        `;
+        const tableInteracts = `
+            CREATE TABLE IF NOT EXISTS interacts (
+                name STRING NOT NULL REFERENCES pins,
+                email STRING NOT NULL REFERENCES users
+            )
+        `;
+        const tableSignUp = `
+            CREATE TABLE IF NOT EXISTS signUp (
+                email STRING NOT NULL REFERENCES users,
+                eventID STRING NOT NULL REFERENCES events
+            )
+        `;
+        
+        // Execute queries
+        db.exec(tablePins);
+        db.exec(tableUsers);
+        db.exec(tableEvents); 
+        db.exec(tableCreateEvent); 
+        db.exec(tableInteracts); 
+        db.exec(tableSignUp); 
 
-// execute query
-db.exec(table);
-db.exec(table1);
-db.exec(table2); 
-db.exec(table3); 
-db.exec(table4); 
-db.exec(table5); 
+        console.log("Tables created.");
+    } catch (error) {
+        console.error("Error creating tables: ", error);
+    }
+};
 
+// Insert profile pictures
+const insertProfilePictures = () => {
+    try {
+        const profilePictures = [
+            { email: "user1@example.com", picturePath: "path/to/user1.jpg" },
+            { email: "user2@example.com", picturePath: "path/to/user2.jpg" },
+            // Add more profile pictures as needed
+        ];
 
-// const insertPin = db.prepare('INSERT INTO pin (name, coordinates, rating, picture, description, difficulty) VALUES (?, ?, ?, ?, ?, ?)');
-// data.forEach((pin) => {
-//     insertPin.run(pin.name, pin.coordinates, pin.rating, pin.picture, pin.description, pin.difficulty);
-// });
+        const insertProfilePicture = db.prepare('INSERT INTO users (email, profilepicture) VALUES (?, ?)');
 
+        profilePictures.forEach((profile) => {
+            const imageData = readImage(profile.picturePath);
+            if (imageData) {
+                insertProfilePicture.run(profile.email, imageData);
+            }
+        });
 
-// const data = [
-//     { name: "College", coordinates: "21335", rating: "10",
-//     picture: "blob", description: "college road spot", difficulty: "easy" },
-//     { name: "UNCW", coordinates: "21335", rating: "5",
-//     picture: "blob", description: "spot on campus", difficulty: "medium" },
-//     { name: "Wrightsville", coordinates: "21335", rating: "3",
-//     picture: "blob", description: "beach spot", difficulty: "hard" }
-// ];
-// const insertPin = db.prepare('INSERT INTO pin (name, coordinates, rating, picture, description, difficulty) VALUES (?, ?, ?, ?, ?, ?)');
-// data.forEach((pin) => {
-//     insertPin.run(pin.name, pin.coordinates, pin.rating, pin.picture, pin.description, pin.difficulty);
-// });
+        console.log("Profile pictures inserted.");
+    } catch (error) {
+        console.error("Error inserting profile pictures: ", error);
+    }
+};
 
-db.close(); 
+// Initialize database
+const initializeDatabase = () => {
+    createTables();
+    insertProfilePictures();
+};
 
+initializeDatabase();
+
+export default db;

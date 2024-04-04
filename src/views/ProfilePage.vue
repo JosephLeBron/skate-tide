@@ -46,6 +46,7 @@
         <!-- File input button added here -->
         <input type = "file" @change="handleFileUpload" accept="image/*" />
         <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" /> <!-- Display the selected image here -->
+        <input type="submit" value="Submit" />
 
         <div class="photos">
           <img src="../img/img_1.webp" alt="Photo" />
@@ -76,18 +77,42 @@ export default {
         // Generate a temporary URL for the selected image
         this.profilePicture = URL.createObjectURL(file);
         
-        // Simulate updating the database (replace with your actual database update logic)
-        // For demonstration, we'll just store the file name
-        const fileName = file.name;
-        console.log('Updating database with profile picture:', fileName);
+        // Send the data to the server
+        // Replace the URL with your actual server endpoint for storing profile pictures
+        fetch('http://your-server-endpoint.com/upload-profile-picture', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to upload profile picture');
+          }
+          return response.json(); // Assuming server responds with JSON data
+        })
+        .then(data => {
+          // Assuming the server responds with the path to the uploaded profile picture
+          console.log('Profile picture uploaded:', data.path);
+          // Update database with the path to the uploaded profile picture
+          // Replace 'updateProfilePicture' with your actual database update method
+          this.updateProfilePicture(data.path);
+        })
+        .catch(error => {
+          console.error('Error uploading profile picture:', error);
+        });
       } else {
         // Handle case where no file is selected
         this.profilePicture = null;
       }
+    },
+    updateProfilePicture(path) {
+      // Send an AJAX request to update the database with the path to the profile picture
+      // You need to implement this method based on your backend/database setup
+      console.log('Updating database with profile picture:', path);
     }
   }
 }
 </script>
+
 
 <style scoped>
 /* CSS content from styles.css */
