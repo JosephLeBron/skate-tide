@@ -2,7 +2,6 @@ import express from 'express';
 import db from './src/assets/database.js';
 
 const router = express.Router();
-
 // Get all events
 router.get('/all', (req, res) => {
   const selectQuery = `
@@ -17,7 +16,6 @@ router.get('/all', (req, res) => {
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
-
 // Create a new event
 router.post('/create', (req, res) => {
   const { eventID, date, time, description } = req.body;
@@ -42,3 +40,5 @@ router.post('/create', (req, res) => {
 });
 
 export default router;
+
+

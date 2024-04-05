@@ -5,9 +5,10 @@ import userServices from './userServices.js';
 import mapServices from './mapServices.js';
 import eventServices from './eventServices.js';
 
-var app = express()
+var app = express();
  
-app.use(cors())
+app.use(cors());
+app.use(express.json());
 
 const options = {
   origin: ['http://localhost:5173']
