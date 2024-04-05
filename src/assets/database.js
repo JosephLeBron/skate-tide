@@ -28,7 +28,6 @@ const createTables = () =>{
         const tableEvents = `
             CREATE TABLE IF NOT EXISTS events (
                 eventID STRING PRIMARY KEY,
-                signedup BOOLEAN NOT NULL,
                 date STRING NOT NULL,
                 time INTEGER NOT NULL,
                 description STRING NOT NULL
