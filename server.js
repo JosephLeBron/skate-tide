@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import userServices from './userServices.js';
 import mapServices from './mapServices.js';
+import eventServices from './eventServices.js';
 
 var app = express()
  
@@ -15,6 +16,7 @@ const options = {
 app.use(cors(options));
 app.use('/user', userServices)
 app.use('/map', mapServices)
+app.use('/events', eventServices);
 
 
 // Start the server
