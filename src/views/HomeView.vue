@@ -45,22 +45,10 @@ function onMarkerClick(selected) {
 .homeview-container {
   display: flex;
   position: fixed;
+  top: 60px;  /* Header height */
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 1;
-}
-
-@media (min-width: 1024px) {
-  .homeview-container {
-    /* Accounts for current header size change */
-    top: 112px;
-  }
-}
-@media (max-width: 1024px) {
-  .homeview-container {
-    /* Accounts for current header size change */
-    top: 44px;
-  }
 }
 </style>
