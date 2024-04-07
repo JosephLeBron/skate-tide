@@ -1,98 +1,138 @@
 <template>
   <div>
-    <div class="navbar">
-      <router-link to="/">Home</router-link>
-      <router-link to="/profile">Profile</router-link>
-      <router-link to="/event" class="active">Events</router-link>
+    <h1>Events</h1>
+    
+    <!-- Display Errors -->
+    <div v-if="debug">
+      <p v-if="getError">Error fetching events: {{ getError.message }}</p>
+      <p v-if="setError">Error creating event: {{ setError.message }}</p>
+      <p v-if="popError">Error populating events: {{ popError.message }}</p>
     </div>
 
-    <header>
-      <h1>Skate the Wave Meetups</h1>
-      <p>Find upcoming skate meetups at various spots around Wilmington!</p>
-    </header>
+    <!-- Display Events -->
+    <div v-if="event.length > 0">
+      <ul>
+        <li v-for="(event, index) in event" :key="index">
+          <p><strong>Event ID:</strong> {{ event.eventID }}</p>
+          <p><strong>Date:</strong> {{ event.date }}</p>
+          <p><strong>Time:</strong> {{ event.time }}</p>
+          <p><strong>Description:</strong> {{ event.description }}</p>
+        </li>
+      </ul>
+    </div>
 
-    <main>
-      <!-- Events -->
-      <section id="schedule">
-        <h2>Upcoming Events</h2>
-        <table v-if="events.length || databaseEvents.length">
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Skate Spot location</th>
-            <th>Details</th>
-          </tr>
-          <!-- Hardcoded  -->
-          <tr v-for="(event, index) in events" :key="index" :class="{ 'even': index % 2 === 0, 'hover': hoverIndex === index }" @mouseover="hoverIndex = index" @mouseleave="hoverIndex = null">
-            <td>{{ event.date }}</td>
-            <td>{{ event.time }}</td>
-            <td>{{ event.location }}</td>
-            <td>{{ event.details }}</td>
-          </tr>
-          <!-- Populate -->
-          <tr v-for="(event, index) in databaseEvents" :key="'db_' + index" :class="{ 'even': (index + events.length) % 2 === 0, 'hover': hoverIndex === (index + events.length) }" @mouseover="hoverIndex = (index + events.length)" @mouseleave="hoverIndex = null">
-            <td>{{ event.date }}</td>
-            <td>{{ event.time }}</td>
-            <td>{{ event.location }}</td>
-            <td>{{ event.details }}</td>
-          </tr>
-        </table>
-        <p v-else>No upcoming events found.</p>
-        <p v-if="error" class="error-message">{{ error }}</p>
-      </section>
-    </main>
+    <!-- Form to Create Event -->
+    <h2>Create New Event</h2>
+    <form @submit.prevent="onCreateEvent">
+      <label for="eventID">EventID:</label>
+      <input type="text" id="eventID" v-model="newEvent.eventID" required>
+      <br>
+
+      <label for="date">Date:</label>
+      <input type="text" id="date" v-model="newEvent.date" required>
+      <br>
+
+      <label for="time">Time:</label>
+      <input type="text" id="time" v-model="newEvent.time" required>
+      <br>
+
+      <label for="description">Description:</label>
+      <textarea id="description" v-model="newEvent.description" required></textarea>
+      <br>
+
+      <button type="submit">Create Event</button>
+    </form>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import { ref, computed } from 'vue'
+import { ref } from 'vue';
+import axios from 'axios';
 
-const debug = ref(false) // Displays error messages on screen when true (set manually)
-// Store axios post response errors from service API calls
-const getError = ref(null)
-const setError = ref(null)
-const popError = ref(null)
-const event = ref([])
+export default {
+  name: 'EventComponent',
+  setup() {
+    const debug = ref(false); // Displays error messages on screen when true (set manually)
+    const getError = ref(null);
+    const setError = ref(null);
+    const popError = ref(null);
+    const event = ref([]);
+    const newEvent = ref({
+      eventID: '',
+      date: '',
+      time: '',
+      description: ''
+    });
 
-async function getEvents() {
-  // Queries the database for stored pins and converts them to spot objects in the
-  // format { name, pos: {lat, lng}, img}. This will be extended in the future
-  getError.value = null
-  await axios
-    .post('http://localhost:8000/event/api/get-events') // API call
-    .then((response) => {
-      // Executed on successful response
-      event.value = []
-      // Convert each row from pins table to simpler objects in the format we were already using for spots.
-      response.data.forEach(element => {
-        event.value.push({
-          date: element.name,
-          time:  element.time ,
-          description: element.description
+    async function getEvents() {
+      // Queries the database for stored events and converts them to event objects 
+      getError.value = null;
+      await axios
+        .post('http://localhost:8000/event/api/get-events') // API call
+        .then((response) => {
+          // Executed on successful response
+          event.value = [];
+          // Convert each row from events table to simpler objects
+          response.data.forEach(element => {
+            event.value.push({
+              eventID: element.eventID,
+              date: element.date,
+              time:  element.time ,
+              description: element.description
+            });
+          });
         })
-      })
-    })
-    .catch(error => getError.value = error) // Store message on error
-}
+        .catch(error => getError.value = error); // Store message on error
+    }
 
-async function createEvent(date, time, discription) {
-  setError.value = null
-  await axios
-    .post('http://localhost:8000/event/api/create-event', {
-      date, time, discription
-    })
-    .catch(error => setError.value = error)
-}
-async function populateEvents() {
-  // Inserts hard-coded spots into database if they don't already exist.
-  // Mostly for debugging, this will change or be removed before deployment.
-  popError.value = null
-  await axios
-    .post('http://localhost:8000/event/api/hardcode-events')
-    .catch(error => popError.value = error)
-}
+  async function createEvent(eventID, date, time, description) {
+    setError.value = null;
+    try {
+      await axios.post('http://localhost:8000/event/api/create-event', {
+        eventID,
+        date,
+        time,
+        description
+      });
+      getEvents(); // Refresh the events after creation
+      newEvent.value = {
+        eventID: '',
+        date: '',
+        time: '',
+        description: ''
+      };
+    } catch (error) {
+      setError.value = error;
+    }
+  }
 
+    async function populateEvents() {
+      // Inserts hard-coded events into database if they don't already exist.
+      // Mostly for debugging, this will change or be removed before deployment.
+      popError.value = null;
+      await axios
+        .post('http://localhost:8000/event/api/hardcode-events')
+        .catch(error => popError.value = error);
+    }
+
+    // Fetch Events on Component Mount
+    getEvents();
+
+    const onCreateEvent = async () => {
+  await createEvent(newEvent.value.eventID, newEvent.value.date, newEvent.value.time, newEvent.value.description);
+};
+
+    return {
+      debug,
+      getError,
+      setError,
+      popError,
+      event,
+      newEvent,
+      onCreateEvent
+    };
+  },
+};
 </script>
 
 <style scoped>
