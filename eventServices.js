@@ -27,7 +27,7 @@ app.post('/api/create-event', (req, res) => {
         INSERT OR IGNORE INTO events VALUES (?, ?, ?, ?);
     `;
     db.prepare(eventQuery).run(eventID, date, time, description);
-    // NEEDS error handling
+   
     res.status(200).json({ message: 'Event successfully inserted into table'});
 });
 

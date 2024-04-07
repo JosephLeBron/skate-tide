@@ -52,7 +52,7 @@ import axios from 'axios';
 export default {
   name: 'EventComponent',
   setup() {
-    const debug = ref(false); // Displays error messages on screen when true (set manually)
+    const debug = ref(false); 
     const getError = ref(null);
     const setError = ref(null);
     const popError = ref(null);
@@ -65,14 +65,14 @@ export default {
     });
 
     async function getEvents() {
-      // Queries the database for stored events and converts them to event objects 
+      // Queries the database
       getError.value = null;
       await axios
-        .post('http://localhost:8000/event/api/get-events') // API call
+        .post('http://localhost:8000/event/api/get-events') 
         .then((response) => {
           // Executed on successful response
           event.value = [];
-          // Convert each row from events table to simpler objects
+          
           response.data.forEach(element => {
             event.value.push({
               eventID: element.eventID,
@@ -82,7 +82,7 @@ export default {
             });
           });
         })
-        .catch(error => getError.value = error); // Store message on error
+        .catch(error => getError.value = error); 
     }
 
   async function createEvent(eventID, date, time, description) {
@@ -94,7 +94,7 @@ export default {
         time,
         description
       });
-      getEvents(); // Refresh the events after creation
+      getEvents(); // Refresh the events 
       newEvent.value = {
         eventID: '',
         date: '',
@@ -108,14 +108,13 @@ export default {
 
     async function populateEvents() {
       // Inserts hard-coded events into database if they don't already exist.
-      // Mostly for debugging, this will change or be removed before deployment.
       popError.value = null;
       await axios
         .post('http://localhost:8000/event/api/hardcode-events')
         .catch(error => popError.value = error);
     }
 
-    // Fetch Events on Component Mount
+    // Fetch Events
     getEvents();
 
     const onCreateEvent = async () => {
