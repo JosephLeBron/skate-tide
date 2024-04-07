@@ -14,7 +14,6 @@ const options = {
 app.use(cors(options));
 app.use('/user', userServices)
 
-
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
