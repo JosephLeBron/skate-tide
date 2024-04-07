@@ -40,7 +40,7 @@
 
 <script>
 /**
- * @author Sinclair DeYoung 
+ * @author Sinclair DeYoung & William Troscher
  * @purpose Login page that handles users login system and create account page button
  * @date Apr 1, 2024
  */
