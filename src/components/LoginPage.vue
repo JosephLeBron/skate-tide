@@ -58,35 +58,35 @@ export default {
     }
   },
   methods: {
-    async login() {
-      if (!this.username || !this.password) {
-        alert('Please enter both username and password.');
-        return;
-      }
-      try {
-        const response = await axios.post('http://localhost:8000/user/api/login', {
-          email: this.username,
-          password: this.password
-        });
-        console.log('Login successful');
-        login(response.data.token);
-        this.invalidLogin = false;
-        this.$router.push('/');
-      } catch (error) {
-        console.error('Error logging in: ', error);
-        this.invalidLogin = true;
-        alert('Invalid  email or password, Please try again.')
-        }
-      },
-      // moves to the create account page
-      createAccount() {
-        this.$router.push({ name: 'CreateAccount' })
-      },
-      // clears the password
-      clearPassword() {
-        this.password = '';
-      }
+  async login() { // Method for handling user login
+    if (!this.username || !this.password) {
+      alert('Please enter both username and password.');
+      return;
+    }
+    try {
+      const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
+        email: this.username,
+        password: this.password
+      }); // Parameters to be sent are defined 
+      console.log('Login successful');
+      login(response.data.token); // Logging in the user with the received token
+      this.invalidLogin = false;
+      this.$router.push('/');
+    } catch (error) {
+      console.error('Error logging in: ', error);
+      this.invalidLogin = true;
+      alert('Invalid  email or password, Please try again.');
+    } // Error handling
+  },
+  // moves to the create account page
+  createAccount() {
+    this.$router.push({ name: 'CreateAccount' });
+  },
+  // clears the password
+  clearPassword() {
+    this.password = '';
   }
+}
 }
 </script>
 
