@@ -6,7 +6,7 @@ import axios from 'axios'
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
-const debug = ref(true) // Displays error messages on screen when true (set manually)
+const debug = ref(false) // Displays error messages on screen when true (set manually)
 const spots = ref([]) // Stores an array of spot objects created from database query
 
 // Store axios post response errors from service API calls
@@ -31,7 +31,7 @@ async function getSpots() {
           img: element.picture,
           difficulty: element.difficulty,
           rating: element.rating,
-          hidden: false
+          show: true
         })
       })
     })
@@ -67,7 +67,10 @@ async function populateSpots() {
 populateSpots()
 getSpots()
 
-
+const showFilter = ref(false)
+function toggleFilter() {
+  showFilter.value = !showFilter.value
+}
 const FilterOptions = {
   DIFF_BEGINNER: "Beginner",
   DIFF_EASY: "Easy",
@@ -77,14 +80,12 @@ const FilterOptions = {
   DIFF_OPTION_COUNT: 5  // Keeps count of difficulty options. Update if adding/removing any
 }
 const filter = ref({
+  name: "",
   showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
-  showRatingMin: 0
+  ratingMin: 1
 })
-function isShowing(difficulty) {
-  return filter.value.showDifficulty.includes(difficulty)
-}
 
-function modifyFilter(difficulty = "", rating = -1) {
+function filterDifficulty(difficulty) {
   if (difficulty) {
     if (filter.value.showDifficulty.includes(difficulty)) {
       // Removing difficulty filter array
@@ -95,18 +96,20 @@ function modifyFilter(difficulty = "", rating = -1) {
       filter.value.showDifficulty.push(difficulty)
     }
   }
-  if (rating > -1) {
-    filter.value.showRatingMin = rating
-  }
   filterSpots()
 }
 function filterSpots() {
   for (let i = 0; i < FilterOptions.DIFF_OPTION_COUNT; i++) {
     const spot = spots.value[i];
-    if (filter.value.showDifficulty.includes(spot.difficulty)) {
-      spot.hidden = false
+    if (
+      filter.value.showDifficulty.includes(spot.difficulty) 
+      && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
+      && spot.rating >= filter.value.ratingMin
+      )
+    {
+      spot.show = true
     } else {
-      spot.hidden = true
+      spot.show = false
     }
   }
 }
@@ -149,18 +152,13 @@ const shape = {
   coords: [1, 1, 1, 20, 18, 20, 18, 1],
   type: 'poly'
 }
-
-const showFilter = ref(false)
-function toggleFilter() {
-  showFilter.value = !showFilter.value
-}
 </script>
 
 <template>
   <GoogleMap
     ref="mapRef"
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
-    class="map"
+    style="width: 100%; height: 100%"
     :center="center"
     :zoom="13"
     :styles="mapStyles"
@@ -172,11 +170,11 @@ function toggleFilter() {
         :key="i"
         :options="{
           position: spot['pos'],
-          map: map,
+          // map: map,
           icon: markerIcon,
           shape: shape,
           title: spot['name'],
-          visible: !spot.hidden
+          visible: spot.show
         }"
         @click="$emit('marker-click', spots[i])"
       />
@@ -186,21 +184,38 @@ function toggleFilter() {
     </CustomControl>
     <CustomControl v-if="showFilter" position="RIGHT_TOP">
       <div class="filter-menu">
-        <h4 class="filter-header"><u>Difficulty</u></h4>
-        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_BEGINNER)">
-            <span v-if="isShowing(FilterOptions.DIFF_BEGINNER)">☑</span><span v-else>☐</span> Beginner
-        </div>
-        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_EASY)">
-          <span v-if="isShowing(FilterOptions.DIFF_EASY)">☑</span><span v-else>☐</span> Easy
-        </div>
-        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_MEDIUM)">
-          <span v-if="isShowing(FilterOptions.DIFF_MEDIUM)">☑</span><span v-else>☐</span> Medium
-        </div>
-        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_HARD)">
-          <span v-if="isShowing(FilterOptions.DIFF_HARD)">☑</span><span v-else>☐</span> Hard
-        </div>
-        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_EXPERT)">
-          <span v-if="isShowing(FilterOptions.DIFF_EXPERT)">☑</span><span v-else>☐</span> Expert
+        <div class="filter-wrapper">
+          <div class="filter-header">Name</div>
+          <input type="text" v-model="filter.name" @input="filterSpots" placeholder="Name" style="width: 100%; margin: auto">
+
+          <div class="filter-header">Rating</div>
+          <span class="filter-item">
+            <!-- <label for="ratingNum"> Rating</label> -->
+            <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
+          </span>
+
+          <div class="filter-header">Difficulty</div>
+          <span class="filter-item">
+            <input type="checkbox" id="beginnerBox" checked @click="filterDifficulty(FilterOptions.DIFF_BEGINNER)">
+            <label for="beginnerBox" class="filter-item"> Beginner</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="easyBox" checked @click="filterDifficulty(FilterOptions.DIFF_EASY)">
+            <label for="easyBox" class="filter-item"> Easy</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="mediumBox" checked @click="filterDifficulty(FilterOptions.DIFF_MEDIUM)">
+            <label for="mediumBox" class="filter-item"> Medium</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="hardBox" checked @click="filterDifficulty(FilterOptions.DIFF_HARD)">
+            <label for="hardBox" class="filter-item"> Hard</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="expertBox" checked @click="filterDifficulty(FilterOptions.DIFF_EXPERT)">
+            <label for="expertBox"> Expert</label>
+          </span>
+
         </div>
       </div>
     </CustomControl>
@@ -218,25 +233,28 @@ function toggleFilter() {
 .gm-style iframe + div { border:none!important; }
 
 .filter-header {
-  margin: auto;
-  background-color: purple;
+  margin-bottom: -5px;
+  text-decoration: underline;
+  font-size: 20px;
 }
 
 .filter-item {
-  margin: auto;
-  font-size: medium;
-  user-select: text;
-  cursor: pointer;
-  background-color: green;
+  font-size: 16px;
+  height: 100%;
+}
+
+.filter-wrapper {
+  display: grid;
+  margin: 10px;
+  height: calc(100% - 20px);
 }
 
 .filter-menu {
-  display: grid;
   box-sizing: border-box;
   background: white;
   color: black;
-  height: 160px;
-  width: 90px;
+  height: 300px;
+  width: 130px;
   border-radius: 2px;
   border: 0px;
   margin: 10px;
