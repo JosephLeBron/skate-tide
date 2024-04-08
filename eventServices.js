@@ -13,7 +13,7 @@ app.post('/api/get-events', (req, res) => {
     const eventQuery = `
         SELECT * FROM events
     `;
-    // Set pins to an array of all rows in pins table
+    // Set events to an array of all rows in event table
     const events = db.prepare(eventQuery).all();
 
     // Set the Content-Type header to application/json
