@@ -8,6 +8,8 @@ defineProps(['spot'])
         <div class="sidebar-contents">
             <h1>{{ spot['name'] }}</h1>
             <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
+            <h2>Difficulty: {{ spot['difficulty'] }}</h2>
+            <h2>Rating: {{ spot['rating'] }}</h2>
         </div>
         <button class="close-button" @click="$emit('close-button')">
             < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->

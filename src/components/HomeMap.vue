@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
+import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
-const debug = ref(false) // Displays error messages on screen when true (set manually)
+const debug = ref(true) // Displays error messages on screen when true (set manually)
 const spots = ref([]) // Stores an array of spot objects created from database query
 
 // Store axios post response errors from service API calls
@@ -28,7 +28,10 @@ async function getSpots() {
         spots.value.push({
           name: element.name,
           pos: { lat: element.lat, lng: element.lon },
-          img: element.picture
+          img: element.picture,
+          difficulty: element.difficulty,
+          rating: element.rating,
+          hidden: false
         })
       })
     })
@@ -63,6 +66,50 @@ async function populateSpots() {
 }
 populateSpots()
 getSpots()
+
+
+const FilterOptions = {
+  DIFF_BEGINNER: "Beginner",
+  DIFF_EASY: "Easy",
+  DIFF_MEDIUM: "Medium",
+  DIFF_HARD: "Hard",
+  DIFF_EXPERT: "Expert",
+  DIFF_OPTION_COUNT: 5  // Keeps count of difficulty options. Update if adding/removing any
+}
+const filter = ref({
+  showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
+  showRatingMin: 0
+})
+function isShowing(difficulty) {
+  return filter.value.showDifficulty.includes(difficulty)
+}
+
+function modifyFilter(difficulty = "", rating = -1) {
+  if (difficulty) {
+    if (filter.value.showDifficulty.includes(difficulty)) {
+      // Removing difficulty filter array
+      const index = filter.value.showDifficulty.indexOf(difficulty)
+      filter.value.showDifficulty.splice(index, 1)
+    } else {
+      // Adding difficulty to filter array
+      filter.value.showDifficulty.push(difficulty)
+    }
+  }
+  if (rating > -1) {
+    filter.value.showRatingMin = rating
+  }
+  filterSpots()
+}
+function filterSpots() {
+  for (let i = 0; i < FilterOptions.DIFF_OPTION_COUNT; i++) {
+    const spot = spots.value[i];
+    if (filter.value.showDifficulty.includes(spot.difficulty)) {
+      spot.hidden = false
+    } else {
+      spot.hidden = true
+    }
+  }
+}
 
 // Map reference + setting styles
 const mapRef = ref(null)
@@ -102,6 +149,11 @@ const shape = {
   coords: [1, 1, 1, 20, 18, 20, 18, 1],
   type: 'poly'
 }
+
+const showFilter = ref(false)
+function toggleFilter() {
+  showFilter.value = !showFilter.value
+}
 </script>
 
 <template>
@@ -123,20 +175,95 @@ const shape = {
           map: map,
           icon: markerIcon,
           shape: shape,
-          title: spot['name']
+          title: spot['name'],
+          visible: !spot.hidden
         }"
         @click="$emit('marker-click', spots[i])"
       />
     </MarkerCluster>
+    <CustomControl position="RIGHT_TOP">
+      <button class="filter-btn" @click="toggleFilter">▼</button>
+    </CustomControl>
+    <CustomControl v-if="showFilter" position="RIGHT_TOP">
+      <div class="filter-menu">
+        <h4 class="filter-header"><u>Difficulty</u></h4>
+        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_BEGINNER)">
+            <span v-if="isShowing(FilterOptions.DIFF_BEGINNER)">☑</span><span v-else>☐</span> Beginner
+        </div>
+        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_EASY)">
+          <span v-if="isShowing(FilterOptions.DIFF_EASY)">☑</span><span v-else>☐</span> Easy
+        </div>
+        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_MEDIUM)">
+          <span v-if="isShowing(FilterOptions.DIFF_MEDIUM)">☑</span><span v-else>☐</span> Medium
+        </div>
+        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_HARD)">
+          <span v-if="isShowing(FilterOptions.DIFF_HARD)">☑</span><span v-else>☐</span> Hard
+        </div>
+        <div class="filter-item" @click="modifyFilter(FilterOptions.DIFF_EXPERT)">
+          <span v-if="isShowing(FilterOptions.DIFF_EXPERT)">☑</span><span v-else>☐</span> Expert
+        </div>
+      </div>
+    </CustomControl>
   </GoogleMap>
   <div v-if="debug" style="display: grid; position: fixed; left: 700px; top: 200px; color:black; background-color: magenta;">
     <div>setError: {{ setError }}</div>
     <div>getError: {{ getError }}</div>
     <div>popError: {{ popError }}</div>
+    <div>filter: {{ filter }}</div>
   </div>
 </template>
 
 <style>
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
+
+.filter-header {
+  margin: auto;
+  background-color: purple;
+}
+
+.filter-item {
+  margin: auto;
+  font-size: medium;
+  user-select: text;
+  cursor: pointer;
+  background-color: green;
+}
+
+.filter-menu {
+  display: grid;
+  box-sizing: border-box;
+  background: white;
+  color: black;
+  height: 160px;
+  width: 90px;
+  border-radius: 2px;
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  font-size: 1.25rem;
+  text-transform: none;
+  appearance: none;
+  user-select: none;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+}
+
+.filter-btn {
+  box-sizing: border-box;
+  background: white;
+  height: 40px;
+  width: 40px;
+  border-radius: 2px;
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  font-size: 1.25rem;
+  text-transform: none;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+}
 </style>
