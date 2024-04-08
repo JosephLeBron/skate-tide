@@ -52,18 +52,24 @@ onBeforeUnmount(() => {
 }
 
 .navbar a {
-  /* text-decoration: none; */
   letter-spacing: 0.5px;
   font-weight: 500;
   color: inherit;
   background-color: transparent;
 }
 
-.navbar a:hover,
-.navbar a.router-link-exact-active {
-  /* text-decoration: underline; */
-  text-shadow: 0px 0px 4px rgb(71, 240, 184, 0.6);
+.navbar a:hover {
+  text-shadow: 0px 0px 2px rgb(71, 240, 184, 0.6);
   color: rgba(13, 226, 180);
+  text-decoration-color: darkcyan;
+}
+.navbar a.router-link-exact-active {
+  text-shadow: 0px 0px 2px rgb(71, 240, 184, 0.6);
+  color: rgba(13, 226, 180);
+  text-decoration: rgb(50, 138, 160) wavy underline;
+  text-underline-offset: 2px;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 2px;
 }
 
 @media (max-width: 1024px) {
