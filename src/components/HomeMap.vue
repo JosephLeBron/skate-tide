@@ -256,6 +256,7 @@ const shape = {
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
 
+
 .filter-header {
   margin-bottom: -5px;
   text-decoration: underline;
@@ -308,4 +309,6 @@ const shape = {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   overflow: hidden;
 }
+=======
+
 </style>

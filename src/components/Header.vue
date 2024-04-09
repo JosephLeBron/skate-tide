@@ -54,4 +54,29 @@ header {
 .full-screen {
   text-align: center;
 }
+
+
+@media (min-width: 30000px) {
+  header {
+    
+  }
+
+  .wrapper {
+    /* margin-top: 18px; Adjust as needed */
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .navbar {
+    /* text-align: left; */
+    /* margin-left: -1rem; */
+    /* font-size: 1rem; */
+    /* color: white; */
+    /* padding: 1rem 0; */
+    /* margin-top: 1rem; */
+    color: blue;
+  }
+}
+
 </style>
