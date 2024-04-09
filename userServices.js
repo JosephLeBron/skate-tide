@@ -38,7 +38,7 @@ app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
 
   // Query the database to check if user exist
-  const userQuery = ' SELECT * FROM tableUsers WHERE email = ? AND password = ? ';
+  const userQuery = ' SELECT * FROM users WHERE email = ? AND password = ? ';
   const user = db.prepare(userQuery).get(email, password);
 
   if (user) {
