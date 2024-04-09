@@ -4,9 +4,12 @@
     <div class="wrapper">
       <HelloWorld v-if="showTitle" />
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
+        <h2>
         <RouterLink to="/" class="button">Home</RouterLink>
         <RouterLink to="/login" class="button">Login</RouterLink>
+        <RouterLink to="/profile" class="button">Profile</RouterLink>
         <RouterLink to="/events" class="button">Events</RouterLink>
+        </h2>
       </nav>
     </div>
   </header>
@@ -21,19 +24,19 @@ const showTitle = window.innerWidth >= 1024 // Adjust the breakpoint as needed
 header {
   background-color: #333;
   color: white;
-  padding: 10px;
+  padding: 0px;
+  margin: 0;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  box-sizing: border-box;
+  box-sizing: content-box;
 }
-
 .button {
   color: white;
 }
 .button:hover {
-  color: red;
+  color: dimgray;
 }
 
 .button:active {
@@ -58,28 +61,30 @@ header {
   text-align: center;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 30000px) {
   header {
-    display: flex;
-    place-items: center;
+    display: inline-block;
+    place-items: left;
     padding-right: calc(var(--section-gap) / 2);
     color: black;
   }
 
   .wrapper {
-    margin-top: 18px; /* Adjust as needed */
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+  float: left;
+  display: block;
+  color: white;
+  text-align: left;
+  padding: 14px 20px;
+  text-decoration: none;
   }
 
   .navbar {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-    color: white;
-    padding: 1rem 0;
-    margin-top: 1rem;
+  float: left;
+  display: block;
+  color: white;
+  text-align: left;
+  padding: 14px 20px;
+  text-decoration: none;
   }
 }
 </style>

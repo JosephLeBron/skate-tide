@@ -34,25 +34,48 @@ async function getSpots() {
     })
     .catch(error => getError.value = error) // Store message on error
 }
+
+
+
 async function createPin(name, lat, lon, rating, picture, difficulty) {
-  // Creates a pin in the database with passed params as column values.
-  // Not set up to store images yet, just storing URLs to pictures for now.
-  // Calling looks like this:
-  // createPin(
-  //   'Breenfield', // Name
-  //   '44.215819',  // Lat
-  //   '-77.942528', // Lng
-  //   '1',   // Rating
-  //   'https://www.outerbanks.com/images/uploads/place/2372/wilmington17-201.jpg', // Pic (URL for now)
-  //   'Easy' // Difficulty
-  // )
   setError.value = null
-  await axios
-    .post('http://localhost:8000/map/api/create-pin', {
+  try {
+    const response = await axios.post('http://localhost:8000/pin/api/create-pin', {
       name, lat, lon, rating, picture, difficulty
-    })
-    .catch(error => setError.value = error)
+    });
+    return response.data;
+  } catch (error) {
+    setError.value = error;
+    throw error;
+  }
 }
+
+async function handleMapClick(event) {
+  console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
+  const confirmAdd = confirm("Do you want to add a pin here?")
+  if (confirmAdd) {
+    const name = prompt("Enter the name for the pin:")
+    const rating = prompt("Enter the rating for the pin (1-5):")
+    const picture = prompt("Enter the picture URL for the pin:")
+    const difficulty = prompt("Enter the difficulty for the pin:")
+    createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
+      .then(() => {
+        // Add the newly created pin to the map
+        spots.value.push({
+          name: name,
+          pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
+          rating: rating,
+          img: picture,
+          difficulty: difficulty
+        })
+      })
+      .catch(error => setError.value = error)
+  }
+}
+
+
+
+
 async function populateSpots() {
   // Inserts hard-coded spots into database if they don't already exist.
   // Mostly for debugging, this will change or be removed before deployment.
@@ -112,6 +135,7 @@ const shape = {
     :center="center"
     :zoom="13"
     :styles="mapStyles"
+    @click="handleMapClick"
   >
     <!-- MarkerCluster -->
     <MarkerCluster>

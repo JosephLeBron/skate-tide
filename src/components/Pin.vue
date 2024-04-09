@@ -1,89 +1,78 @@
-<!-- Andrew Teague -->
-<template>
-  <div ref="map" style="height: 400px;"></div>
-  <!--  v-if is used to conditionally render a block and only continues if true -->
-  <div v-if="showConfirmation" class="confirmation-modal">
-    <div class="confirmation-content">
-      <p>Do you want to add a spot here?</p>
-      <button @click="confirmAddSpot">Yes</button>
-      <button @click="cancelAddSpot">No</button>
-    </div>
-  </div>
-</template>
+<script setup>
+import { ref, computed } from 'vue'
+import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
+import axios from 'axios'
 
+const debug = ref(false)
+const spots = ref([])
+const getError = ref(null)
+const setError = ref(null)
+const popError = ref(null)
 
-<script>
-import HomeMap from '../HomeMap.vue';
-import db from '../assets/database.js';
+async function createPin(name, lat, lon, rating, picture, difficulty) {
+  setError.value = null
+  await axios.post('http://localhost:8000/pin/api/create-pin', {
+      name, lat, lon, rating, picture, difficulty
+    })
+    .catch(error => setError.value = error)
+}
 
-export default {
-  name: 'HomeMap',
-  data() {
-    return {
-      map: null,
-      showConfirmation: false,
-      clickCoordinates: null
-    };
-  },
-  // markers should appear when/where a user clicks on the map
-  mounted() {
-    // this event listener calls addMarker() when the map is clicked
-    google.maps.event.addListener(HomeMap, "click", (event)); {
-      addMarker(event.latLng, HomeMap);
-      // Store click coordinates
-      this.clickCoordinates = event.latLng;
-      // Show confirmation modal
-      this.showConfirmation = true;
-    }
-  },
-
-  methods() {
-    confirmAddSpot(); {
-      // Hide confirmation modal
-      this.showConfirmation = false;
-      // Add marker at the clicked location
-      this.addMarker(this.clickCoordinates, this.HomeMap);
-      // insert pin info into database
-      const createPin = db.prepare('INSERT INTO pins (lat, lon) VALUES (?, ?)');
-      createPin.run(this.lat, this.lon);
-    };
-    cancelAddSpot(); {
-      // Hide confirmation modal
-      this.showConfirmation = false;
-      // Reset click coordinates
-      this.clickCoordinates = null;
-    };
-    // adds marker to the map
-    addMarker(coordinates, HomeMap); {
-      // add marker at the clicked location
-      new google.maps.Marker({
-        position: coordinates,
-        map: HomeMap,
-      });
-    }
+async function handleMapClick(event) {
+  console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
+  const confirmAdd = confirm("Do you want to add a pin here?")
+  if (confirmAdd) {
+    const name = prompt("Enter the name for the pin:")
+    const rating = prompt("Enter the rating for the pin (1-5):")
+    const picture = prompt("Enter the picture URL for the pin:")
+    const difficulty = prompt("Enter the difficulty for the pin:")
+    createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
+    .then(() => {
+        // Add the newly created pin to the map
+        spots.value.push({
+          name: name,
+          pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
+          rating: rating,
+          img: picture,
+          difficulty: difficulty
+        })
+      })
+      .catch(error => setError.value = error)
   }
-};
+}
+
+
+
+
 </script>
 
-<style scoped>
-.confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.confirmation-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  text-align: center;
-}
-.confirmation-content p {
-  margin-bottom: 10px;
-}
-</style>
+<template>
+  <GoogleMap
+    ref="mapRef"
+    api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
+    class="map"
+    :center="center"
+    :zoom="13"
+    :styles="mapStyles"
+    @click="handleMapClick"
+  >
+    <MarkerCluster>
+      <Marker
+        v-for="(spot, i) in spots"
+        :key="i"
+        :options="{
+          position: spot['pos'],
+          map: map,
+          icon: markerIcon,
+          shape: shape,
+          title: spot['name']
+        }"
+        @click="$emit('marker-click', spots[i])"
+      />
+    </MarkerCluster>
+  </GoogleMap>
+  <div v-if="debug" style="display: grid; position: fixed; left: 700px; top: 200px; color:black; background-color: magenta;">
+    <div>setError: {{ setError }}</div>
+    <div>getError: {{ getError }}</div>
+    <div>popError: {{ popError }}</div>
+  </div>
+</template>
