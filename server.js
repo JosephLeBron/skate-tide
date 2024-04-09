@@ -18,7 +18,6 @@ app.use('/user', userServices)
 app.use('/map', mapServices)
 app.use('/pin', pinServices)
 
-
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
