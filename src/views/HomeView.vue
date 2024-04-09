@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import HomeMap from '../components/HomeMap.vue';
+import Pin from '../components/Pin.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
 
 const showSidebar = ref(false)
@@ -22,6 +23,18 @@ function onMarkerClick(selected) {
   showSidebar.value = true
   spot.value = selected
 }
+
+function onMapClick(spot){
+  //Function to run when clicking on the map
+  spot.value = {
+    lat: lat,
+    lng: lng,
+    name: '', //  based on user input
+    rating: '', 
+    picture: '', 
+    difficulty: '' 
+  };
+}
 </script>
 
 <template>
@@ -30,7 +43,7 @@ function onMarkerClick(selected) {
       <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
     </div>
     <div class="map" :style="{ width: mapWidth }">
-      <HomeMap @marker-click="onMarkerClick"/>
+      <HomeMap @marker-click="onMarkerClick" @handleMapClick = 'onMapClick'/>
     </div>
   </div>
 </template>

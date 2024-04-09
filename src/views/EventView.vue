@@ -1,185 +1,172 @@
 <template>
-  <div>
-    <div class="navbar">
-      <router-link to="/">Home</router-link>
-      <router-link to="/profile">Profile</router-link>
-      <router-link to="/event" class="active">Events</router-link>
+  <div class="main-container">
+    <h1>Upcoming Events</h1>
+    
+    <!-- Display Errors -->
+    <div v-if="debug">
+      <p v-if="getError">Error fetching events: {{ getError.message }}</p>
+      <p v-if="setError">Error creating event: {{ setError.message }}</p>
+      <p v-if="popError">Error populating events: {{ popError.message }}</p>
     </div>
 
-    <header>
-      <h1>Skate the Wave Meetups</h1>
-      <p>Find upcoming skate meetups at various spots around Wilmington!</p>
-    </header>
+    <!-- Events -->
+    <div v-if="events.length > 0">
+      <ul class="event-list">
+        <li v-for="(event, index) in events" :key="index" class="event-item">
+          <p><strong>Title:</strong> {{ event.eventID }}</p>
+          <p><strong>Date:</strong> {{ event.date }}</p>
+          <p><strong>Time:</strong> {{ event.time }}</p>
+          <p><strong>Description:</strong> {{ event.description }}</p>
+        </li>
+      </ul>
+    </div>
 
-    <main>
-      <!-- Events -->
-      <section id="schedule">
-        <h2>Upcoming Events</h2>
-        <table v-if="events.length || databaseEvents.length">
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Skate Spot location</th>
-            <th>Details</th>
-          </tr>
-          <!-- Hardcoded  -->
-          <tr v-for="(event, index) in events" :key="index" :class="{ 'even': index % 2 === 0, 'hover': hoverIndex === index }" @mouseover="hoverIndex = index" @mouseleave="hoverIndex = null">
-            <td>{{ event.date }}</td>
-            <td>{{ event.time }}</td>
-            <td>{{ event.location }}</td>
-            <td>{{ event.details }}</td>
-          </tr>
-          <!-- Populate -->
-          <tr v-for="(event, index) in databaseEvents" :key="'db_' + index" :class="{ 'even': (index + events.length) % 2 === 0, 'hover': hoverIndex === (index + events.length) }" @mouseover="hoverIndex = (index + events.length)" @mouseleave="hoverIndex = null">
-            <td>{{ event.date }}</td>
-            <td>{{ event.time }}</td>
-            <td>{{ event.location }}</td>
-            <td>{{ event.details }}</td>
-          </tr>
-        </table>
-        <p v-else>No upcoming events found.</p>
-        <p v-if="error" class="error-message">{{ error }}</p>
-      </section>
-    </main>
+    <!-- Button for Create Event Form -->
+    <button @click="toggleForm" class="toggle-button">Create New Event</button>
+    
+    <!-- Create Event Form -->
+    <div v-if="showForm" class="create-event-form">
+      <h2>Create New Event</h2>
+      <form @submit.prevent="onCreateEvent">
+        <label for="eventID">Title:</label>
+        <input type="text" id="eventID" v-model="newEvent.eventID" required>
+        <br>
+
+        <label for="date">Date:</label>
+        <input type="text" id="date" v-model="newEvent.date" required>
+        <br>
+
+        <label for="time">Time:</label>
+        <input type="text" id="time" v-model="newEvent.time" required>
+        <br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" v-model="newEvent.description" required></textarea>
+        <br>
+
+        <button type="submit">Create Event</button>
+      </form>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      events: [
-        {
-          date: 'March 25, 2024',
-          time: '2:00 PM',
-          location: 'RiverFront Park',
-          details: 'Join us for a fun afternoon of skating at RiverFront Park!'
-        },
-        {
-          date: 'March 24, 2024',
-          time: '11:00 AM',
-          location: 'Riverfront Boardwalk',
-          details: 'Skate along the beautiful Boardwalk with fellow skaters!'
-        }
-      ],
-      databaseEvents: [],
-      hoverIndex: null,
-      error: null
-    };
+<script setup>
+import { ref } from 'vue';
+
+const showForm = ref(false);
+const newEvent = ref({
+  eventID: '',
+  date: '',
+  time: '',
+  description: ''
+});
+
+function toggleForm() {
+  showForm.value = !showForm.value;
+}
+
+//hard coded events
+const events = ref([
+  {
+    eventID: 'Skating Party Downtown',
+    date: '2024-04-10',
+    time: '18:00',
+    description: 'Join us for a fun evening of skating in the city'
   },
-  mounted() {
-    // Fetch SQLite database
-    this.fetchEvents();
+  {
+    eventID: 'Skate park competition',
+    date: '2024-04-15',
+    time: '14:00',
+    description: 'Compete in our annual skate park competition'
   },
-  methods: {
-    async fetchEvents() {
-      try {
-        const response = await fetch('/api/events');
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
-        }
-        this.databaseEvents = await response.json();
-      } catch (error) {
-        console.error(error);
-        this.error = 'Events from the databaseP';
-      }
-    }
+  {
+    eventID: 'Skate park cleanup',
+    date: '2024-04-20',
+    time: '16:00',
+    description: 'Help us clean up the skate park and make it better for everyone'
   }
-};
+]);
+
+function onCreateEvent() {
+}
 </script>
 
 <style scoped>
-
-.error-message {
-  color: red;
-  font-weight: bold;
-}
-
-body {
+/* Main color teal and secondary color gold */
+.main-container {
   font-family: "Poppins", sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 20px;
   background-color: teal;
   color: #fff;
 }
 
-header {
-  background-color: gold;
-  padding: 20px;
-  text-align: center;
-}
-
-h1 {
-  margin: 0;
+.event-list {
+  list-style-type: none;
   padding: 0;
-  font-size: 36px;
 }
 
-p {
-  margin: 10px 0;
-  font-size: 18px;
+.event-item {
+  border: 1px solid gold;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
-main {
-  padding: 20px;
+.toggle-button {
+  background-color: gold;
+  color: teal;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-section#schedule {
-  background-color: #1a1a1a;
-  padding: 20px;
-  border-radius: 10px;
+.toggle-button:hover {
+  background-color: #ffd700; 
+}
+
+.create-event-form {
+  display: none;
   margin-top: 20px;
 }
 
-h2 {
-  color: gold;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border-bottom: 1px solid #fff;
-  padding: 10px;
-  text-align: left;
-}
-
-th {
-  background-color: teal;
-  color: gold;
-}
-
-tr.even {
-  background-color: #333;
-}
-
-tr.hover {
-  background-color: #555;
-}
-
-.navbar {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.navbar a {
-  float: left;
+.create-event-form.show {
   display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 20px;
-  text-decoration: none;
 }
 
-.navbar a:hover {
-  background-color: #ddd;
-  color: black;
+.create-event-form h2 {
+  color: gold;
 }
 
-.active {
-  background-color: #ddd;
-  color: black;
+.create-event-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.create-event-form input[type="text"],
+.create-event-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.create-event-form button {
+  background-color: gold;
+  color: teal;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.create-event-form button:hover {
+  background-color: #ffd700;
 }
 </style>
+

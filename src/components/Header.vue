@@ -3,9 +3,12 @@
   <header>
     <div class="wrapper">
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
+        <h2>
         <RouterLink to="/" class="button">Home</RouterLink>
         <RouterLink to="/login" class="button">Login</RouterLink>
+        <RouterLink to="/profile" class="button">Profile</RouterLink>
         <RouterLink to="/events" class="button">Events</RouterLink>
+        </h2>
       </nav>
     </div>
   </header>
@@ -27,7 +30,6 @@ header {
   height: 60px;
   background-color: #333;
 }
-
 .button {
   color: white;
 }
@@ -51,28 +53,5 @@ header {
 
 .full-screen {
   text-align: center;
-}
-
-@media (min-width: 1024px) {
-  header {
-    
-  }
-
-  .wrapper {
-    /* margin-top: 18px; Adjust as needed */
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .navbar {
-    /* text-align: left; */
-    /* margin-left: -1rem; */
-    /* font-size: 1rem; */
-    /* color: white; */
-    /* padding: 1rem 0; */
-    /* margin-top: 1rem; */
-    color: blue;
-  }
 }
 </style>
