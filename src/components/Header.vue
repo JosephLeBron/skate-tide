@@ -55,6 +55,7 @@ header {
   text-align: center;
 }
 
+
 @media (min-width: 30000px) {
   header {
     
@@ -77,4 +78,5 @@ header {
     color: blue;
   }
 }
+
 </style>

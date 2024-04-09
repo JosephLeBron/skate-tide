@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
+import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
 // Using vue3-google-map package to implement the Google Maps API
@@ -28,7 +28,10 @@ async function getSpots() {
         spots.value.push({
           name: element.name,
           pos: { lat: element.lat, lng: element.lon },
-          img: element.picture
+          img: element.picture,
+          difficulty: element.difficulty,
+          rating: element.rating,
+          show: true
         })
       })
     })
@@ -87,6 +90,53 @@ async function populateSpots() {
 populateSpots()
 getSpots()
 
+const showFilter = ref(false)
+function toggleFilter() {
+  showFilter.value = !showFilter.value
+}
+const FilterOptions = {
+  DIFF_BEGINNER: "Beginner",
+  DIFF_EASY: "Easy",
+  DIFF_MEDIUM: "Medium",
+  DIFF_HARD: "Hard",
+  DIFF_EXPERT: "Expert",
+  DIFF_OPTION_COUNT: 5  // Keeps count of difficulty options. Update if adding/removing any
+}
+const filter = ref({
+  name: "",
+  showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
+  ratingMin: 1
+})
+
+function filterDifficulty(difficulty) {
+  if (difficulty) {
+    if (filter.value.showDifficulty.includes(difficulty)) {
+      // Removing difficulty filter array
+      const index = filter.value.showDifficulty.indexOf(difficulty)
+      filter.value.showDifficulty.splice(index, 1)
+    } else {
+      // Adding difficulty to filter array
+      filter.value.showDifficulty.push(difficulty)
+    }
+  }
+  filterSpots()
+}
+function filterSpots() {
+  for (let i = 0; i < FilterOptions.DIFF_OPTION_COUNT; i++) {
+    const spot = spots.value[i];
+    if (
+      filter.value.showDifficulty.includes(spot.difficulty) 
+      && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
+      && spot.rating >= filter.value.ratingMin
+      )
+    {
+      spot.show = true
+    } else {
+      spot.show = false
+    }
+  }
+}
+
 // Map reference + setting styles
 const mapRef = ref(null)
 const center = { lat: 34.210249, lng: -77.887004 } // Map centered on wilmington
@@ -131,7 +181,7 @@ const shape = {
   <GoogleMap
     ref="mapRef"
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
-    class="map"
+    style="width: 100%; height: 100%"
     :center="center"
     :zoom="13"
     :styles="mapStyles"
@@ -144,23 +194,121 @@ const shape = {
         :key="i"
         :options="{
           position: spot['pos'],
-          map: map,
+          // map: map,
           icon: markerIcon,
           shape: shape,
-          title: spot['name']
+          title: spot['name'],
+          visible: spot.show
         }"
         @click="$emit('marker-click', spots[i])"
       />
     </MarkerCluster>
+    <CustomControl position="RIGHT_TOP">
+      <button class="filter-btn" @click="toggleFilter">▼</button>
+    </CustomControl>
+    <CustomControl v-if="showFilter" position="RIGHT_TOP">
+      <div class="filter-menu">
+        <div class="filter-wrapper">
+          <div class="filter-header">Name</div>
+          <input type="text" v-model="filter.name" @input="filterSpots" placeholder="Name" style="width: 100%; margin: auto">
+
+          <div class="filter-header">Rating</div>
+          <span class="filter-item">
+            <!-- <label for="ratingNum"> Rating</label> -->
+            <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
+          </span>
+
+          <div class="filter-header">Difficulty</div>
+          <span class="filter-item">
+            <input type="checkbox" id="beginnerBox" checked @click="filterDifficulty(FilterOptions.DIFF_BEGINNER)">
+            <label for="beginnerBox" class="filter-item"> Beginner</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="easyBox" checked @click="filterDifficulty(FilterOptions.DIFF_EASY)">
+            <label for="easyBox" class="filter-item"> Easy</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="mediumBox" checked @click="filterDifficulty(FilterOptions.DIFF_MEDIUM)">
+            <label for="mediumBox" class="filter-item"> Medium</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="hardBox" checked @click="filterDifficulty(FilterOptions.DIFF_HARD)">
+            <label for="hardBox" class="filter-item"> Hard</label>
+          </span>
+          <span class="filter-item">
+            <input type="checkbox" id="expertBox" checked @click="filterDifficulty(FilterOptions.DIFF_EXPERT)">
+            <label for="expertBox"> Expert</label>
+          </span>
+
+        </div>
+      </div>
+    </CustomControl>
   </GoogleMap>
   <div v-if="debug" style="display: grid; position: fixed; left: 700px; top: 200px; color:black; background-color: magenta;">
     <div>setError: {{ setError }}</div>
     <div>getError: {{ getError }}</div>
     <div>popError: {{ popError }}</div>
+    <div>filter: {{ filter }}</div>
   </div>
 </template>
 
 <style>
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
+
+
+.filter-header {
+  margin-bottom: -5px;
+  text-decoration: underline;
+  font-size: 20px;
+}
+
+.filter-item {
+  font-size: 16px;
+  height: 100%;
+}
+
+.filter-wrapper {
+  display: grid;
+  margin: 10px;
+  height: calc(100% - 20px);
+}
+
+.filter-menu {
+  box-sizing: border-box;
+  background: white;
+  color: black;
+  height: 300px;
+  width: 130px;
+  border-radius: 2px;
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  font-size: 1.25rem;
+  text-transform: none;
+  appearance: none;
+  user-select: none;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+}
+
+.filter-btn {
+  box-sizing: border-box;
+  background: white;
+  height: 40px;
+  width: 40px;
+  border-radius: 2px;
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  font-size: 1.25rem;
+  text-transform: none;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+}
+=======
+
 </style>
