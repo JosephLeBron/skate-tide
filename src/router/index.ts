@@ -6,7 +6,7 @@ import ProfilePage from '../views/ProfilePage.vue'
 import CreateAccountView from '@/views/CreateAccountView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(process.env.BASE_URL),
   routes: [
     {
       path: '/',

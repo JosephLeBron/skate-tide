@@ -85,8 +85,8 @@ const createTables = () => {
 const insertProfilePictures = () => {
     try {
         const profilePictures = [
-            { email: "user1@example.com", picturePath: "path/to/user1.jpg" },
-            { email: "user2@example.com", picturePath: "path/to/user2.jpg" },
+            { email: "user1@example.com", picturePath: "./csc450-sp24-project-team_4/src/assets/images/user1.jpg"  },
+            { email: "user2@example.com", picturePath: "./csc450-sp24-project-team_4/src/assets/images/user2.jpg"  },
             // Add more profile pictures as needed
         ];
 
