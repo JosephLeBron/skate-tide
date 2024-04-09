@@ -32,16 +32,19 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* Nav component styles go here */
-.navbar a {
+.navbar {
   position: fixed;
+  z-index: 10;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: lightgray;
-  color: black;
+  height: 60px;
+  background-color: #333;
+  color:white;
   padding: 10px;
   margin-top: 0;
   display: flex;
+  place-items: center;
   justify-content: space-around;
   transition:
     background-color 0.3s,
@@ -49,24 +52,35 @@ onBeforeUnmount(() => {
 }
 
 .navbar a {
-  text-decoration: none;
+  letter-spacing: 0.5px;
+  font-weight: 500;
   color: inherit;
+  background-color: transparent;
 }
 
-.navbar a:hover,
+.navbar a:hover {
+  text-shadow: 0px 0px 2px rgb(71, 240, 184, 0.6);
+  color: rgba(13, 226, 180);
+  text-decoration-color: darkcyan;
+}
 .navbar a.router-link-exact-active {
-  background-color: #ddd;
-  color: black;
+  text-shadow: 0px 0px 2px rgb(71, 240, 184, 0.6);
+  color: rgba(13, 226, 180);
+  text-decoration: rgb(50, 138, 160) wavy underline;
+  text-underline-offset: 2px;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 2px;
 }
 
-.full-screen {
-  position: fixed;
-  z-index: 1;
-}
-
-@media (max-width: 1025px) {
+@media (max-width: 1024px) {
   .navbar {
-    justify-content: center;
+    font-size: medium;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar {
+    font-size: larger;
   }
 }
 </style>

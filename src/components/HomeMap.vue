@@ -159,3 +159,8 @@ const shape = {
     <div>popError: {{ popError }}</div>
   </div>
 </template>
+
+<style>
+/* This line removes the annoying blue focus border around the map element */
+.gm-style iframe + div { border:none!important; }
+</style>
