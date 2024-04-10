@@ -63,6 +63,12 @@ export default {
         alert('Please enter both username and password.');
         return;
       }
+
+      if (!this.validateEmail(this.email)){
+        alert('Please enter a valid email address.');
+        return;
+      }
+
       try {
         const response = await axios.post('/user/api/login', {
           email: this.username,
@@ -85,6 +91,9 @@ export default {
       // clears the password
       clearPassword() {
         this.password = '';
+      },
+      validateEmail(email){
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
       }
   }
 }

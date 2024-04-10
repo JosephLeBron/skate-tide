@@ -39,15 +39,20 @@
 import axios from 'axios';
   
 export default {
-    data() {
-        return {
-          email: '', 
-          password: '',
-          repeatPassword: '',
-          invalidInput: false,
-          };
-        },
-methods: {
+  data() {
+      return {
+        email: '', 
+        password: '',
+        repeatPassword: '',
+        invalidInput: false,
+        };
+  },
+  watch: {
+    email(value) {
+      this.validateEmail(value)
+    }
+  },
+  methods: {
     async createAccount() {
       console.log('Button Clicked');
       if (!this.email || !this.password || !this.repeatPassword) {
@@ -55,6 +60,11 @@ methods: {
           return;
           }
       
+      if (!this.validateEmail(this.email)) {
+        alert('Please enter a valid email address.')
+        return;
+      }
+
       if (this.password !== this.repeatPassword){
         alert('Passwords do not match. Please try again.');
         return;
@@ -80,6 +90,9 @@ methods: {
       clearPasswords(){
         this.password = '';
         this.repeatPassword = '';
+      },
+      validateEmail(email){
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
       } 
   }
 };
