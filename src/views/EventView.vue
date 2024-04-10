@@ -51,44 +51,55 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue'
+import axios from 'axios'
 
-const showForm = ref(false);
-const newEvent = ref({
-  eventID: '',
-  date: '',
-  time: '',
-  description: ''
-});
+const debug = ref(false) // Displays error messages on screen when true (set manually)
+const events = ref([]) // Stores an array of spot objects created from database query
 
-function toggleForm() {
-  showForm.value = !showForm.value;
+// Store axios post response errors from service API calls
+const getError = ref(null)
+const setError = ref(null)
+const popError = ref(null)
+
+async function getSpots() {
+  // Queries the database for stored pins and converts them to spot objects in the
+  // format { name, pos: {lat, lng}, img}. This will be extended in the future
+  getError.value = null
+  await axios
+    .post('http://localhost:8000/event/api/get-pins') // API call
+    .then((response) => {
+      // Executed on successful response
+      events.value = []
+      // Convert each row from pins table to simpler objects in the format we were already using for spots.
+      response.data.forEach(element => {
+        events.value.push({
+          eventID: element.eventID,
+          date: element.date,
+          time: element.time,
+          description: element.description
+        })
+      })
+    })
+    .catch(error => getError.value = error) // Store message on error
 }
+getSpots()
 
-//hard coded events
-const events = ref([
-  {
-    eventID: 'Skating Party Downtown',
-    date: '2024-04-10',
-    time: '18:00',
-    description: 'Join us for a fun evening of skating in the city'
-  },
-  {
-    eventID: 'Skate park competition',
-    date: '2024-04-15',
-    time: '14:00',
-    description: 'Compete in our annual skate park competition'
-  },
-  {
-    eventID: 'Skate park cleanup',
-    date: '2024-04-20',
-    time: '16:00',
-    description: 'Help us clean up the skate park and make it better for everyone'
+
+async function createPin(eventID, date, time, description) {
+  setError.value = null
+  try {
+    const response = await axios.post('http://localhost:8000/event/api/create-pin', {
+      eventID, date, time, description
+    });
+    return response.data;
+  } catch (error) {
+    setError.value = error;
+    throw error;
   }
-]);
-
-function onCreateEvent() {
 }
+
+createPin()
 </script>
 
 <style scoped>
