@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
@@ -10,7 +10,7 @@ console.log('hello script setup')
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
 const debug = ref(false) // Displays error messages on screen when true (set manually)
-const spots = ref([]) // Stores an array of spot objects created from database query
+const spots = reactive([]) // Stores an array of spot objects created from database query
 
 // Store axios post response errors from service API calls
 const getError = ref(null)
@@ -25,10 +25,10 @@ async function getSpots() {
     .post('http://localhost:8000/map/api/get-pins') // API call
     .then((response) => {
       // Executed on successful response
-      spots.value = []
+      spots.length = 0
       // Convert each row from pins table to simpler objects in the format we were already using for spots.
       response.data.forEach(element => {
-        spots.value.push({
+        spots.push({
           name: element.name,
           pos: { lat: element.lat, lng: element.lon },
           img: element.picture,
@@ -65,7 +65,7 @@ async function handleMapClick(event) {
     createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
       .then(() => {
         // Add the newly created pin to the map
-        spots.value.push({
+        spots.push({
           name: name,
           pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
           rating: rating,
@@ -121,7 +121,7 @@ function filterDifficulty(difficulty) {
 }
 function filterSpots() {
   for (let i = 0; i < FilterOptions.DIFF_OPTION_COUNT; i++) {
-    const spot = spots.value[i];
+    const spot = spots[i];
     if (
       filter.value.showDifficulty.includes(spot.difficulty) 
       && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
