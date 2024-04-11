@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 
 import userServices from './userServices.js';
+import mapServices from './mapServices.js';
+
 
 var app = express()
  
@@ -13,6 +15,8 @@ const options = {
 
 app.use(cors(options));
 app.use('/user', userServices)
+app.use('/map', mapServices)
+
 
 // Start the server
 const PORT = process.env.PORT || 8000;

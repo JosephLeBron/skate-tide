@@ -15,7 +15,7 @@ const createTables = () =>{
                 picture BLOB NOT NULL,
                 difficulty STRING NOT NULL
             );
-            CREATE UNIQUE INDEX coordinates On pins (lat, lon)
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates On pins (lat, lon)
         `;
         const tableUsers = `
             CREATE TABLE IF NOT EXISTS users (
@@ -28,7 +28,6 @@ const createTables = () =>{
         const tableEvents = `
             CREATE TABLE IF NOT EXISTS events (
                 eventID STRING PRIMARY KEY,
-                signedup BOOLEAN NOT NULL,
                 date STRING NOT NULL,
                 time INTEGER NOT NULL,
                 description STRING NOT NULL
@@ -60,9 +59,48 @@ const createTables = () =>{
     db.exec(tableInteracts); 
     db.exec(tableSignUp); 
     console.log("Tables created.");
-    } catch (error) {
-        console.error("Error creating tables: ", error);
-    }
+    const insertEvents = () => {
+        try {
+            const events = [
+                {
+                    eventID: 'event1',
+                    date: '2024-04-10',
+                    time: 1800,
+                    description: 'Event 1 description here'
+                },
+                {
+                    eventID: 'event2',
+                    date: '2024-04-15',
+                    time: 1400,
+                    description: 'Event 2 description here'
+                },
+                {
+                    eventID: 'event3',
+                    date: '2024-04-20',
+                    time: 1600,
+                    description: 'Event 3 description here'
+                }
+            ];
+
+            const insertEventStmt = db.prepare('INSERT INTO events (eventID, date, time, description) VALUES (@eventID, @date, @time, @description)');
+
+            db.transaction(() => {
+                for (const event of events) {
+                    insertEventStmt.run(event);
+                }
+            })();
+
+            console.log("Events inserted successfully.");
+        } catch (error) {
+            console.error("Error inserting events: ", error);
+        }
+    };
+
+    insertEvents();
+
+} catch (error) {
+    console.error("Error creating tables: ", error);
+}    
 };
 createTables();
 
