@@ -3,6 +3,9 @@ import { ref, computed } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
+const emit = defineEmits(['marker-click', 'handleMapClick'])
+console.log('hello script setup')
+
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
@@ -37,8 +40,6 @@ async function getSpots() {
     })
     .catch(error => getError.value = error) // Store message on error
 }
-
-
 
 async function createPin(name, lat, lon, rating, picture, difficulty) {
   setError.value = null
@@ -75,9 +76,6 @@ async function handleMapClick(event) {
       .catch(error => setError.value = error)
   }
 }
-
-
-
 
 async function populateSpots() {
   // Inserts hard-coded spots into database if they don't already exist.
@@ -200,7 +198,7 @@ const shape = {
           title: spot['name'],
           visible: spot.show
         }"
-        @click="$emit('marker-click', spots[i])"
+        @click="emit('marker-click', spots[i])"
       />
     </MarkerCluster>
     <CustomControl position="RIGHT_TOP">
@@ -212,9 +210,8 @@ const shape = {
           <div class="filter-header">Name</div>
           <input type="text" v-model="filter.name" @input="filterSpots" placeholder="Name" style="width: 100%; margin: auto">
 
-          <div class="filter-header">Rating</div>
+          <div class="filter-header">Min Rating</div>
           <span class="filter-item">
-            <!-- <label for="ratingNum"> Rating</label> -->
             <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
           </span>
 
@@ -255,7 +252,6 @@ const shape = {
 <style>
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
-
 
 .filter-header {
   margin-bottom: -5px;
@@ -309,6 +305,5 @@ const shape = {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   overflow: hidden;
 }
-=======
 
 </style>
