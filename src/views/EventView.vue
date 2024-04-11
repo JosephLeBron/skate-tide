@@ -20,71 +20,35 @@
         </li>
       </ul>
     </div>
-
-    <!-- Button for Create Event Form -->
-    <button @click="toggleForm" class="toggle-button">Create New Event</button>
-    
-    <!-- Create Event Form -->
-    <div v-if="showForm" class="create-event-form">
-      <h2>Create New Event</h2>
-      <form @submit.prevent="onCreateEvent">
-        <label for="eventID">Title:</label>
-        <input type="text" id="eventID" v-model="newEvent.eventID" required>
-        <br>
-
-        <label for="date">Date:</label>
-        <input type="text" id="date" v-model="newEvent.date" required>
-        <br>
-
-        <label for="time">Time:</label>
-        <input type="text" id="time" v-model="newEvent.time" required>
-        <br>
-
-        <label for="description">Description:</label>
-        <textarea id="description" v-model="newEvent.description" required></textarea>
-        <br>
-
-        <button type="submit">Create Event</button>
-      </form>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 
 const debug = ref(false) // Displays error messages on screen when true (set manually)
-const events = ref([]) // Stores an array of spot objects created from database query
+const events = ref([]) // Stores an array of event objects created from database query
 
-// Store axios post response errors from service API calls
 const getError = ref(null)
 const setError = ref(null)
 const popError = ref(null)
 
-async function getSpots() {
-  // Queries the database for stored pins and converts them to spot objects in the
-  // format { name, pos: {lat, lng}, img}. This will be extended in the future
+async function getEvents() {
   getError.value = null
-  await axios
-    .post('http://localhost:8000/event/api/get-pins') // API call
-    .then((response) => {
-      // Executed on successful response
-      events.value = []
-      // Convert each row from pins table to simpler objects in the format we were already using for spots.
-      response.data.forEach(element => {
-        events.value.push({
-          eventID: element.eventID,
-          date: element.date,
-          time: element.time,
-          description: element.description
-        })
-      })
-    })
-    .catch(error => getError.value = error) // Store message on error
+  try {
+    const response = await axios.post('http://localhost:8000/event/api/get-pins')
+    events.value = response.data.map(event => ({
+      eventID: event.eventID,
+      date: event.date,
+      time: event.time,
+      description: event.description
+    }))
+  } catch (error) {
+    getError.value = error
+  }
 }
-getSpots()
-
+getEvents()
 
 async function createPin(eventID, date, time, description) {
   setError.value = null
@@ -99,8 +63,10 @@ async function createPin(eventID, date, time, description) {
   }
 }
 
-createPin()
 </script>
+
+
+
 
 <style scoped>
 /* Main color teal and secondary color gold */
