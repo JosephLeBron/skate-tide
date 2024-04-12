@@ -3,24 +3,38 @@ import { ref, computed } from 'vue'
 import HomeMap from '../components/HomeMap.vue';
 import Pin from '../components/Pin.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
+import SubmitSidebar from '../components/SubmitSidebar.vue'
 
-const showSidebar = ref(false)
+// Need to add more robust logic for which sidebar to show.
+// Initial thought: base it on most recent click. The click listeners
+// toggle the other. Want to be able to click submit, enter some info,
+// click on a spot to look at it, then click back on the submit marker
+// and the info is still there. Close button always closes any open sidebar.
+
+const showSpotSidebar = ref(false)
 const spot = ref(null)
+
+const showSubmitSidebar = ref(false)
+const submitSpotObject = ref(null)
 
 const mapWidth = computed(() => {
   // Map is styled at 80% width if sidebar is open, 100% otherwise
-  return showSidebar.value ? '80%' : '100%'
+  return (showSpotSidebar.value || showSubmitSidebar.value) ? '80%' : '100%'
 })
 
-function onCloseBtnClick() {
-  // Function to run when pressing the X button in the sidebar
-  showSidebar.value = false
+function onSpotCloseBtnClick() {
+  // Function to run when pressing the X button in the spot sidebar
+  showSpotSidebar.value = false
+}
+function onSubmitCloseBtnClick() {
+  // Function to run when pressing the X button in the submit sidebar
+  showSpotSidebar.value = false
 }
 
 function onMarkerClick(selected) {
   // Function to run when clicking a marker on the map, selected
   // is the spot object associated with that marker
-  showSidebar.value = true
+  showSpotSidebar.value = true
   spot.value = selected
 }
 
@@ -39,9 +53,14 @@ function onMapClick(spot){
 
 <template>
     <div class="homeview-container">
-      <div v-if="showSidebar" class="sidebar" style="width: 20%"> 
-        <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
+      <div v-if="showSpotSidebar" class="sidebar" style="width: 20%"> 
+        <SpotSideBar :spot="spot" @close-button="onSpotCloseBtnClick" />
       </div>
+
+      <div v-if="showSubmitSidebar" class="sidebar" style="width: 20%">
+        <SpotSideBar :spotObject="submitSpotObject" @close-button="onSubmitCloseBtnClick" />
+      </div>
+
       <div class="map" :style="{ width: mapWidth }">
         <Suspense>
           <!-- Async component rendered once awaits are finished -->

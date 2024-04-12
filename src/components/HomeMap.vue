@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
-const emit = defineEmits(['marker-click', 'handleMapClick'])
+const emit = defineEmits(['marker-click', 'submit-click', 'submit-drag'])
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
@@ -65,29 +65,45 @@ function createPin(name, lat, lon, rating, picture, difficulty) {
     .catch(error => console.log(error))
 }
 
+const showSubmitMarker = ref(false)
+const submitPos = ref(null)
+const submitSpotObject = ref(null)
+
+// Look into vue KeepAlive for submit sidebar?
+
 function handleMapClick(event) {
-  console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
-  const confirmAdd = confirm("Do you want to add a pin here?")
-  if (confirmAdd) {
-    const name = prompt("Enter the name for the pin:")
-    const rating = prompt("Enter the rating for the pin (1-5):")
-    const picture = prompt("Enter the picture URL for the pin:")
-    const difficulty = prompt("Enter the difficulty for the pin:")
-    createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
-      .then(() => {
-        console.log("Test test")
-        // Add the newly created pin to the map
-        spots.value.push({
-          name: name,
-          pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
-          rating: rating,
-          img: picture,
-          difficulty: difficulty,
-          show: true
-        })
-      })
-      .catch(error => console.log(error))
-  }
+  showSubmitMarker.value = true
+  submitPos.value = event.latLng
+  emit('submit-click', event.latLng)
+
+  // console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
+
+  // const confirmAdd = confirm("Do you want to add a pin here?")
+  // if (confirmAdd) {
+  //   const name = prompt("Enter the name for the pin:")
+  //   const rating = prompt("Enter the rating for the pin (1-5):")
+  //   const picture = prompt("Enter the picture URL for the pin:")
+  //   const difficulty = prompt("Enter the difficulty for the pin:")
+  //   createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
+  //     .then(() => {
+  //       console.log("Test test")
+  //       // Add the newly created pin to the map
+  //       spots.value.push({
+  //         name: name,
+  //         pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
+  //         rating: rating,
+  //         img: picture,
+  //         difficulty: difficulty,
+  //         show: true
+  //       })
+  //     })
+  //     .catch(error => console.log(error))
+  // }
+}
+function updateSubmitPos(event) {
+  // console.log("Marker moved to " + event.latLng)
+  emit('submit-drag', event.latLng)
+  submitPos.value = event.latLng
 }
 
 const showFilterMenu = ref(false)
@@ -204,6 +220,16 @@ const shape = {
     :styles="mapStyles"
     @click="handleMapClick"
   >
+    <Marker
+      v-if="showSubmitMarker"
+      :options="{
+        position: submitPos,
+        draggable: true,
+        zIndex: 1
+      }"
+      @dragend="updateSubmitPos"
+    />
+
     <!-- MarkerCluster -->
     <MarkerCluster>
       <Marker
@@ -214,7 +240,8 @@ const shape = {
           icon: markerIcon,
           shape: shape,
           title: spot['name'],
-          visible: spot.show
+          visible: spot.show,
+          zIndex: 0
         }"
         @click="emit('marker-click', spots[i])"
       />
@@ -279,7 +306,6 @@ const shape = {
 
 .filter-header {
   flex: 1;
-  /* margin-bottom: -5px; */
   text-decoration: underline;
   font-size: 20px;
 }
@@ -287,7 +313,6 @@ const shape = {
 .filter-item {
   flex: 1;
   font-size: 16px;
-  /* height: 100%; */
 }
 
 .filter-wrapper {
