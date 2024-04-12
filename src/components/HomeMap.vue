@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
+defineProps(['showSubmitMarker'])
 const emit = defineEmits(['marker-click', 'submit-click', 'submit-drag'])
 
 // Using vue3-google-map package to implement the Google Maps API
@@ -65,43 +66,17 @@ function createPin(name, lat, lon, rating, picture, difficulty) {
     .catch(error => console.log(error))
 }
 
-const showSubmitMarker = ref(false)
 const submitPos = ref(null)
-const submitSpotObject = ref(null)
-
 // Look into vue KeepAlive for submit sidebar?
 
 function handleMapClick(event) {
-  showSubmitMarker.value = true
-  submitPos.value = event.latLng
   emit('submit-click', event.latLng)
-
-  // console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
-
-  // const confirmAdd = confirm("Do you want to add a pin here?")
-  // if (confirmAdd) {
-  //   const name = prompt("Enter the name for the pin:")
-  //   const rating = prompt("Enter the rating for the pin (1-5):")
-  //   const picture = prompt("Enter the picture URL for the pin:")
-  //   const difficulty = prompt("Enter the difficulty for the pin:")
-  //   createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
-  //     .then(() => {
-  //       console.log("Test test")
-  //       // Add the newly created pin to the map
-  //       spots.value.push({
-  //         name: name,
-  //         pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
-  //         rating: rating,
-  //         img: picture,
-  //         difficulty: difficulty,
-  //         show: true
-  //       })
-  //     })
-  //     .catch(error => console.log(error))
-  // }
+  submitPos.value = event.latLng
+}
+function handleSubmitClick(event) {
+  emit('submit-click', event.latLng)
 }
 function updateSubmitPos(event) {
-  // console.log("Marker moved to " + event.latLng)
   emit('submit-drag', event.latLng)
   submitPos.value = event.latLng
 }
@@ -227,6 +202,7 @@ const shape = {
         draggable: true,
         zIndex: 1
       }"
+      @click="handleSubmitClick"
       @dragend="updateSubmitPos"
     />
 

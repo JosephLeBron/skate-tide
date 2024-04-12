@@ -15,7 +15,14 @@ const showSpotSidebar = ref(false)
 const spot = ref(null)
 
 const showSubmitSidebar = ref(false)
-const submitSpotObject = ref(null)
+const showSubmitMarker = ref(false)
+const submitSpotObject = ref({ name: '', pos: {lat: 0, lng: 0}, rating: 0, picture: '', difficulty: 0 })
+
+const sidebarMode = {
+  VIEW: 0,
+  SUBMIT: 1
+}
+const mostRecentClick = ref(sidebarMode.SPOT)
 
 const mapWidth = computed(() => {
   // Map is styled at 80% width if sidebar is open, 100% otherwise
@@ -25,17 +32,32 @@ const mapWidth = computed(() => {
 function onSpotCloseBtnClick() {
   // Function to run when pressing the X button in the spot sidebar
   showSpotSidebar.value = false
+  showSubmitSidebar.value = false
 }
 function onSubmitCloseBtnClick() {
   // Function to run when pressing the X button in the submit sidebar
   showSpotSidebar.value = false
+  showSubmitSidebar.value = false
 }
 
 function onMarkerClick(selected) {
   // Function to run when clicking a marker on the map, selected
   // is the spot object associated with that marker
   showSpotSidebar.value = true
+  mostRecentClick.value = sidebarMode.VIEW
   spot.value = selected
+}
+function onSubmitClick(latLng) {
+  showSubmitSidebar.value = true
+  showSubmitMarker.value = true
+  mostRecentClick.value = sidebarMode.SUBMIT
+  submitSpotObject.value['pos']['lat'] = latLng.lat()
+  submitSpotObject.value['pos']['lng'] = latLng.lng()
+}
+function onSubmitCancel() {
+  showSubmitSidebar.value = false
+  showSubmitMarker.value = false
+  mostRecentClick.value = sidebarMode.VIEW
 }
 
 function onMapClick(spot){
@@ -53,18 +75,18 @@ function onMapClick(spot){
 
 <template>
     <div class="homeview-container">
-      <div v-if="showSpotSidebar" class="sidebar" style="width: 20%"> 
+      <div v-if="showSpotSidebar && mostRecentClick === sidebarMode.VIEW" class="sidebar" style="width: 20%"> 
         <SpotSideBar :spot="spot" @close-button="onSpotCloseBtnClick" />
       </div>
 
-      <div v-if="showSubmitSidebar" class="sidebar" style="width: 20%">
-        <SpotSideBar :spotObject="submitSpotObject" @close-button="onSubmitCloseBtnClick" />
+      <div v-if="showSubmitSidebar && mostRecentClick === sidebarMode.SUBMIT" class="sidebar" style="width: 20%">
+        <SubmitSidebar :spotObject="submitSpotObject" @cancel-submit="onSubmitCancel" @close-button="onSubmitCloseBtnClick" />
       </div>
 
       <div class="map" :style="{ width: mapWidth }">
         <Suspense>
           <!-- Async component rendered once awaits are finished -->
-          <HomeMap @marker-click="onMarkerClick" @handleMapClick = 'onMapClick'/>
+          <HomeMap :showSubmitMarker="showSubmitMarker" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitClick"/>
 
           <!-- Fallback component to render while waiting -->
           <template #fallback>

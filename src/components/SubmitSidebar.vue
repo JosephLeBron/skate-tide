@@ -8,12 +8,13 @@ It's only destroyed when clicking "cancel" on submission form -->
 
 <template>
     <div class="sidebar-container">
-        <img class="sidebar-img" :src="spot['img']" />
+        <img class="sidebar-img" src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=" />
         <div class="sidebar-contents">
             <h1>Name input</h1>
-            <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
+            <h2>Pos: {{ spotObject['pos']['lat'] }}, {{ spotObject['pos']['lng'] }}</h2>
             <h2>Difficulty input</h2>
             <h2>Rating input(?)</h2>
+            <button @click="$emit('cancel-submit')">Cancel</button>
         </div>
         <button class="close-button" @click="$emit('close-button')">
             < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
