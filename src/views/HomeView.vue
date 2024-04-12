@@ -38,14 +38,26 @@ function onMapClick(spot){
 </script>
 
 <template>
-  <div class="homeview-container">
-    <div v-if="showSidebar" class="sidebar" style="width: 20%"> 
-      <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
+    <div class="homeview-container">
+      <div v-if="showSidebar" class="sidebar" style="width: 20%"> 
+        <SpotSideBar :spot="spot" @close-button="onCloseBtnClick" />
+      </div>
+      <div class="map" :style="{ width: mapWidth }">
+        <Suspense>
+          <!-- Async component rendered once awaits are finished -->
+          <HomeMap @marker-click="onMarkerClick" @handleMapClick = 'onMapClick'/>
+
+          <!-- Fallback component to render while waiting -->
+          <template #fallback>
+            <div class="homeview-container">
+              <div style="margin: auto; font-size: 30px; color: darkgray;">
+                Loading...
+              </div>
+            </div>
+          </template>
+        </Suspense>
+      </div>
     </div>
-    <div class="map" :style="{ width: mapWidth }">
-      <HomeMap @marker-click="onMarkerClick" @handleMapClick = 'onMapClick'/>
-    </div>
-  </div>
 </template>
 
 <style>
@@ -63,5 +75,6 @@ function onMapClick(spot){
   right: 0;
   bottom: 0;
   z-index: 1;
+  background-color: #e8eaed;
 }
 </style>
