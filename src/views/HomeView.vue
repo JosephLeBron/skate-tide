@@ -16,7 +16,7 @@ const spot = ref(null)
 
 const showSubmitSidebar = ref(false)
 const showSubmitMarker = ref(false)
-const submitSpotObject = ref({ name: '', pos: {lat: 0, lng: 0}, rating: 0, picture: '', difficulty: 0 })
+const submitPos = ref(null)
 
 const sidebarMode = {
   VIEW: 0,
@@ -48,28 +48,19 @@ function onMarkerClick(selected) {
   spot.value = selected
 }
 function onSubmitClick(latLng) {
+  if (!showSubmitMarker.value) {
+    console.log('initial click')
+  }
+  console.log('submit click, latlng = ' + latLng.toUrlValue())
   showSubmitSidebar.value = true
   showSubmitMarker.value = true
   mostRecentClick.value = sidebarMode.SUBMIT
-  submitSpotObject.value['pos']['lat'] = latLng.lat()
-  submitSpotObject.value['pos']['lng'] = latLng.lng()
+  submitPos.value = latLng
 }
 function onSubmitCancel() {
   showSubmitSidebar.value = false
   showSubmitMarker.value = false
   mostRecentClick.value = sidebarMode.VIEW
-}
-
-function onMapClick(spot){
-  //Function to run when clicking on the map
-  spot.value = {
-    lat: lat,
-    lng: lng,
-    name: '', //  based on user input
-    rating: '', 
-    picture: '', 
-    difficulty: '' 
-  };
 }
 </script>
 
@@ -80,13 +71,14 @@ function onMapClick(spot){
       </div>
 
       <div v-if="showSubmitSidebar && mostRecentClick === sidebarMode.SUBMIT" class="sidebar" style="width: 20%">
-        <SubmitSidebar :spotObject="submitSpotObject" @cancel-submit="onSubmitCancel" @close-button="onSubmitCloseBtnClick" />
+        <!-- Look into KeepAlive component -->
+        <SubmitSidebar :spotLatLng="submitPos" @cancel-submit="onSubmitCancel" @close-button="onSubmitCloseBtnClick" />
       </div>
 
       <div class="map" :style="{ width: mapWidth }">
         <Suspense>
-          <!-- Async component rendered once awaits are finished -->
-          <HomeMap :showSubmitMarker="showSubmitMarker" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitClick"/>
+          <!-- Async component rendered once awaits are resolved -->
+          <HomeMap :showSubmitMarker="showSubmitMarker" @map-click="onSubmitClick" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitClick"/>
 
           <!-- Fallback component to render while waiting -->
           <template #fallback>

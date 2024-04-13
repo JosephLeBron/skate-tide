@@ -4,7 +4,7 @@ import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map
 import axios from 'axios'
 
 defineProps(['showSubmitMarker'])
-const emit = defineEmits(['marker-click', 'submit-click', 'submit-drag'])
+const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
@@ -27,7 +27,7 @@ const dbSpots = await axios
     .catch(error => console.log("Error getting spots: " + error))
 
 function convertSpots(spotArr) {
-  // Convert each row from pins table to simpler objects in the format we were already using for spots.
+  // Convert each spot in spotArr to simpler objects in the format we were already using for spots.
   const newSpots = []
   for (let i=0; i < spotArr.length; i++) {
     const spot = spotArr[i]
@@ -53,7 +53,7 @@ function createPin(name, lat, lon, rating, picture, difficulty) {
   axios.post('http://localhost:8000/pin/api/create-pin',
       { name, lat, lon, rating, picture, difficulty }
     )
-    .then( response => {
+    .then(
       spots.value.push({
         name: name,
         pos: { lat: lat, lng: lon },
@@ -62,7 +62,7 @@ function createPin(name, lat, lon, rating, picture, difficulty) {
         rating: rating,
         show: true
       })
-    })
+    )
     .catch(error => console.log(error))
 }
 
@@ -70,11 +70,12 @@ const submitPos = ref(null)
 // Look into vue KeepAlive for submit sidebar?
 
 function handleMapClick(event) {
-  emit('submit-click', event.latLng)
+  emit('map-click', event.latLng)
   submitPos.value = event.latLng
 }
 function handleSubmitClick(event) {
   emit('submit-click', event.latLng)
+  submitPos.value = event.latLng
 }
 function updateSubmitPos(event) {
   emit('submit-drag', event.latLng)

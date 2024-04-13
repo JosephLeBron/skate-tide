@@ -1,5 +1,21 @@
 <script setup>
-defineProps(['spotObject'])
+import { ref, defineProps } from 'vue'
+const props = defineProps(['spotLatLng'])
+
+// This should exist in HomeView bound to a spot property of this component
+// so that closing the sidebar doesn't destroy input info, but cancel does
+const submitSpot = ref({
+    name: '',
+    // pos: {lat: props.spotPos['lat'], lng: props.spotPos['lng']},
+    img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    difficulty: '',
+    rating: 0,
+})
+
+function updateSpotObject() {
+    console.log(submitSpot)
+}
+
 </script>
 
 <!-- The submit spot object holds input data so that you can click away from it, look
@@ -8,12 +24,16 @@ It's only destroyed when clicking "cancel" on submission form -->
 
 <template>
     <div class="sidebar-container">
-        <img class="sidebar-img" src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=" />
+        <img class="sidebar-img" :src="submitSpot['img']"/>
         <div class="sidebar-contents">
-            <h1>Name input</h1>
-            <h2>Pos: {{ spotObject['pos']['lat'] }}, {{ spotObject['pos']['lng'] }}</h2>
+            <input type="text" v-model="submitSpot['name']" @input="updateSpotObject">
+
+            <h2>Pos: {{ props.spotLatLng.toUrlValue() }}</h2>
+
             <h2>Difficulty input</h2>
+
             <h2>Rating input(?)</h2>
+
             <button @click="$emit('cancel-submit')">Cancel</button>
         </div>
         <button class="close-button" @click="$emit('close-button')">
