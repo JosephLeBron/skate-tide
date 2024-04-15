@@ -91,17 +91,23 @@ function onSubmitCancel() {
   mostRecentClick.value = sidebarMode.VIEW
   resetSubmitSpot()
 }
+function onSubmit() {
+  console.log(
+    "Submitting:\n" +
+    JSON.stringify(submitSpot)
+  )
+}
 </script>
 
 <template>
     <div class="homeview-container">
       <div v-if="showSpotSidebar && mostRecentClick === sidebarMode.VIEW" class="sidebar" style="width: 20%"> 
-        <SpotSideBar :spot="viewSpot" @close-button="onSpotCloseBtnClick" />
+        <SpotSideBar :spot="viewSpot" @close="onSpotCloseBtnClick" />
       </div>
 
       <div v-if="showSubmitSidebar && mostRecentClick === sidebarMode.SUBMIT" class="sidebar" style="width: 20%">
         <!-- Look into KeepAlive component -->
-        <SubmitSidebar :submitSpot="submitSpot" @cancel-submit="onSubmitCancel" @close-button="onSubmitCloseBtnClick" />
+        <SubmitSidebar :submitSpot="submitSpot" @close="onSubmitCloseBtnClick" @cancel="onSubmitCancel" @submit="onSubmit"  />
       </div>
 
       <div class="map" :style="{ width: mapWidth }">

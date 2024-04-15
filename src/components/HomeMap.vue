@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
 
-defineProps(['showSubmitMarker'])
+const props = defineProps(['showSubmitMarker'])
 const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
 
 // Using vue3-google-map package to implement the Google Maps API
@@ -211,7 +211,7 @@ const shape = {
     @click="handleMapClick"
   >
     <Marker
-      v-if="showSubmitMarker"
+      v-if="props.showSubmitMarker"
       :options="{
         position: submitPos,
         draggable: true,
@@ -228,10 +228,10 @@ const shape = {
         v-for="(spot, i) in spots"
         :key="i"
         :options="{
-          position: spot['pos'],
+          position: spot.pos,
           icon: markerIcon,
           shape: shape,
-          title: spot['name'],
+          title: spot.name,
           visible: spot.show,
           zIndex: 0
         }"

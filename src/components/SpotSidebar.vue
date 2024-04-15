@@ -1,17 +1,18 @@
 <script setup>
-defineProps(['spot'])
+const props = defineProps(['spot'])
+const emit = defineEmits(['close'])
 </script>
 
 <template>
     <div class="sidebar-container">
-        <img class="sidebar-img" :src="spot['img']" />
+        <img class="sidebar-img" :src="props.spot['img']" />
         <div class="sidebar-contents">
-            <h1>{{ spot['name'] }}</h1>
-            <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
-            <h2>Difficulty: {{ spot['difficulty'] }}</h2>
-            <h2>Rating: {{ spot['rating'] }}</h2>
+            <h1>{{ props.spot['name'] }}</h1>
+            <h2>Pos: {{ props.spot['pos']['lat'] }}, {{ props.spot['pos']['lng'] }}</h2>
+            <h2>Difficulty: {{ props.spot['difficulty'] }}</h2>
+            <h2>Rating: {{ props.spot['rating'] }}</h2>
         </div>
-        <button class="close-button" @click="$emit('close-button')">
+        <button class="close-button" @click="emit('close')">
             < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
         </button>
     </div>
