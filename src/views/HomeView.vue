@@ -13,16 +13,27 @@ const showSubmitMarker = ref(false)
 const viewSpot = ref(null)
 
 // When the user starts submitting a spot, the data is stored in this object.
-// If they cancel, this data isn't lost; resuming submission restores input info.
-const submitSpot = ref({
-  name: '',
-  pos: {lat: 0, lng: 0},
-  img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
-  difficulty: '',
-  rating: 0
-})
+// If they view another spot or collapse the sidebar, this data isn't lost;
+// resuming submission restores input info.
+// If they cancel, the spot is reset to default values.
+const submitSpot = ref(getBlankSubmitSpot())
+
+function getBlankSubmitSpot() {
+  return {
+    name: '',
+    pos: {lat: 0, lng: 0},
+    img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+    difficulty: '',
+    rating: 0
+  }
+}
+function resetSubmitSpot() {
+  // Reset submit spot to default values
+  submitSpot.value = getBlankSubmitSpot()
+}
 
 const sidebarMode = {
+  // Enum for which kind of sidebar to display
   VIEW: 0,
   SUBMIT: 1
 }
@@ -56,20 +67,29 @@ function onSubmitClick(latLng) {
   // if (!showSubmitMarker.value) {
     // Showing sidebar either for the first time or resuming after cancel
   // }
-  showSubmitSidebar.value = true
-  showSubmitMarker.value = true
-  mostRecentClick.value = sidebarMode.SUBMIT
   submitSpot.value['pos'] = {
     // Round LatLng values to 6 decimal places
     lat: latLng.lat().toFixed(6),
     lng: latLng.lng().toFixed(6)
   }
+  showSubmitSidebar.value = true
+  showSubmitMarker.value = true
+  mostRecentClick.value = sidebarMode.SUBMIT
+}
+function onSubmitDrag(latLng) {
+  // If no sidebar is showing, don't automatically show when dragging event starts.
+  // This makes the marker location jump. If no sidebar is showing when drag starts,
+  // the drag-end event (treated like a marker click) triggers it to display.
+  if (showSpotSidebar.value || showSubmitSidebar.value) {
+    onSubmitClick(latLng)
+  }
 }
 function onSubmitCancel() {
-  // Submit cancel button
+  // Submit cancel button pressed
   showSubmitSidebar.value = false
   showSubmitMarker.value = false
   mostRecentClick.value = sidebarMode.VIEW
+  resetSubmitSpot()
 }
 </script>
 
@@ -87,7 +107,7 @@ function onSubmitCancel() {
       <div class="map" :style="{ width: mapWidth }">
         <Suspense>
           <!-- Async component rendered once awaits are resolved -->
-          <HomeMap :showSubmitMarker="showSubmitMarker" @map-click="onSubmitClick" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitClick"/>
+          <HomeMap :showSubmitMarker="showSubmitMarker" @map-click="onSubmitClick" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitDrag"/>
 
           <!-- Fallback component to render while waiting -->
           <template #fallback>

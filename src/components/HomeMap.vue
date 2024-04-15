@@ -44,6 +44,7 @@ function convertSpots(spotArr) {
   return newSpots
 }
 
+// Reactive array to store spots pulled from database
 const spots = ref([])
 onMounted(() => {
   // Assign database spots array to reactive spots array on mount
@@ -218,7 +219,7 @@ const shape = {
       }"
       @click="handleSubmitClick"
       @drag="handleSubmitDrag"
-      @dragend="handleSubmitDrag"
+      @dragend="handleSubmitClick"
     />
 
     <!-- MarkerCluster -->

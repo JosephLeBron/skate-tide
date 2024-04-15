@@ -1,25 +1,12 @@
 <script setup>
-import { ref } from 'vue'
 const props = defineProps(['submitSpot'])
-
-// This should exist in HomeView bound to a spot property of this component
-// so that closing the sidebar doesn't destroy input info, but cancel does
-
-function updateSpotObject() {
-    console.log(props.submitSpot)
-}
-
 </script>
-
-<!-- The submit spot object holds input data so that you can click away from it, look
-at other spots, then click on the submit marker again and the information is restored.
-It's only destroyed when clicking "cancel" on submission form -->
 
 <template>
     <div class="sidebar-container">
         <img class="sidebar-img" :src="submitSpot['img']"/>
         <div class="sidebar-contents">
-            <input type="text" v-model="submitSpot['name']" @input="updateSpotObject">
+            <input type="text" placeholder="Name" v-model="submitSpot['name']" @input="printSpotObject">
 
             <h2>Pos: {{ props.submitSpot['pos']['lat'] }}, {{ props.submitSpot['pos']['lng'] }}</h2>
 
