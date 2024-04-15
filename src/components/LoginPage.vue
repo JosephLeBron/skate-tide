@@ -83,19 +83,20 @@ export default {
       this.invalidLogin = true;
       alert('Invalid  email or password, Please try again.');
     } // Error handling
-  },
-  // moves to the create account page
-  createAccount() {
-    this.$router.push({ name: 'CreateAccount' });
-  },
-  // clears the password
-  clearPassword() {
-    this.password = '';
-  },
-  validateEmail(email){
-    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);    
+    },
+    // moves to the create account page
+    createAccount() {
+      this.$router.push({ name: 'CreateAccount' });
+    },
+    // clears the password
+    clearPassword() {
+      this.password = '';
+    },
+    validateEmail(email){
+      return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);    
+    }
   }
-}
+};
 </script>
 
 <style scoped>
