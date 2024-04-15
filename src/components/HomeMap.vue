@@ -11,8 +11,8 @@ const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-d
 
 // Hardcode spots (for now), then convert database spots
 function hardcodeSpots() {
-// Inserts hard-coded spots into database if they don't already exist.
-// Mostly for debugging, this will change or be removed before deployment.
+  // Inserts hard-coded spots into database if they don't already exist.
+  // Mostly for debugging, this will change or be removed before deployment.
   axios.post('http://localhost:8000/map/api/hardcode-pins')
     .catch(error => console.log(error))
 }
@@ -25,6 +25,7 @@ const dbSpots = await axios
       return convertSpots(response.data)
     })
     .catch(error => console.log("Error getting spots: " + error))
+;
 
 function convertSpots(spotArr) {
   // Convert each spot in spotArr to simpler objects in the format we were already using for spots.
@@ -67,18 +68,21 @@ function createPin(name, lat, lon, rating, picture, difficulty) {
 }
 
 const submitPos = ref(null)
-// Look into vue KeepAlive for submit sidebar?
 
 function handleMapClick(event) {
+  // console.log("mapRef: " + mapRef.value)
   emit('map-click', event.latLng)
-  submitPos.value = event.latLng
+  updateSubmitPos(event)
 }
 function handleSubmitClick(event) {
   emit('submit-click', event.latLng)
-  submitPos.value = event.latLng
+  updateSubmitPos(event)
+}
+function handleSubmitDrag(event) {
+  emit('submit-drag', event.latLng)
+  updateSubmitPos(event)
 }
 function updateSubmitPos(event) {
-  emit('submit-drag', event.latLng)
   submitPos.value = event.latLng
 }
 
@@ -149,6 +153,13 @@ function filterSpots(withEnable = false) {
 // Map reference + setting styles
 const mapRef = ref(null)
 const center = { lat: 34.210249, lng: -77.887004 } // Map centered on wilmington
+// Region to restrict map panning
+const restrictionBounds = {
+  north: center['lat'] + 0.3,
+  south: center['lat'] - 0.3,
+  east: center['lng'] + 0.3,
+  west: center['lng'] - 0.3
+}
 const mapStyles = [
   {
     // Disable points of interest, assign this to a custom toggle in the future?
@@ -192,7 +203,9 @@ const shape = {
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
     style="width: 100%; height: 100%"
     :center="center"
+    :restriction="{latLngBounds: restrictionBounds}"
     :zoom="13"
+    :minZoom="11"
     :styles="mapStyles"
     @click="handleMapClick"
   >
@@ -204,7 +217,8 @@ const shape = {
         zIndex: 1
       }"
       @click="handleSubmitClick"
-      @dragend="updateSubmitPos"
+      @drag="handleSubmitDrag"
+      @dragend="handleSubmitDrag"
     />
 
     <!-- MarkerCluster -->
