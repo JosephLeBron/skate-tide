@@ -1,13 +1,15 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
 import axios from 'axios'
+
+const emit = defineEmits(['marker-click', 'handleMapClick'])
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
 const debug = ref(false) // Displays error messages on screen when true (set manually)
-const spots = ref([]) // Stores an array of spot objects created from database query
+const spots = reactive([]) // Stores an array of spot objects created from database query
 
 // Store axios post response errors from service API calls
 const getError = ref(null)
@@ -22,10 +24,10 @@ async function getSpots() {
     .post('http://localhost:8000/map/api/get-pins') // API call
     .then((response) => {
       // Executed on successful response
-      spots.value = []
+      spots.length = 0
       // Convert each row from pins table to simpler objects in the format we were already using for spots.
       response.data.forEach(element => {
-        spots.value.push({
+        spots.push({
           name: element.name,
           pos: { lat: element.lat, lng: element.lon },
           img: element.picture,
@@ -37,8 +39,6 @@ async function getSpots() {
     })
     .catch(error => getError.value = error) // Store message on error
 }
-
-
 
 async function createPin(name, lat, lon, rating, picture, difficulty) {
   setError.value = null
@@ -64,7 +64,7 @@ async function handleMapClick(event) {
     createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
       .then(() => {
         // Add the newly created pin to the map
-        spots.value.push({
+        spots.push({
           name: name,
           pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
           rating: rating,
@@ -75,9 +75,6 @@ async function handleMapClick(event) {
       .catch(error => setError.value = error)
   }
 }
-
-
-
 
 async function populateSpots() {
   // Inserts hard-coded spots into database if they don't already exist.
@@ -90,17 +87,14 @@ async function populateSpots() {
 populateSpots()
 getSpots()
 
-const showFilter = ref(false)
-function toggleFilter() {
-  showFilter.value = !showFilter.value
-}
+const showFilterMenu = ref(false)
+const useFilter = ref(false)
 const FilterOptions = {
   DIFF_BEGINNER: "Beginner",
   DIFF_EASY: "Easy",
   DIFF_MEDIUM: "Medium",
   DIFF_HARD: "Hard",
-  DIFF_EXPERT: "Expert",
-  DIFF_OPTION_COUNT: 5  // Keeps count of difficulty options. Update if adding/removing any
+  DIFF_EXPERT: "Expert"
 }
 const filter = ref({
   name: "",
@@ -108,6 +102,17 @@ const filter = ref({
   ratingMin: 1
 })
 
+function toggleFilter() {
+  useFilter.value = !useFilter.value
+  if (useFilter.value) {
+    filterSpots()
+  } else {
+    getSpots()
+  }
+}
+function toggleFilterMenu() {
+  showFilterMenu.value = !showFilterMenu.value
+}
 function filterDifficulty(difficulty) {
   if (difficulty) {
     if (filter.value.showDifficulty.includes(difficulty)) {
@@ -122,8 +127,9 @@ function filterDifficulty(difficulty) {
   filterSpots()
 }
 function filterSpots() {
-  for (let i = 0; i < FilterOptions.DIFF_OPTION_COUNT; i++) {
-    const spot = spots.value[i];
+  useFilter.value = true
+  for (let i = 0; i < spots.length; i++) {
+    const spot = spots[i];
     if (
       filter.value.showDifficulty.includes(spot.difficulty) 
       && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
@@ -200,23 +206,41 @@ const shape = {
           title: spot['name'],
           visible: spot.show
         }"
-        @click="$emit('marker-click', spots[i])"
+        @click="emit('marker-click', spots[i])"
       />
     </MarkerCluster>
     <CustomControl position="RIGHT_TOP">
-      <button class="filter-btn" @click="toggleFilter">▼</button>
+      <button class="filter-btn" @click="toggleFilterMenu">▼</button>
     </CustomControl>
-    <CustomControl v-if="showFilter" position="RIGHT_TOP">
+    <CustomControl v-if="showFilterMenu" position="RIGHT_TOP">
       <div class="filter-menu">
         <div class="filter-wrapper">
+          <div style="display: flex;">
+            <div class="filter-header" style="flex: 1">Filter:</div>
+            <input type="checkbox" id="toggleFilterBox" v-model="useFilter" @click="toggleFilter" style="height: 70%; flex: auto; align-self: center;">
+            <span class="filter-item" style="flex: 1; align-self: center; color: #333;">
+              <p v-if="useFilter">On</p>
+              <p v-else>Off</p>
+            </span>
+          </div>
+
+          <hr>
+          
           <div class="filter-header">Name</div>
           <input type="text" v-model="filter.name" @input="filterSpots" placeholder="Name" style="width: 100%; margin: auto">
 
           <div class="filter-header">Rating</div>
-          <span class="filter-item">
-            <!-- <label for="ratingNum"> Rating</label> -->
+
+          <div style="display: flex;">
+            <div class="filter-item" style="flex: initial; align-self: center;">≥&nbsp;</div>
+            <span class="filter-item" style="flex: auto; align-self: center;">
+              <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
+            </span>
+          </div>
+
+          <!-- <span class="filter-item">
             <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
-          </span>
+          </span> -->
 
           <div class="filter-header">Difficulty</div>
           <span class="filter-item">
@@ -256,20 +280,23 @@ const shape = {
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
 
-
 .filter-header {
-  margin-bottom: -5px;
+  flex: 1;
+  /* margin-bottom: -5px; */
   text-decoration: underline;
   font-size: 20px;
 }
 
 .filter-item {
+  flex: 1;
   font-size: 16px;
-  height: 100%;
+  /* height: 100%; */
 }
 
 .filter-wrapper {
-  display: grid;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2px;
   margin: 10px;
   height: calc(100% - 20px);
 }
