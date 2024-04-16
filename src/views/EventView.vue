@@ -14,10 +14,11 @@
       <ul class="event-list">
         <li v-for="(event, index) in events" :key="index" class="event-item">
           <p><strong>Title:</strong> {{ event.eventID }}</p>
+          <p><strong>Pin:</strong> {{ event.pinname }}</p>
           <p><strong>Date:</strong> {{ event.date }}</p>
           <p><strong>Time:</strong> {{ event.time }}</p>
           <p><strong>Description:</strong> {{ event.description }}</p>
-        </li>
+        </li> 
       </ul>
     </div>
   </div>
@@ -40,6 +41,7 @@ async function getEvents() {
     const response = await axios.post('http://localhost:8000/event/api/get-pins')
     events.value = response.data.map(event => ({
       eventID: event.eventID,
+      pinname: event.pinname,
       date: event.date,
       time: event.time,
       description: event.description
@@ -49,19 +51,6 @@ async function getEvents() {
   }
 }
 getEvents()
-
-async function createPin(eventID, date, time, description) {
-  setError.value = null
-  try {
-    const response = await axios.post('http://localhost:8000/event/api/create-pin', {
-      eventID, date, time, description
-    });
-    return response.data;
-  } catch (error) {
-    setError.value = error;
-    throw error;
-  }
-}
 
 </script>
 
@@ -91,59 +80,5 @@ async function createPin(eventID, date, time, description) {
   color: #fff;
 }
 
-.toggle-button {
-  background-color: gold;
-  color: teal;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.toggle-button:hover {
-  background-color: #ffd700; 
-}
-
-.create-event-form {
-  display: none;
-  margin-top: 20px;
-}
-
-.create-event-form.show {
-  display: block;
-}
-
-.create-event-form h2 {
-  color: gold;
-}
-
-.create-event-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.create-event-form input[type="text"],
-.create-event-form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #fff;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.create-event-form button {
-  background-color: gold;
-  color: teal;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.create-event-form button:hover {
-  background-color: #ffd700;
-}
 </style>
 

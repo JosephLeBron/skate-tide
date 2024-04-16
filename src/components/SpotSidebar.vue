@@ -1,5 +1,6 @@
 <script setup>
 defineProps(['spot'])
+
 </script>
 
 <template>
@@ -8,11 +9,13 @@ defineProps(['spot'])
         <div class="sidebar-contents">
             <h1>{{ spot['name'] }}</h1>
             <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
+            <button>Create Event For This Pin</button>
+            <h4>Create New Event</h4>
         </div>
-        <button class="close-button" @click="$emit('close-button')">
-            < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
-        </button>
     </div>
+    <button class="close-button" @click="$emit('close-button')">
+            < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
+    </button>
 </template>
 
 <style>

@@ -28,6 +28,7 @@ const createTables = () =>{
         const tableEvents = `
             CREATE TABLE IF NOT EXISTS events (
                 eventID STRING PRIMARY KEY,
+                pinname STRING NOT NULL,
                 date STRING NOT NULL,
                 time INTEGER NOT NULL,
                 description STRING NOT NULL
@@ -64,25 +65,28 @@ const createTables = () =>{
             const events = [
                 {
                     eventID: 'event1',
+                    pinname: 'College & Oleander',
                     date: '2024-04-10',
                     time: 1800,
                     description: 'Event 1 description here'
                 },
                 {
                     eventID: 'event2',
+                    pinname: 'UNCW',
                     date: '2024-04-15',
                     time: 1400,
                     description: 'Event 2 description here'
                 },
                 {
                     eventID: 'event3',
+                    pinname: 'Wrightsville',
                     date: '2024-04-20',
                     time: 1600,
                     description: 'Event 3 description here'
                 }
             ];
 
-            const insertEventStmt = db.prepare('INSERT INTO events (eventID, date, time, description) VALUES (@eventID, @date, @time, @description)');
+            const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description) VALUES (@eventID, @pinname, @date, @time, @description)');
 
             db.transaction(() => {
                 for (const event of events) {
