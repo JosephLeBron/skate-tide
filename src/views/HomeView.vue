@@ -5,6 +5,7 @@ import Pin from '../components/Pin.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
 import SubmitSidebar from '../components/SubmitSidebar.vue'
 
+const mapComponent = ref(null)
 const showSpotSidebar = ref(false)
 const showSubmitSidebar = ref(false)
 const showSubmitMarker = ref(false)
@@ -20,11 +21,12 @@ const submitSpot = ref(getBlankSubmitSpot())
 
 function getBlankSubmitSpot() {
   return {
-    name: '',
+    name: "",
     pos: {lat: 0, lng: 0},
-    img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
-    difficulty: '',
-    rating: 0
+    img: "",
+    difficulty: "",
+    rating: 0,
+    displayPos: ""
   }
 }
 function resetSubmitSpot() {
@@ -67,11 +69,12 @@ function onSubmitClick(latLng) {
   // if (!showSubmitMarker.value) {
     // Showing sidebar either for the first time or resuming after cancel
   // }
-  submitSpot.value['pos'] = {
+  submitSpot.value.pos = {
     // Round LatLng values to 6 decimal places
-    lat: latLng.lat().toFixed(6),
-    lng: latLng.lng().toFixed(6)
+    lat: latLng.lat(),
+    lng: latLng.lng()
   }
+  submitSpot.value.displayPos = latLng.toUrlValue(6)
   showSubmitSidebar.value = true
   showSubmitMarker.value = true
   mostRecentClick.value = sidebarMode.SUBMIT
@@ -96,6 +99,15 @@ function onSubmit() {
     "Submitting:\n" +
     JSON.stringify(submitSpot)
   )
+  mapComponent.value.createPin(
+    submitSpot.value.name,
+    submitSpot.value.pos.lat,
+    submitSpot.value.pos.lng,
+    submitSpot.value.rating,
+    submitSpot.value.img,
+    submitSpot.value.difficulty
+  )
+  onSubmitCancel()
 }
 </script>
 
@@ -113,7 +125,7 @@ function onSubmit() {
       <div class="map" :style="{ width: mapWidth }">
         <Suspense>
           <!-- Async component rendered once awaits are resolved -->
-          <HomeMap :showSubmitMarker="showSubmitMarker" @map-click="onSubmitClick" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitDrag"/>
+          <HomeMap ref="mapComponent" :showSubmitMarker="showSubmitMarker" @map-click="onSubmitClick" @marker-click="onMarkerClick" @submit-click="onSubmitClick" @submit-drag="onSubmitDrag"/>
 
           <!-- Fallback component to render while waiting -->
           <template #fallback>

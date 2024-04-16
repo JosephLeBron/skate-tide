@@ -9,6 +9,24 @@ const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-d
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
+function createPin(name, lat, lon, rating, picture, difficulty) {
+  axios.post('http://localhost:8000/pin/api/create-pin',
+      { name, lat, lon, rating, picture, difficulty }
+    )
+    .then(
+      spots.value.push({
+        name: name,
+        pos: { lat: lat, lng: lon },
+        img: picture,
+        difficulty: difficulty,
+        rating: rating,
+        show: true
+      })
+    )
+    .catch(error => console.log(error))
+}
+defineExpose({createPin})
+
 // Hardcode spots (for now), then convert database spots
 function hardcodeSpots() {
   // Inserts hard-coded spots into database if they don't already exist.
@@ -50,23 +68,6 @@ onMounted(() => {
   // Assign database spots array to reactive spots array on mount
   spots.value = dbSpots
 })
-
-function createPin(name, lat, lon, rating, picture, difficulty) {
-  axios.post('http://localhost:8000/pin/api/create-pin',
-      { name, lat, lon, rating, picture, difficulty }
-    )
-    .then(
-      spots.value.push({
-        name: name,
-        pos: { lat: lat, lng: lon },
-        img: picture,
-        difficulty: difficulty,
-        rating: rating,
-        show: true
-      })
-    )
-    .catch(error => console.log(error))
-}
 
 const submitPos = ref(null)
 

@@ -9,14 +9,28 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
 
 <template>
     <div class="sidebar-container">
-        <img class="sidebar-img" :src="submitSpot['img']"/>
+        <!-- Img to display before upload -->
+        <img class="sidebar-img" src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=">
+
         <div class="sidebar-contents">
-            <h1>Submit</h1>
+            <h1>Submit a Spot</h1>
             <div class="submission-form-container">
                 <div class="submission-form">
                     <!-- Position header -->
                     <div>
-                        <h3>Pos: {{ props.submitSpot.pos.lat }}, {{ props.submitSpot.pos.lng }}</h3>
+                        <h3>Pos: {{ props.submitSpot.displayPos }}</h3>
+                    </div>
+                    
+                    <!-- Image upload -->
+                    <!-- <div>
+                        <label for="file">Upload an image:</label>
+                        <input type="file" accept="image/*" id="file" name="file" />
+                    </div> -->
+
+                    <!-- Temp: image url input -->
+                    <div>
+                        <label for="img">Image URL:</label>
+                        <input type="text" id="img" v-model="props.submitSpot.img" />
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->
@@ -74,6 +88,9 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
     grid-column: 1;
     grid-row: 1;
     object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-height: 100%;
     background-color: white;
