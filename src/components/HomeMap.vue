@@ -124,7 +124,7 @@ function filterSpots(withEnable = false) {
       const spot = spots.value[i];
       if (
         filter.value.showDifficulty.includes(spot.difficulty) 
-        && String(spot.name).toLowerCase().includes(filter.value.name.toLowerCase())
+        && spot.name.toString().toLowerCase().includes(filter.value.name.toLowerCase())
         && spot.rating >= filter.value.ratingMin
         )
       {
