@@ -1,14 +1,20 @@
 <template>
-    <div>
-      <h1>Testing23546732</h1>
+    <div class="bounty">
+      <BountyPage />
     </div>
   </template>
   
-  <script>
-  export default {
-  }
+  <script setup lang="ts">
+  import Bounty from '../components/Bounty.vue'
+  const components = { Bounty }
   </script>
   
-  <style scoped>
+  <style>
+  .bounty {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   </style>
   
