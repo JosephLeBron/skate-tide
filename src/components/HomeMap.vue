@@ -17,15 +17,7 @@ function createPin(name, desc, lat, lon, rating, picture, difficulty) {
     )
     .then(
       spots.value.push(
-        new MapSpot(
-          name,
-          desc, // Description to be added
-          lat,
-          lon,
-          picture,
-          difficulty,
-          rating
-        )
+        new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
       )
     )
     .catch(error => console.log(error))
@@ -56,15 +48,7 @@ function convertSpots(spotArr) {
   for (let i=0; i < spotArr.length; i++) {
     const spot = spotArr[i]
     newSpots.push(
-      new MapSpot(
-        spot.name,
-        spot.desc,
-        spot.lat,
-        spot.lon,
-        spot.picture,
-        spot.difficulty,
-        spot.rating
-      )
+      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating)
     )
   }
   return newSpots
