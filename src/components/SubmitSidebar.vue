@@ -1,6 +1,7 @@
 <script setup>
-const props = defineProps(['submitSpot'])
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
 const emit = defineEmits(['close', 'submit', 'cancel'])
+
 // TODO:
 // - When navigating away from the homepage while submit is in progress, ask for confirmation
 // - Image upload
@@ -18,7 +19,7 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
                 <div class="submission-form">
                     <!-- Position header -->
                     <div>
-                        <h3>Pos: {{ props.submitSpot.displayPos }}</h3>
+                        <h3>Pos: {{ activeSubmitSpot.getDisplayPos() }}</h3>
                     </div>
                     
                     <!-- Image upload -->
@@ -30,13 +31,13 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
                     <!-- Temp: image url input -->
                     <div>
                         <label for="img">Image URL:</label>
-                        <input type="text" id="img" v-model="props.submitSpot.img" />
+                        <input type="text" id="img" v-model="activeSubmitSpot.img" />
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->
                     <div>
                         <label for="difficulty">Difficulty:</label>
-                        <select id="difficulty" v-model="props.submitSpot.difficulty">
+                        <select id="difficulty" v-model="activeSubmitSpot.difficulty">
                             <option value="Beginner">Beginner</option>
                             <option value="Easy">Easy</option>
                             <option value="Medium">Medium</option>
@@ -48,19 +49,19 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
                     <!-- Title -->
                     <div>
                         <label for="title">Title:</label>
-                        <input type="text" id="title" v-model="props.submitSpot.name" />
+                        <input type="text" id="title" v-model="activeSubmitSpot.name" />
                     </div>
             
                     <!-- Description -->
                     <div>
                         <label for="description">Description:</label>
-                        <textarea id="description" v-model="props.submitSpot.description" style="resize:vertical"></textarea>
+                        <textarea id="description" v-model="activeSubmitSpot.description" style="resize:vertical"></textarea>
                     </div>
             
                     <!-- Cancel and Submit buttons -->
                     <div class="button-container">
-                        <button @click="emit('cancel')">Cancel</button>
-                        <button @click="emit('submit')">Submit</button>
+                        <button class="submit-button" @click="emit('cancel')">Cancel</button>
+                        <button class="submit-button" @click="emit('submit')">Submit</button>
                     </div>
                 </div>
             </div>
@@ -142,7 +143,7 @@ select {
     justify-content: space-between;
 }
 
-button {
+.submit-button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -150,10 +151,10 @@ button {
     color: #fff;
     cursor: pointer;
 }
-button:hover {
+.submit-button:hover {
     background-color: #0056b3;
 }
-button:active {
+.submit-button:active {
     background-color: #0056b3;
     transform: translateY(1px);
 }

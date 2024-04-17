@@ -7,10 +7,21 @@ const emit = defineEmits(['close'])
     <div class="sidebar-container">
         <img class="sidebar-img" :src="props.spot['img']" />
         <div class="sidebar-contents">
-            <h1>{{ props.spot['name'] }}</h1>
-            <h2>Pos: {{ props.spot['pos']['lat'] }}, {{ props.spot['pos']['lng'] }}</h2>
-            <h2>Difficulty: {{ props.spot['difficulty'] }}</h2>
-            <h2>Rating: {{ props.spot['rating'] }}</h2>
+            <!-- Name -->
+            <h1>{{ props.spot.name || "Null" }}</h1>
+
+            <!-- Description -->
+            <h2 v-if="props.spot.description"> {{ props.spot.description }}</h2>
+            <h2 v-else><i>No description</i></h2>
+
+            <!-- Position -->
+            <h2>Pos: {{ props.spot.getDisplayPos() || "Null" }}</h2>
+
+            <!-- Difficulty -->
+            <h2>Difficulty: {{ props.spot.difficulty || "Null" }}</h2>
+
+            <!-- Rating -->
+            <h2>Rating: {{ props.spot.rating === -1 ? "Unrated" : props.spot.rating }}</h2>
         </div>
         <button class="close-button" @click="emit('close')">
             < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->

@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
+import { MapSpot } from './Spot';
 import axios from 'axios'
 
 const props = defineProps(['showSubmitMarker'])
@@ -9,19 +11,22 @@ const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-d
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
-function createPin(name, lat, lon, rating, picture, difficulty) {
+function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   axios.post('http://localhost:8000/pin/api/create-pin',
-      { name, lat, lon, rating, picture, difficulty }
+      { name, desc, lat, lon, rating, picture, difficulty }
     )
     .then(
-      spots.value.push({
-        name: name,
-        pos: { lat: lat, lng: lon },
-        img: picture,
-        difficulty: difficulty,
-        rating: rating,
-        show: true
-      })
+      spots.value.push(
+        new MapSpot(
+          name,
+          desc, // Description to be added
+          lat,
+          lon,
+          picture,
+          difficulty,
+          rating
+        )
+      )
     )
     .catch(error => console.log(error))
 }
@@ -46,18 +51,21 @@ const dbSpots = await axios
 ;
 
 function convertSpots(spotArr) {
-  // Convert each spot in spotArr to simpler objects in the format we were already using for spots.
+  // Convert each spot from database to a Spot object.
   const newSpots = []
   for (let i=0; i < spotArr.length; i++) {
     const spot = spotArr[i]
-    newSpots.push({
-      name: spot.name,
-      pos: { lat: spot.lat, lng: spot.lon },
-      img: spot.picture,
-      difficulty: spot.difficulty,
-      rating: spot.rating,
-      show: true
-    })
+    newSpots.push(
+      new MapSpot(
+        spot.name,
+        spot.desc,
+        spot.lat,
+        spot.lon,
+        spot.picture,
+        spot.difficulty,
+        spot.rating
+      )
+    )
   }
   return newSpots
 }
@@ -68,8 +76,6 @@ onMounted(() => {
   // Assign database spots array to reactive spots array on mount
   spots.value = dbSpots
 })
-
-const submitPos = ref(null)
 
 function handleMapClick(event) {
   // console.log("mapRef: " + mapRef.value)
@@ -85,7 +91,7 @@ function handleSubmitDrag(event) {
   updateSubmitPos(event)
 }
 function updateSubmitPos(event) {
-  submitPos.value = event.latLng
+  activeSubmitSpot.setPosFromLatLng(event.latLng)
 }
 
 const showFilterMenu = ref(false)
@@ -100,7 +106,7 @@ const FilterOptions = {
 const filter = ref({
   name: "",
   showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
-  ratingMin: 1
+  ratingMin: -1
 })
 
 function toggleFilter() {
@@ -134,20 +140,20 @@ function filterSpots(withEnable = false) {
       const spot = spots.value[i];
       if (
         filter.value.showDifficulty.includes(spot.difficulty) 
-        && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
+        && String(spot.name).toLowerCase().includes(filter.value.name.toLowerCase())
         && spot.rating >= filter.value.ratingMin
         )
       {
-        spot.show = true
+        spot.show()
       } else {
-        spot.show = false
+        spot.hide()
       }
     }
   } else {
     // No filter: show all spots
     for (let i = 0; i < spots.value.length; i++) {
       const spot = spots.value[i];
-      spot.show = true
+      spot.show()
     }
   }
 }
@@ -211,10 +217,11 @@ const shape = {
     :styles="mapStyles"
     @click="handleMapClick"
   >
+    <!-- Submission marker -->
     <Marker
       v-if="props.showSubmitMarker"
       :options="{
-        position: submitPos,
+        position: activeSubmitSpot.pos(),
         draggable: true,
         zIndex: 1
       }"
@@ -223,29 +230,34 @@ const shape = {
       @dragend="handleSubmitClick"
     />
 
-    <!-- MarkerCluster -->
+    <!-- MarkerCluster: Viewable spots -->
     <MarkerCluster>
       <Marker
         v-for="(spot, i) in spots"
         :key="i"
         :options="{
-          position: spot.pos,
+          position: spot.pos(),
           icon: markerIcon,
           shape: shape,
-          title: spot.name,
-          visible: spot.show,
+          title: spot.name.toString(),
+          visible: spot.visible,
           zIndex: 0
         }"
         @click="emit('marker-click', spots[i])"
       />
     </MarkerCluster>
+
+    <!-- Button to expand filter menu -->
     <CustomControl position="RIGHT_TOP">
       <button class="filter-btn" @click="toggleFilterMenu">▼</button>
     </CustomControl>
+
+    <!-- Filter menu -->
     <CustomControl v-if="showFilterMenu" position="RIGHT_TOP">
       <div class="filter-menu">
         <div class="filter-wrapper">
           <div style="display: flex;">
+            <!-- Header: enable/disable filter -->
             <div class="filter-header" style="flex: 1">Filter:</div>
             <input type="checkbox" id="toggleFilterBox" v-model="useFilter" @click="toggleFilter" style="height: 70%; flex: auto; align-self: center;">
             <span class="filter-item" style="flex: 1; align-self: center; color: #333;">
@@ -255,17 +267,20 @@ const shape = {
           </div>
           <hr>
 
+          <!-- Filter by name input -->
           <div class="filter-header">Name</div>
           <input type="text" v-model="filter.name" @input="filterSpots(true)" placeholder="Name" style="width: 100%; margin: auto">
 
+          <!-- Filter by rating input -->
           <div class="filter-header">Rating</div>
           <div style="display: flex;">
             <div class="filter-item" style="flex: initial; align-self: center;">≥&nbsp;</div>
             <span class="filter-item" style="flex: auto; align-self: center;">
-              <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
+              <input type="number" v-model="filter.ratingMin" min="-1" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
             </span>
           </div>
 
+          <!-- Filter by difficulty input -->
           <div class="filter-header">Difficulty</div>
           <span class="filter-item">
             <input type="checkbox" id="beginnerBox" checked @click="filterDifficulty(FilterOptions.DIFF_BEGINNER)">

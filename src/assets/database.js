@@ -9,6 +9,7 @@ const createTables = () =>{
         const tablePins = `
             CREATE TABLE IF NOT EXISTS pins (
                 name STRING PRIMARY KEY,
+                desc STRING NOT NULL,
                 lat DECIMAL NOT NULL,
                 lon DECIMAL NOT NULL,
                 rating INTEGER NOT NULL,

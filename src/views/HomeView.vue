@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
 import HomeMap from '../components/HomeMap.vue';
 import Pin from '../components/Pin.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
@@ -13,26 +14,9 @@ const showSubmitMarker = ref(false)
 // When the user clicks a marker to view a spot, it's assigned to this object
 const viewSpot = ref(null)
 
-// When the user starts submitting a spot, the data is stored in this object.
 // If they view another spot or collapse the sidebar, this data isn't lost;
 // resuming submission restores input info.
 // If they cancel, the spot is reset to default values.
-const submitSpot = ref(getBlankSubmitSpot())
-
-function getBlankSubmitSpot() {
-  return {
-    name: "",
-    pos: {lat: 0, lng: 0},
-    img: "",
-    difficulty: "",
-    rating: 0,
-    displayPos: ""
-  }
-}
-function resetSubmitSpot() {
-  // Reset submit spot to default values
-  submitSpot.value = getBlankSubmitSpot()
-}
 
 const sidebarMode = {
   // Enum for which kind of sidebar to display
@@ -69,12 +53,7 @@ function onSubmitClick(latLng) {
   // if (!showSubmitMarker.value) {
     // Showing sidebar either for the first time or resuming after cancel
   // }
-  submitSpot.value.pos = {
-    // Round LatLng values to 6 decimal places
-    lat: latLng.lat(),
-    lng: latLng.lng()
-  }
-  submitSpot.value.displayPos = latLng.toUrlValue(6)
+  activeSubmitSpot.setPosFromLatLng(latLng)
   showSubmitSidebar.value = true
   showSubmitMarker.value = true
   mostRecentClick.value = sidebarMode.SUBMIT
@@ -92,20 +71,21 @@ function onSubmitCancel() {
   showSubmitSidebar.value = false
   showSubmitMarker.value = false
   mostRecentClick.value = sidebarMode.VIEW
-  resetSubmitSpot()
+  activeSubmitSpot.reset()
 }
 function onSubmit() {
   console.log(
-    "Submitting:\n" +
-    JSON.stringify(submitSpot)
+    "Submitting spot:\n" +
+    activeSubmitSpot.getLogString()
   )
   mapComponent.value.createPin(
-    submitSpot.value.name,
-    submitSpot.value.pos.lat,
-    submitSpot.value.pos.lng,
-    submitSpot.value.rating,
-    submitSpot.value.img,
-    submitSpot.value.difficulty
+    activeSubmitSpot.name,
+    activeSubmitSpot.description,
+    activeSubmitSpot.lat,
+    activeSubmitSpot.lng,
+    activeSubmitSpot.rating,
+    activeSubmitSpot.img,
+    activeSubmitSpot.difficulty
   )
   onSubmitCancel()
 }
@@ -119,7 +99,7 @@ function onSubmit() {
 
       <div v-if="showSubmitSidebar && mostRecentClick === sidebarMode.SUBMIT" class="sidebar" style="width: 20%">
         <!-- Look into KeepAlive component -->
-        <SubmitSidebar :submitSpot="submitSpot" @close="onSubmitCloseBtnClick" @cancel="onSubmitCancel" @submit="onSubmit"  />
+        <SubmitSidebar @close="onSubmitCloseBtnClick" @cancel="onSubmitCancel" @submit="onSubmit"  />
       </div>
 
       <div class="map" :style="{ width: mapWidth }">
