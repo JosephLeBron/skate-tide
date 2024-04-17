@@ -1,10 +1,8 @@
 import Database from 'better-sqlite3';
-// const Database = require('better-sqlite3');
-const db = new Database('database.db');
-// Using better-sqlite3 package to implement the Database API
 
-//create table
-const createTables = () =>{
+const db = new Database('database.db');
+
+const createTables = () => {
     try {
         const tablePins = `
             CREATE TABLE IF NOT EXISTS pins (
@@ -15,7 +13,7 @@ const createTables = () =>{
                 picture BLOB NOT NULL,
                 difficulty STRING NOT NULL
             );
-            CREATE UNIQUE INDEX IF NOT EXISTS coordinates On pins (lat, lon)
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates ON pins (lat, lon)
         `;
         const tableUsers = `
             CREATE TABLE IF NOT EXISTS users (
@@ -51,16 +49,23 @@ const createTables = () =>{
                 eventID STRING NOT NULL REFERENCES events
             )
         `;
-        // execute query
-    db.exec(tablePins);
-    db.exec(tableUsers);
-    db.exec(tableEvents); 
-    db.exec(tableCreateEvent); 
-    db.exec(tableInteracts); 
-    db.exec(tableSignUp); 
-    console.log("Tables created.");
-    const insertEvents = () => {
-        try {
+
+        const tableTeamScores = `
+            CREATE TABLE IF NOT EXISTS team_scores (
+                team_name STRING PRIMARY KEY,
+                score INTEGER NOT NULL DEFAULT 0
+            )
+        `;
+
+        db.exec(tablePins);
+        db.exec(tableUsers);
+        db.exec(tableEvents);
+        db.exec(tableCreateEvent);
+        db.exec(tableInteracts);
+        db.exec(tableSignUp);
+        db.exec(tableTeamScores);
+
+        const insertEvents = () => {
             const events = [
                 {
                     eventID: 'event1',
@@ -91,20 +96,19 @@ const createTables = () =>{
             })();
 
             console.log("Events inserted successfully.");
-        } catch (error) {
-            console.error("Error inserting events: ", error);
-        }
-    };
+        };
 
-    insertEvents();
+        insertEvents();
 
-} catch (error) {
-    console.error("Error creating tables: ", error);
-}    
+    } catch (error) {
+        console.error("Error creating tables: ", error);
+    }
 };
+
 createTables();
 
 export default db;
+
 
 // const insertPin = db.prepare('INSERT INTO pin (name, coordinates, rating, picture, description, difficulty) VALUES (?, ?, ?, ?, ?, ?)');
 // data.forEach((pin) => {
