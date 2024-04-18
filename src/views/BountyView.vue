@@ -1,6 +1,6 @@
 <template>
     <div class="bounty">
-      <BountyPage />
+      <Bounty />
     </div>
   </template>
   
