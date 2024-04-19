@@ -1,6 +1,36 @@
 <script setup>
 defineProps(['spot'])
+import axios from 'axios'
+import { ref } from 'vue'
 
+const setError = ref(null);
+
+async function createEvent(eventID, pinname, date, time, description) {
+  setError.value = null;
+  try {
+    const response = await axios.post('http://localhost:8000/map/api/create-event', {
+      eventID, pinname, date, time, description
+    });
+    return response.data;
+  } catch (error) {
+    setError.value = error;
+    throw error;
+  }
+}
+
+async function CreatingEvent(event) {
+  const eventID = prompt("Enter the event's title:", "e.g.Joe's Skate Meetup");
+  const pinname = prompt("Enter the Pin's Name:", "Use slected pins name here");
+  const date = prompt("Enter the event's date:", "format:DD-MM-YYYY");
+  const time = prompt("Enter the event's time:", "format: 630");
+  const description = prompt("Enter the event's description:", "e.g. Skate meetup at the park");
+  try {
+    await createEvent(eventID, pinname, date, time, description);
+  } catch (error) {
+    console.error('Error creating event:', error);
+    // Handle error if needed
+  }
+}
 </script>
 
 <template>
@@ -9,8 +39,7 @@ defineProps(['spot'])
         <div class="sidebar-contents">
             <h1>{{ spot['name'] }}</h1>
             <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
-            <button>Create Event For This Pin</button>
-            <h4>Create New Event</h4>
+            <button @click="CreatingEvent">Create Event For This Pin</button>
         </div>
     </div>
     <button class="close-button" @click="$emit('close-button')">
