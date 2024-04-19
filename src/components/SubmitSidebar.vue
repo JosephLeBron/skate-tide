@@ -6,12 +6,21 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
 // - When navigating away from the homepage while submit is in progress, ask for confirmation
 // - Image upload
 // - Input validation
+
+const testImg = new Image()
+
+function loadImg() {
+    console.log("Loading img from " + activeSubmitSpot.img) 
+    testImg.src = activeSubmitSpot.img
+}
+
 </script>
 
 <template>
     <div class="sidebar-container">
         <!-- Img to display before upload -->
-        <img class="sidebar-img" src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=">
+        <img class="sidebar-img" v-if="testImg.complete" :src="activeSubmitSpot.img">
+        <img class="sidebar-img" v-else src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=">
 
         <div class="sidebar-contents">
             <h1>Submit a Spot</h1>
@@ -31,7 +40,7 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
                     <!-- Temp: image url input -->
                     <div>
                         <label for="img">Image URL:</label>
-                        <input type="text" id="img" v-model="activeSubmitSpot.img" />
+                        <input type="text" id="img" v-model="activeSubmitSpot.img" @focusout="loadImg" />
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->
