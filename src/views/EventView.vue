@@ -18,6 +18,8 @@
           <p><strong>Date:</strong> {{ event.date }}</p>
           <p><strong>Time:</strong> {{ event.time }}</p>
           <p><strong>Description:</strong> {{ event.description }}</p>
+          <input type="password" v-model="event.deletionPassword" placeholder="Deletion Password">
+          <button @click="deleteEvent(event)">Delete</button>
         </li> 
       </ul>
     </div>
@@ -44,13 +46,28 @@ async function getEvents() {
       pinname: event.pinname,
       date: event.date,
       time: event.time,
-      description: event.description
+      description: event.description,
+      password: event.password
     }))
   } catch (error) {
     getError.value = error
   }
 }
 getEvents()
+
+async function deleteEvent(event) {
+  if (event.deletionPassword === event.password) {
+    try {
+      // Send request to delete event from database
+      await axios.post('http://localhost:8000/event/api/delete-event', { eventID: event.eventID })
+      events.value = events.value.filter(e => e.eventID !== event.eventID)
+    } catch (error) {
+      setError.value = error
+    }
+  } else {
+    setError.value = new Error('Incorrect deletion password')
+  }
+}
 
 </script>
 

@@ -37,12 +37,11 @@ app.post('/api/create-pin', (req, res) => {
 
 app.post('/api/create-event', (req, res) => {
     console.log('Map services -- insert event request: ', req.body);
-    const {eventID, pinname,date, time, description } = req.body;
+    const {eventID, pinname,date, time, description, password } = req.body;
     const pinQuery = `
-        INSERT OR IGNORE INTO events VALUES (?, ?, ?, ?, ?);
+        INSERT OR IGNORE INTO events VALUES (?, ?, ?, ?, ?, ?);
     `;
-    db.prepare(pinQuery).run(eventID, pinname, date, time, description);
-    // NEEDS error handling
+    db.prepare(pinQuery).run(eventID, pinname, date, time, description, password);
     res.status(200).json({ message: 'Event successfully inserted into table'});
 });
 

@@ -5,11 +5,11 @@ import { ref } from 'vue'
 
 const setError = ref(null);
 
-async function createEvent(eventID, pinname, date, time, description) {
+async function createEvent(eventID, pinname, date, time, description, password) {
   setError.value = null;
   try {
     const response = await axios.post('http://localhost:8000/map/api/create-event', {
-      eventID, pinname, date, time, description
+      eventID, pinname, date, time, description, password
     });
     return response.data;
   } catch (error) {
@@ -24,11 +24,11 @@ async function CreatingEvent(event) {
   const date = prompt("Enter the event's date:", "format:DD-MM-YYYY");
   const time = prompt("Enter the event's time:", "format: 630");
   const description = prompt("Enter the event's description:", "e.g. Skate meetup at the park");
+  const password = prompt("Enter an admin password to delete later:", "e.g. password123");
   try {
-    await createEvent(eventID, pinname, date, time, description);
+    await createEvent(eventID, pinname, date, time, description, password);
   } catch (error) {
     console.error('Error creating event:', error);
-    // Handle error if needed
   }
 }
 </script>

@@ -31,7 +31,8 @@ const createTables = () =>{
                 pinname STRING NOT NULL,
                 date STRING NOT NULL,
                 time INTEGER NOT NULL,
-                description STRING NOT NULL
+                description STRING NOT NULL,
+                password STRING NOT NULL
             )
         `;
         const tableCreateEvent = `
@@ -68,25 +69,28 @@ const createTables = () =>{
                     pinname: 'College & Oleander',
                     date: '2024-04-10',
                     time: 1800,
-                    description: 'Event 1 description here'
+                    description: 'Event 1 description here',
+                    password: 'password1'
                 },
                 {
                     eventID: 'event2',
                     pinname: 'UNCW',
                     date: '2024-04-15',
                     time: 1400,
-                    description: 'Event 2 description here'
+                    description: 'Event 2 description here',
+                    password: 'password2'
                 },
                 {
                     eventID: 'event3',
                     pinname: 'Wrightsville',
                     date: '2024-04-20',
                     time: 1600,
-                    description: 'Event 3 description here'
+                    description: 'Event 3 description here',
+                    password: 'password3'
                 }
             ];
 
-            const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description) VALUES (@eventID, @pinname, @date, @time, @description)');
+            const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description, password) VALUES (@eventID, @pinname, @date, @time, @description, @password)');
 
             db.transaction(() => {
                 for (const event of events) {

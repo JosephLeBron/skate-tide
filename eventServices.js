@@ -28,11 +28,25 @@ app.post('/api/create-pin', (req, res) => {
     console.log('Map services -- insert pin request: ', req.body);
     const { eventID, date, time, description } = req.body;
     const pinQuery = `
-        INSERT OR IGNORE INTO eventsn VALUES (?, ?, ?, ?);
+        INSERT OR IGNORE INTO events VALUES (?, ?, ?, ?);
     `;
     db.prepare(pinQuery).run(eventID, date, time, description);
     // NEEDS error handling
     res.status(200).json({ message: 'Pin successfully inserted into table'});
+});
+
+// Handle POST request to delete event
+app.post('/api/delete-event', (req, res) => {
+    console.log('Delete event request:', req.body);
+    const { eventID } = req.body;
+    if (!eventID) {
+        return res.status(400).json({ message: 'Event ID is required' });
+    }
+    const eventQuery = `
+        DELETE FROM events WHERE eventID = ?;
+    `;
+    db.prepare(eventQuery).run(eventID);
+    res.status(200).json({ message: `Event ${eventID} successfully deleted` });
 });
 export default app;
 
