@@ -57,6 +57,41 @@ export default {
       userInfo: {},
     }
   },
+  computed: {
+    passwordRequirements() {
+      return [
+        {
+          name: 'Must contain uppercase letters',
+          predicate: this.password.toLowerCase() !== this.password,
+        },
+        {
+          name: 'Must contain lowercase letters',
+          predicate: this.password.toUpperCase() !== this.password,
+        },
+        {
+          name: 'Must contain numbers',
+          predicate: /\d/.test(this.password),
+        },
+        {
+          name: 'Must contain symbols',
+          predicate: /\W/.test(this.password),
+        },
+        {
+          name: 'Must be at least 8 characters long',
+          predicate: this.password.length >= 8,
+        },
+        {
+          name: 'Must match',
+          predicate: this.password === this.repeatPassword,
+        }
+      ];
+    }
+  },
+  watch: {
+    email(value) {
+      this.validateEmail(value)
+    }
+  },
   methods: {
     async login() { // Method for handling user login
       if (!this.username || !this.password) {
