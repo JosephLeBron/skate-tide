@@ -39,7 +39,7 @@ async function CreatingEvent(event) {
         <div class="sidebar-contents">
             <h1>{{ spot['name'] }}</h1>
             <h2>Pos: {{ spot['pos']['lat'] }}, {{ spot['pos']['lng'] }}</h2>
-            <button @click="CreatingEvent">Create Event For This Pin</button>
+            <button class="create-event-button" @click="CreatingEvent">Create Event For This Pin</button>
         </div>
     </div>
     <button class="close-button" @click="$emit('close-button')">
@@ -48,6 +48,15 @@ async function CreatingEvent(event) {
 </template>
 
 <style>
+.create-event-button {
+    color: yellow;
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px; 
+}
+
 .close-button {
     grid-column: 2;
     grid-row: 1 / 3;

@@ -18,8 +18,8 @@
           <p><strong>Date:</strong> {{ event.date }}</p>
           <p><strong>Time:</strong> {{ event.time }}</p>
           <p><strong>Description:</strong> {{ event.description }}</p>
-          <input type="password" v-model="event.deletionPassword" placeholder="Deletion Password">
-          <button @click="deleteEvent(event)">Delete</button>
+          <input class="admin-password-input"type="password" v-model="event.deletionPassword" placeholder="Admin password">
+          <button class="create-event-button" @click="deleteEvent(event)">Delete</button>
         </li> 
       </ul>
     </div>
@@ -75,6 +75,25 @@ async function deleteEvent(event) {
 
 
 <style scoped>
+.admin-password-input {
+    color: yellow; 
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px; 
+    border-radius: 4px; 
+}
+.admin-password-input::placeholder {
+    color: yellow;
+}
+
+.create-event-button {
+    color: yellow;
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px; 
+}
 /* Main color teal and secondary color gold */
 .main-container {
   font-family: "Poppins", sans-serif;
@@ -82,6 +101,7 @@ async function deleteEvent(event) {
   padding: 20px;
   background-color: teal;
   color: #fff;
+  width: 100%;
 }
 
 .event-list {
