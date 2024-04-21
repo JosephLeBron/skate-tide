@@ -1,5 +1,6 @@
 <script setup>
-import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
+import { ref } from 'vue'
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot'
 const emit = defineEmits(['close', 'submit', 'cancel'])
 
 // TODO:
@@ -7,20 +8,101 @@ const emit = defineEmits(['close', 'submit', 'cancel'])
 // - Image upload
 // - Input validation
 
-const testImg = new Image()
+const defaultImgSource = "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+const errorImgSource = "https://t4.ftcdn.net/jpg/01/28/44/55/360_F_128445579_62dfVMTyJzQhd3cKSnW5JjZHV5nNTrHQ.jpg"
 
-function loadImg() {
-    console.log("Loading img from " + activeSubmitSpot.img) 
-    testImg.src = activeSubmitSpot.img
+const inputImg = ref(defaultImgSource)
+const imgIsValid = ref(false)
+
+if (activeSubmitSpot.img !== "") {
+    loadImg()
 }
 
+const imgErrMsg = ref("")
+const showImgErr = ref(false)
+
+const nameErrMsg = ref("")
+const showNameErr = ref(false)
+
+const descErrMsg = ref("")
+const showDescErr = ref(false)
+
+const diffErrMsg = ref("")
+const showDiffErr = ref(false)
+
+function loadImg() {
+    // Try to load image from input URL in {activeSubmitSpot.img}
+    if (activeSubmitSpot.img === '') {
+        // No input: default img
+        inputImg.value = defaultImgSource
+        return
+    }
+
+    var image = new Image()
+    image.onload = function() {
+        if (this.width > 0) {
+            // Valid input source
+            inputImg.value = activeSubmitSpot.img
+            imgIsValid.value = true
+        }
+    }
+    image.onerror = function() {
+        // Invalid input source
+        inputImg.value = errorImgSource
+        imgIsValid.value = false
+    }
+    image.src = activeSubmitSpot.img
+}
+
+function trySubmit() {
+    // Attempt submit, set error refs where appropriate
+    if (activeSubmitSpot.img === '') {
+        // No image URL input
+        showImgErr.value = true
+        imgErrMsg.value = "Please enter a URL"
+    } else if (!imgIsValid.value) {
+        // Input URL invalid
+        showImgErr.value = true
+        imgErrMsg.value = "Invalid URL"
+    } else {
+        showImgErr.value = false
+    }
+
+    if (activeSubmitSpot.name === '') {
+        // No name input
+        showNameErr.value = true
+        nameErrMsg.value = "Please enter a name"
+    } else {
+        showNameErr.value = false
+    }
+
+    if (activeSubmitSpot.description === '') {
+        // No description input
+        showDescErr.value = true
+        descErrMsg.value = "Please enter description"
+    } else {
+        showDescErr.value = false
+    }
+
+    if (activeSubmitSpot.difficulty === '') {
+        // No difficulty selected
+        showDiffErr.value = true
+        diffErrMsg.value = "Please select a difficulty"
+    } else {
+        showDiffErr.value = false
+    }
+
+    // If no errors, submit
+    if ( !(showImgErr.value || showNameErr.value || showDescErr.value || showDiffErr.value) ) {
+        emit('submit')
+    }
+}
 </script>
 
 <template>
     <div class="sidebar-container">
-        <!-- Img to display before upload -->
-        <img class="sidebar-img" v-if="testImg.complete" :src="activeSubmitSpot.img">
-        <img class="sidebar-img" v-else src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=">
+        <!-- Header img -->
+        <img class="sidebar-img" :src="inputImg">
 
         <div class="sidebar-contents">
             <h1>Submit a Spot</h1>
@@ -40,13 +122,29 @@ function loadImg() {
                     <!-- Temp: image url input -->
                     <div>
                         <label for="img">Image URL:</label>
-                        <input type="text" id="img" v-model="activeSubmitSpot.img" @focusout="loadImg" />
+                        <span class="error-msg" v-if="showImgErr">&nbsp;&nbsp;{{ imgErrMsg }}</span>
+                        <input type="text" id="img" v-model="activeSubmitSpot.img" @input="loadImg" maxlength="250" :class="{ 'err-highlight' : showImgErr}" />
+                    </div>
+            
+                    <!-- Name -->
+                    <div>
+                        <label for="title">Name:</label>
+                        <span class="error-msg" v-if="showNameErr">&nbsp;&nbsp;{{ nameErrMsg }}</span>
+                        <input type="text" id="title" v-model="activeSubmitSpot.name" maxlength="50" :class="{ 'err-highlight' : showNameErr}" />
+                    </div>
+            
+                    <!-- Description -->
+                    <div>
+                        <label for="description">Description:</label>
+                        <span class="error-msg" v-if="showDescErr">&nbsp;&nbsp;{{ descErrMsg }}</span>
+                        <textarea id="description" v-model="activeSubmitSpot.description" maxlength="250" style="resize:vertical" :class="{ 'err-highlight' : showDescErr}"></textarea>
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->
                     <div>
                         <label for="difficulty">Difficulty:</label>
-                        <select id="difficulty" v-model="activeSubmitSpot.difficulty">
+                        <span class="error-msg" v-if="showDiffErr">&nbsp;&nbsp;{{ diffErrMsg }}</span>
+                        <select id="difficulty" v-model="activeSubmitSpot.difficulty" :class="{ 'err-highlight' : showDiffErr}">
                             <option value="Beginner">Beginner</option>
                             <option value="Easy">Easy</option>
                             <option value="Medium">Medium</option>
@@ -55,29 +153,17 @@ function loadImg() {
                         </select>
                     </div>
             
-                    <!-- Title -->
-                    <div>
-                        <label for="title">Title:</label>
-                        <input type="text" id="title" v-model="activeSubmitSpot.name" />
-                    </div>
-            
-                    <!-- Description -->
-                    <div>
-                        <label for="description">Description:</label>
-                        <textarea id="description" v-model="activeSubmitSpot.description" style="resize:vertical"></textarea>
-                    </div>
-            
                     <!-- Cancel and Submit buttons -->
                     <div class="button-container">
                         <button class="submit-button" @click="emit('cancel')">Cancel</button>
-                        <button class="submit-button" @click="emit('submit')">Submit</button>
+                        <button class="submit-button" @click="trySubmit">Submit</button>
                     </div>
                 </div>
             </div>
         </div>
         
         <button class="close-button" @click="emit('close')">
-            < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
+            &lt;
         </button>
     </div>
 </template>
@@ -108,6 +194,7 @@ function loadImg() {
 .sidebar-contents {
     grid-column: 1;
     grid-row: 2;
+    overflow-y: scroll;
     color: white;
     background-color: darkcyan;
 }
@@ -122,19 +209,21 @@ function loadImg() {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* height: 100vh; */
 }
 .submission-form {
     width: 80%;
     max-width: 500px;
     padding: 20px;
-    /* border: 2px solid black; */
     border-radius: 10px;
     box-shadow: 0 0 5px black;
 }
 .label {
     display: block;
     margin-bottom: 10px;
+}
+.error-msg {
+    color: rgb(255, 109, 109);
+    text-shadow: 0 0 3px rgb(255, 83, 83);
 }
 
 input[type="text"],
@@ -144,7 +233,11 @@ select {
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 5px;    
+}
+
+.err-highlight {
+    outline: 1px solid red;
 }
 
 .button-container {

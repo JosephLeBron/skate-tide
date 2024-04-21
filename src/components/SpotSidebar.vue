@@ -24,12 +24,12 @@ const emit = defineEmits(['close'])
             <h2>Rating: {{ props.spot.rating === -1 ? "Unrated" : props.spot.rating }}</h2>
         </div>
         <button class="close-button" @click="emit('close')">
-            < <!-- If this is underlined red, ignore it. It's correct. I'll replace it with an icon some day -->
+            &lt;
         </button>
     </div>
 </template>
 
-<style>
+<style scoped>
 .close-button {
     grid-column: 2;
     grid-row: 1 / 3;
@@ -52,6 +52,8 @@ const emit = defineEmits(['close'])
 .sidebar-contents {
     grid-column: 1;
     grid-row: 2;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
     color: white;
     background-color: darkcyan;
 }
