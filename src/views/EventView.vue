@@ -10,7 +10,7 @@
     </div>
 
     <!-- Events -->
-    <div v-if="events.length > 0">
+    <div data-testid="events-container" v-if="events.length > 0">
       <ul class="event-list">
         <li v-for="(event, index) in events" :key="index" class="event-item">
           <p><strong>Title:</strong> {{ event.eventID }}</p>
