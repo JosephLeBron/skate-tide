@@ -1,7 +1,9 @@
 import Database from 'better-sqlite3';
-
+// const Database = require('better-sqlite3');
 const db = new Database('database.db');
+// Using better-sqlite3 package to implement the Database API
 
+//create table
 const createTables = () => {
     try {
         const tablePins = `
@@ -13,7 +15,7 @@ const createTables = () => {
                 picture BLOB NOT NULL,
                 difficulty STRING NOT NULL
             );
-            CREATE UNIQUE INDEX IF NOT EXISTS coordinates ON pins (lat, lon)
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates On pins (lat, lon)
         `;
         const tableUsers = `
             CREATE TABLE IF NOT EXISTS users (
@@ -49,65 +51,92 @@ const createTables = () => {
                 eventID STRING NOT NULL REFERENCES events
             )
         `;
-
         const tableTeamScores = `
-            CREATE TABLE IF NOT EXISTS team_scores (
-                team_name STRING PRIMARY KEY,
-                score INTEGER NOT NULL DEFAULT 0
-            )
-        `;
-
+        CREATE TABLE IF NOT EXISTS team_scores (
+            team TEXT PRIMARY KEY,
+            score INTEGER NOT NULL DEFAULT 0
+        )
+    `   ;
+        // execute query
         db.exec(tablePins);
         db.exec(tableUsers);
-        db.exec(tableEvents);
-        db.exec(tableCreateEvent);
-        db.exec(tableInteracts);
-        db.exec(tableSignUp);
+        db.exec(tableEvents); 
+        db.exec(tableCreateEvent); 
+        db.exec(tableInteracts); 
+        db.exec(tableSignUp); 
         db.exec(tableTeamScores);
-
+        console.log("Tables created.");
         const insertEvents = () => {
-            const events = [
-                {
-                    eventID: 'event1',
-                    date: '2024-04-10',
-                    time: 1800,
-                    description: 'Event 1 description here'
-                },
-                {
-                    eventID: 'event2',
-                    date: '2024-04-15',
-                    time: 1400,
-                    description: 'Event 2 description here'
-                },
-                {
-                    eventID: 'event3',
-                    date: '2024-04-20',
-                    time: 1600,
-                    description: 'Event 3 description here'
-                }
-            ];
+            try {
+                const events = [
+                    {
+                        eventID: 'event1',
+                        date: '2024-04-10',
+                        time: 1800,
+                        description: 'Event 1 description here'
+                    },
+                    {
+                        eventID: 'event2',
+                        date: '2024-04-15',
+                        time: 1400,
+                        description: 'Event 2 description here'
+                    },
+                    {
+                        eventID: 'event3',
+                        date: '2024-04-20',
+                        time: 1600,
+                        description: 'Event 3 description here'
+                    }
+                ];
 
-            const insertEventStmt = db.prepare('INSERT INTO events (eventID, date, time, description) VALUES (@eventID, @date, @time, @description)');
+                const insertEventStmt = db.prepare('INSERT INTO events (eventID, date, time, description) VALUES (@eventID, @date, @time, @description)');
 
-            db.transaction(() => {
-                for (const event of events) {
-                    insertEventStmt.run(event);
-                }
-            })();
+                db.transaction(() => {
+                    for (const event of events) {
+                        insertEventStmt.run(event);
+                    }
+                })();
 
-            console.log("Events inserted successfully.");
+                console.log("Events inserted successfully.");
+            } catch (error) {
+                console.error("Error inserting events: ", error);
+            }
         };
-
         insertEvents();
-
     } catch (error) {
         console.error("Error creating tables: ", error);
     }
 };
 
-createTables();
+try {
+    // Check if team_scores table exists
+    const teamScoresExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='team_scores'").get();
+    if (teamScoresExists) {
+        console.log("Team scores table exists.");
+    } else {
+        console.error("Team scores table does not exist.");
+    }
+    const teamScoresCount = db.prepare("SELECT COUNT(*) AS count FROM team_scores").get().count;
+    if (teamScoresCount > 0) {
+        console.log("Records exist in team_scores table.");
+    } else {
+        console.warn("No records found in team_scores table.");
+    }
+    const insertTeamScoresSampleData = db.prepare("INSERT INTO team_scores (team, score) VALUES (?, ?)");
+    insertTeamScoresSampleData.run("Red", 10);
+    insertTeamScoresSampleData.run("Blue", 15);
+    insertTeamScoresSampleData.run("Yellow", 20);
+    console.log("Sample data inserted into team_scores table.");
+
+    const teamScores = db.prepare("SELECT * FROM team_scores").all();
+    console.log("Team scores:", teamScores);
+
+} catch (error) {
+    console.error("Error creating tables: ", error);
+}
 
 export default db;
+
 
 
 // const insertPin = db.prepare('INSERT INTO pin (name, coordinates, rating, picture, description, difficulty) VALUES (?, ?, ?, ?, ?, ?)');
