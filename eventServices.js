@@ -1,7 +1,6 @@
 // Import modules
 import express from 'express';
 import db from './src/assets/database.js';
-import e from 'express';
 
 const app = express();
 // Parse JSON request bodies
@@ -48,6 +47,36 @@ app.post('/api/delete-event', (req, res) => {
     db.prepare(eventQuery).run(eventID);
     res.status(200).json({ message: `Event ${eventID} successfully deleted` });
 });
+
+// Handle POST request to upvote event
+app.post('/api/upvote', (req, res) => {
+    console.log('Upvote event request:', req.body);
+    const { eventId } = req.body;
+    if (!eventId) {
+        return res.status(400).json({ message: 'Event ID is required' });
+    }
+    const upvoteQuery = `
+        UPDATE events SET vote = vote + 1 WHERE eventID = ?;
+    `;
+    db.prepare(upvoteQuery).run(eventId);
+    res.status(200).json({ message: `Event ${eventId} upvoted successfully` });
+});
+
+// Handle POST request to downvote event
+app.post('/api/downvote', (req, res) => {
+    console.log('Downvote event request:', req.body);
+    const { eventId } = req.body;
+    if (!eventId) {
+        return res.status(400).json({ message: 'Event ID is required' });
+    }
+    const downvoteQuery = `
+        UPDATE events SET vote = vote - 1 WHERE eventID = ?;
+    `;
+    db.prepare(downvoteQuery).run(eventId);
+    res.status(200).json({ message: `Event ${eventId} downvoted successfully` });
+});
+
 export default app;
+
 
 
