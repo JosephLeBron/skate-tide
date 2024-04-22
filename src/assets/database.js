@@ -108,32 +108,7 @@ const createTables = () => {
     }
 };
 
-try {
-    // Check if team_scores table exists
-    const teamScoresExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='team_scores'").get();
-    if (teamScoresExists) {
-        console.log("Team scores table exists.");
-    } else {
-        console.error("Team scores table does not exist.");
-    }
-    const teamScoresCount = db.prepare("SELECT COUNT(*) AS count FROM team_scores").get().count;
-    if (teamScoresCount > 0) {
-        console.log("Records exist in team_scores table.");
-    } else {
-        console.warn("No records found in team_scores table.");
-    }
-    const insertTeamScoresSampleData = db.prepare("INSERT INTO team_scores (team, score) VALUES (?, ?)");
-    insertTeamScoresSampleData.run("Red", 10);
-    insertTeamScoresSampleData.run("Blue", 15);
-    insertTeamScoresSampleData.run("Yellow", 20);
-    console.log("Sample data inserted into team_scores table.");
-
-    const teamScores = db.prepare("SELECT * FROM team_scores").all();
-    console.log("Team scores:", teamScores);
-
-} catch (error) {
-    console.error("Error creating tables: ", error);
-}
+createTables();
 
 export default db;
 
