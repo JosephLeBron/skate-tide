@@ -40,4 +40,27 @@ app.post('/api/create-pin', (req, res) => {
 });
 
 
+// POST request to delete a pin
+app.post('/api/delete-pin', (req, res) => {
+    try {
+        const { name, lat, lon } = req.body;
+
+        const stmt = db.prepare('DELETE FROM pins WHERE name = ? AND lat = ? AND lon = ?');
+        const result = stmt.run(name, lat, lon);
+
+        if (result.changes > 0) {
+            console.log(`Deleted pin with name ${name} at (${lat}, ${lon})`);
+            res.status(200).json('Pin deleted successfully');
+        } else {
+            console.log(`Pin with name ${name} at (${lat}, ${lon}) not found, skipping deletion.`);
+            res.status(404).json('Pin not found');
+        }
+    } catch (error) {
+        console.error('Error deleting pin:', error);
+        res.status(500).json({ error: 'Failed to delete pin' });
+    }
+});
+
+
+
 export default app;

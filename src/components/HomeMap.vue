@@ -7,6 +7,7 @@ import axios from 'axios'
 
 const props = defineProps(['showSubmitMarker'])
 const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
+defineExpose({createPin, deletePin})
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
@@ -15,14 +16,34 @@ function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   axios.post('http://localhost:8000/pin/api/create-pin',
       { name, desc, lat, lon, rating, picture, difficulty }
     )
-    .then(
+    .then(() => {
       spots.value.push(
         new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
       )
-    )
-    .catch(error => console.log(error))
+    })
+    .catch((error) => {
+      console.log("An error occurred during pin creation:", error)
+    })
 }
-defineExpose({createPin})
+
+function deletePin(spot) {
+  // Implement deletion logic here
+  axios.post('http://localhost:8000/pin/api/delete-pin',
+    { name: spot.name, lat: spot.lat, lon: spot.lng }
+  )
+  .then(() => {
+    // Handle deletion success
+    // console.log(`Pin " ${spot.name} "deleted Successfully`)
+
+    // Remove the deleted pin from the spots array
+    const delIndex = spots.value.indexOf(spot)
+    spots.value.splice(delIndex, 1)
+  })
+  .catch((error) => {
+    // Handle error here, if needed
+    console.error("An error occurred during pin deletion:", error)
+  })
+}
 
 // Hardcode spots (for now), then convert database spots
 function hardcodeSpots() {

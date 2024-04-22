@@ -74,6 +74,7 @@ function onSubmitCancel() {
   activeSubmitSpot.reset()
 }
 function onSubmit() {
+  // Submit button pressed
   console.log(
     "Submitting spot:\n" +
     activeSubmitSpot.getLogString()
@@ -89,12 +90,25 @@ function onSubmit() {
   )
   onSubmitCancel()
 }
+function onDelete(spot) {
+  // Delete button pressed
+  const confirmDelete = confirm(`Are you sure you want to delete the pin " ${spot.name} "?`);
+  if (confirmDelete) {
+    // deletePin(spot.name, spot.lat, spot.lng);
+    console.log(
+      "Deleting spot:\n" +
+      spot.getLogString()
+    )
+    mapComponent.value.deletePin(spot)
+    onSpotCloseBtnClick()
+  }
+}
 </script>
 
 <template>
     <div class="homeview-container">
       <div v-if="showSpotSidebar && mostRecentClick === sidebarMode.VIEW" class="sidebar" style="width: 20%"> 
-        <SpotSideBar :spot="viewSpot" @close="onSpotCloseBtnClick" />
+        <SpotSideBar :spot="viewSpot" @delete="onDelete" @close="onSpotCloseBtnClick" />
       </div>
 
       <div v-if="showSubmitSidebar && mostRecentClick === sidebarMode.SUBMIT" class="sidebar" style="width: 20%">
