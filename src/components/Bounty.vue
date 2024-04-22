@@ -1,12 +1,21 @@
 <template>
-  <div>
-    <h1>Bounty</h1>
-    <div>
-      <p>Red Team: {{ redScore }}</p>
-      <p>Blue Team: {{ blueScore }}</p>
-      <p>Yellow Team: {{ yellowScore }}</p>
+  <div class="container">
+    <h1>Bounty Tricks</h1>
+    <div class="team-container">
+      <div class="team">
+        <h2>Red Team</h2>
+        <p>{{ redScore }}</p>
+      </div>
+      <div class="team">
+        <h2>Blue Team</h2>
+        <p>{{ blueScore }}</p>
+      </div>
+      <div class="team">
+        <h2>Yellow Team</h2>
+        <p>{{ yellowScore }}</p>
+      </div>
     </div>
-    <form @submit.prevent="submitForm">
+    <form class="form" @submit.prevent="submitForm">
       <label>
         I performed a:
         <select v-model="selectedTrick">
@@ -61,19 +70,22 @@ export default {
         switch (this.selectedTeam) {
           case 'red':
             this.redScore++;
-            await axios.put('http://localhost:8000/map/api/bounty', { team: 'red', score: this.redScore });
             break;
           case 'blue':
             this.blueScore++;
-            await axios.put('http://localhost:8000/user/api/bounty', { team: 'blue', score: this.blueScore });
             break;
           case 'yellow':
             this.yellowScore++;
-            await axios.put('http://localhost:8000/user/api/bounty', { team: 'yellow', score: this.yellowScore });
             break;
           default:
             break;
         }
+
+        // Call the updateTeamScores function
+        await axios.post('http://localhost:8000/updateTeamScores', {
+          team: this.selectedTeam,
+          score: 1 // Assuming you always increase the score by 1
+        });
       } catch (error) {
         console.error('Error updating team score: ', error);
       }
@@ -87,5 +99,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.container {
+  text-align: center;
+}
+
+.team-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.team {
+  margin-bottom: 20px;
+}
+
+.form {
+  margin-top: 20px;
+}
 </style>
