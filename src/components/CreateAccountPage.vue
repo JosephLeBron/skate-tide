@@ -16,6 +16,14 @@
               <label for="repeatPassword">Repeat Password:</label>
               <input type="password" v-model="repeatPassword" required>
             </div>
+            <div class="password-requirements">
+              <h2>Password Requirements:</h2>
+              <ul>
+                <li v-for="(requirement, index) in passwordRequirements" :key="index">
+                {{ requirement.name }}: <span v-if="requirement.predicate">✅</span><span v-else>❌</span>
+                </li>
+              </ul>
+            </div>
             <div class="button-container">
               <button type="submit">Create Account</button>
               <button type="button" @click="cancel">Cancel</button>
@@ -39,15 +47,50 @@
 import axios from 'axios';
   
 export default {
-    data() {
-        return {
-          email: '', 
-          password: '',
-          repeatPassword: '',
-          invalidInput: false,
-          };
+  data() {
+      return {
+        email: '', 
+        password: '',
+        repeatPassword: '',
+        invalidInput: false,
+        };
+  },
+  computed: {
+    passwordRequirements() {
+      return [
+        {
+          name: 'Must contain uppercase letters',
+          predicate: this.password.toLowerCase() !== this.password,
         },
-methods: {
+        {
+          name: 'Must contain lowercase letters',
+          predicate: this.password.toUpperCase() !== this.password,
+        },
+        {
+          name: 'Must contain numbers',
+          predicate: /\d/.test(this.password),
+        },
+        {
+          name: 'Must contain symbols',
+          predicate: /\W/.test(this.password),
+        },
+        {
+          name: 'Must be at least 8 characters long',
+          predicate: this.password.length >= 8,
+        },
+        {
+          name: 'Must match',
+          predicate: this.password === this.repeatPassword,
+        }
+      ];
+    }
+  },
+  watch: {
+    email(value) {
+      this.validateEmail(value)
+    }
+  },
+  methods: {
     async createAccount() {
       console.log('Button Clicked');
       if (!this.email || !this.password || !this.repeatPassword) {
@@ -55,6 +98,11 @@ methods: {
           return;
           }
       
+      if (!this.validateEmail(this.email)) {
+        alert('Please enter a valid email address.')
+        return;
+      }
+
       if (this.password !== this.repeatPassword){
         alert('Passwords do not match. Please try again.');
         return;
@@ -80,6 +128,9 @@ methods: {
       clearPasswords(){
         this.password = '';
         this.repeatPassword = '';
+      },
+      validateEmail(email){
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
       } 
   }
 };
