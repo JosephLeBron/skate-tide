@@ -67,27 +67,38 @@ export default {
   methods: {
     async submitForm() {
       try {
-        switch (this.selectedTeam) {
-          case 'red':
-            this.redScore++;
-            break;
-          case 'blue':
-            this.blueScore++;
-            break;
-          case 'yellow':
-            this.yellowScore++;
-            break;
-          default:
-            break;
-        }
-
-        // Call the updateTeamScores function
-        await axios.post('http://localhost:8000/updateTeamScores', {
-          team: this.selectedTeam,
-          score: 1 // Assuming you always increase the score by 1
+        // Check if the user is already teamed
+        const isAlreadyTeamed = await axios.post('http://localhost:8000/isTeamed', {
+          email: 'user@example.com' // Replace with the actual user's email
         });
+
+        // If the user is already teamed, set selectedTeam to their existing team
+        if (isAlreadyTeamed) {
+          this.selectedTeam = isAlreadyTeamed.team;
+        } else {
+          // User is not already teamed, proceed as usual
+          switch (this.selectedTeam) {
+            case 'red':
+              this.redScore++;
+              break;
+            case 'blue':
+              this.blueScore++;
+              break;
+            case 'yellow':
+              this.yellowScore++;
+              break;
+            default:
+              break;
+          }
+
+          // Call the updateTeamScores function
+          await axios.post('http://localhost:8000/updateTeamScores', {
+            team: this.selectedTeam,
+            score: 1 // Assuming you always increase the score by 1
+          });
+        }
       } catch (error) {
-        console.error('Error updating team score: ', error);
+        console.error('Error submitting form: ', error);
       }
     }
   },
@@ -117,3 +128,4 @@ export default {
   margin-top: 20px;
 }
 </style>
+

@@ -1,7 +1,3 @@
-import Database from 'better-sqlite3';
-
-const db = new Database('database.db');
-
 const createTables = () => {
     try {
         const tablePins = `
@@ -20,7 +16,8 @@ const createTables = () => {
                 email STRING PRIMARY KEY,
                 profilepicture BLOB,
                 bio STRING,
-                password STRING NOT NULL
+                password STRING NOT NULL,
+                chosen_team TEXT DEFAULT NULL
             )
         `;
         const tableEvents = `
@@ -80,7 +77,15 @@ const updateTeamScores = (team, score) => {
         console.error("Error updating team scores: ", error);
     }
 };
-
+const isTeamed = (email) => {
+    try {
+        const stmt = db.prepare('SELECT chosen_team FROM users WHERE email = ?');
+        const result = stmt.get(email);
+        return result && result.chosen_team !== null; //true if there user has chosen a team false otherwise
+    } catch (error) {
+        console.error("Error checking if team is chosen: ", error);
+    }
+};
 createTables();
 
 export default db;
