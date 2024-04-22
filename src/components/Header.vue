@@ -2,11 +2,13 @@
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld v-if="showTitle" />
       <nav class="navbar" :class="{ 'full-screen': !showTitle }">
+        <h2>
         <RouterLink to="/" class="button">Home</RouterLink>
         <RouterLink to="/login" class="button">Login</RouterLink>
+        <RouterLink to="/profile" class="button">Profile</RouterLink>
         <RouterLink to="/events" class="button">Events</RouterLink>
+        </h2>
       </nav>
     </div>
   </header>
@@ -19,21 +21,21 @@ const showTitle = window.innerWidth >= 1024 // Adjust the breakpoint as needed
 <style scoped>
 /* Header component styles go here */
 header {
-  background-color: #333;
-  color: white;
-  padding: 10px;
   position: fixed;
+  display: flex;
+  place-items: center;
   top: 0;
   left: 0;
   width: 100%;
-  box-sizing: border-box;
+  height: 60px;
+  background-color: #333;
 }
-
 .button {
   color: white;
 }
 .button:hover {
-  color: red;
+  color: rgb(13, 226, 180);
+  background-color: transparent;
 }
 
 .button:active {
@@ -46,40 +48,35 @@ header {
 .wrapper {
   max-width: 1024px; /* Set a max-width for the wrapper */
   margin: 0 auto; /* Center the wrapper */
-}
-
-@media (max-width: 1024px) {
-  .wrapper {
-    width: 100%; /* Take full width on smaller screens */
-  }
+  padding: 10px;
 }
 
 .full-screen {
   text-align: center;
 }
 
-@media (min-width: 1024px) {
+
+@media (min-width: 30000px) {
   header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-    color: black;
+    
   }
 
   .wrapper {
-    margin-top: 18px; /* Adjust as needed */
+    /* margin-top: 18px; Adjust as needed */
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
   }
 
   .navbar {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-    color: white;
-    padding: 1rem 0;
-    margin-top: 1rem;
+    /* text-align: left; */
+    /* margin-left: -1rem; */
+    /* font-size: 1rem; */
+    /* color: white; */
+    /* padding: 1rem 0; */
+    /* margin-top: 1rem; */
+    color: blue;
   }
 }
+
 </style>

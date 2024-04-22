@@ -4,7 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import EventView from '../views/EventView.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import CreateAccountView from '@/views/CreateAccountView.vue'
-
+//Creation of all available pages. Importing their view and adding their URL to the router. 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
