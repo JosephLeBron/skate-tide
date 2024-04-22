@@ -1,3 +1,8 @@
+/**
+ * Author: William Troscher
+ * Purpose: Creation of healthy user skating competition
+ */
+
 <template>
   <div class="container">
     <h1>Bounty Tricks</h1>
@@ -50,13 +55,15 @@ export default {
       selectedTeam: ''
     };
   },
+  
+  /**
+   * Fetches team scores from the database on component creation
+   * @async
+   */
   async created() {
     try {
-      // Fetch team scores from the database
       const response = await axios.get('http://localhost:8000/user/api/bounty');
       const { redScore, blueScore, yellowScore } = response.data;
-
-      // Update local data with fetched scores
       this.redScore = redScore;
       this.blueScore = blueScore;
       this.yellowScore = yellowScore;
@@ -64,44 +71,61 @@ export default {
       console.error('Error fetching team scores: ', error);
     }
   },
+  
   methods: {
+    /**
+     * Submits the form, updates scores, and calls necessary API endpoints
+     * @async
+     */
     async submitForm() {
       try {
-        // Check if the user is already teamed
-        const isAlreadyTeamed = await axios.post('http://localhost:8000/isTeamed', {
-          email: 'user@example.com' // Replace with the actual user's email
+        switch (this.selectedTeam) {
+          case 'red':
+            this.redScore++;
+            break;
+          case 'blue':
+            this.blueScore++;
+            break;
+          case 'yellow':
+            this.yellowScore++;
+            break;
+          default:
+            break;
+        }
+
+        const userEmail = this.getUserEmail();
+
+        if (userEmail) {
+          const isTeamed = await axios.post('http://localhost:8000/isTeamed', {
+            email: userEmail
+          });
+
+          if (isTeamed && isTeamed.data && isTeamed.data.team) {
+            this.selectedTeam = isTeamed.data.team;
+          }
+        }
+
+        await axios.post('http://localhost:8000/updateTeamScores', {
+          team: this.selectedTeam,
+          score: 1
         });
 
-        // If the user is already teamed, set selectedTeam to their existing team
-        if (isAlreadyTeamed) {
-          this.selectedTeam = isAlreadyTeamed.team;
-        } else {
-          // User is not already teamed, proceed as usual
-          switch (this.selectedTeam) {
-            case 'red':
-              this.redScore++;
-              break;
-            case 'blue':
-              this.blueScore++;
-              break;
-            case 'yellow':
-              this.yellowScore++;
-              break;
-            default:
-              break;
-          }
-
-          // Call the updateTeamScores function
-          await axios.post('http://localhost:8000/updateTeamScores', {
-            team: this.selectedTeam,
-            score: 1 // Assuming you always increase the score by 1
-          });
-        }
+        console.log('Form submitted successfully');
       } catch (error) {
         console.error('Error submitting form: ', error);
       }
+    },
+    
+    /**
+     * Retrieves the user's email
+     * @returns {string} The user's email
+     */
+    getUserEmail() {
+      // 
+      return 'firstentry@gmail.com';
     }
   },
+  
   computed: {
     tricks() {
       return ['Ollie', 'Kickflip', 'Heelflip', 'Pop Shove-it', 'Tre Flip', 'Varial Flip', 'Backside Flip', 'Frontside Flip', 'Nollie', 'Switch Heelflip'];
@@ -128,4 +152,3 @@ export default {
   margin-top: 20px;
 }
 </style>
-
