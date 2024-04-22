@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
 import HomeMap from '../components/HomeMap.vue';
-import Pin from '../components/Pin.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
 import SubmitSidebar from '../components/SubmitSidebar.vue'
 

@@ -1,39 +1,6 @@
 <script setup>
-import axios from 'axios'
-const props = defineProps(['spot'])
-const emit = defineEmits(['close', 'delete'])
-
-// function deletePin(name, lat, lon) {
-//     // setError.value = null;
-//     // Implement deletion logic here
-//     axios.post('http://localhost:8000/pin/api/delete-pin',
-//             { name, lat, lon }
-//         )
-//         .then(() => {
-//             // Handle deletion success
-//             console.log(`Pin " ${name} "deleted Successfully`)
-//             // Remove the deleted pin from the spots array or any other necessary action
-//             // spot.value.push ({
-//             //     name: null,
-//             //     pos: { lat: null, lng: null },
-//             //     rating: null,
-//             //     img: null,
-//             //     difficulty: null
-//             // });
-//         })
-//         .catch((error) => {
-//             // Handle error here, if needed
-//             console.error("An error occurred during pin deletion:", error)
-//         })
-// }
-
-// function handleButtonClick(spot) {
-//     const confirmDelete = confirm(`Are you sure you want to delete the pin " ${spot.name} "?`);
-//     if (confirmDelete) {
-//         // deletePin(spot.name, spot.lat, spot.lng);
-//         emit('delete', spot)
-//     }
-// }
+    const props = defineProps(['spot'])
+    const emit = defineEmits(['close', 'delete'])
 </script>
 
 <template>
