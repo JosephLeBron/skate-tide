@@ -41,13 +41,27 @@ export default {
       selectedTeam: ''
     };
   },
+  async created() {
+    try {
+      // Fetch team scores from the database
+      const response = await axios.get('http://localhost:8000/user/api/bounty');
+      const { redScore, blueScore, yellowScore } = response.data;
+
+      // Update local data with fetched scores
+      this.redScore = redScore;
+      this.blueScore = blueScore;
+      this.yellowScore = yellowScore;
+    } catch (error) {
+      console.error('Error fetching team scores: ', error);
+    }
+  },
   methods: {
     async submitForm() {
       try {
         switch (this.selectedTeam) {
           case 'red':
             this.redScore++;
-            await axios.put('http://localhost:8000/user/api/bounty', { team: 'red', score: this.redScore });
+            await axios.put('http://localhost:8000/map/api/bounty', { team: 'red', score: this.redScore });
             break;
           case 'blue':
             this.blueScore++;

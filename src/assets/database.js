@@ -1,9 +1,7 @@
 import Database from 'better-sqlite3';
-// const Database = require('better-sqlite3');
-const db = new Database('database.db');
-// Using better-sqlite3 package to implement the Database API
 
-//create table
+const db = new Database('database.db');
+
 const createTables = () => {
     try {
         const tablePins = `
@@ -52,12 +50,12 @@ const createTables = () => {
             )
         `;
         const tableTeamScores = `
-        CREATE TABLE IF NOT EXISTS team_scores (
-            team TEXT PRIMARY KEY,
-            score INTEGER NOT NULL DEFAULT 0
-        )
-    `   ;
-        // execute query
+            CREATE TABLE IF NOT EXISTS team_scores (
+                team TEXT PRIMARY KEY,
+                score INTEGER NOT NULL DEFAULT 0
+            )
+        `;
+
         db.exec(tablePins);
         db.exec(tableUsers);
         db.exec(tableEvents); 
@@ -66,51 +64,27 @@ const createTables = () => {
         db.exec(tableSignUp); 
         db.exec(tableTeamScores);
         console.log("Tables created.");
-        const insertEvents = () => {
-            try {
-                const events = [
-                    {
-                        eventID: 'event1',
-                        date: '2024-04-10',
-                        time: 1800,
-                        description: 'Event 1 description here'
-                    },
-                    {
-                        eventID: 'event2',
-                        date: '2024-04-15',
-                        time: 1400,
-                        description: 'Event 2 description here'
-                    },
-                    {
-                        eventID: 'event3',
-                        date: '2024-04-20',
-                        time: 1600,
-                        description: 'Event 3 description here'
-                    }
-                ];
-
-                const insertEventStmt = db.prepare('INSERT INTO events (eventID, date, time, description) VALUES (@eventID, @date, @time, @description)');
-
-                db.transaction(() => {
-                    for (const event of events) {
-                        insertEventStmt.run(event);
-                    }
-                })();
-
-                console.log("Events inserted successfully.");
-            } catch (error) {
-                console.error("Error inserting events: ", error);
-            }
-        };
-        insertEvents();
+        
     } catch (error) {
         console.error("Error creating tables: ", error);
+    }
+};
+
+const updateTeamScores = (team, score) => {
+    try {
+        const stmt = db.prepare('INSERT INTO team_scores (team, score) VALUES (@team, @score) ON CONFLICT(team) DO UPDATE SET score = score + @score');
+        stmt.run({ team, score });
+        
+        console.log(`Team scores updated: Team ${team} score increased by ${score}`);
+    } catch (error) {
+        console.error("Error updating team scores: ", error);
     }
 };
 
 createTables();
 
 export default db;
+
 
 
 
