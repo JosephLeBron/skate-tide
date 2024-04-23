@@ -30,15 +30,17 @@ const createTables = () => {
                 picture BLOB NOT NULL,
                 difficulty STRING NOT NULL
             );
-            CREATE UNIQUE INDEX IF NOT EXISTS coordinates ON pins (lat, lon)
+            CREATE UNIQUE INDEX IF NOT EXISTS coordinates ON pins (lat, lon);
         `;
+        //addition of chosen team for each user
         const tableUsers = `
             CREATE TABLE IF NOT EXISTS users (
                 email STRING PRIMARY KEY,
                 profilepicture BLOB,
                 bio STRING,
-                password STRING NOT NULL
-            )
+                password STRING NOT NULL,
+                chosen_team TEXT DEFAULT NULL
+            );
         `;
         const tableEvents = `
             CREATE TABLE IF NOT EXISTS events (
@@ -49,26 +51,33 @@ const createTables = () => {
                 description STRING NOT NULL,
                 password STRING NOT NULL,
                 vote INTEGER NOT NULL
-            )
+            );
         `;
         // signedup BOOLEAN NOT NULL, ^^^^
         const tableCreateEvent = `
             CREATE TABLE IF NOT EXISTS createEvent (
                 eventID STRING NOT NULL REFERENCES events,
                 name STRING NOT NULL REFERENCES pins
-            )
+            );
         `;
         const tableInteracts = `
             CREATE TABLE IF NOT EXISTS interacts (
                 name STRING NOT NULL REFERENCES pins,
                 email STRING NOT NULL REFERENCES users
-            )
+            );
         `;
         const tableSignUp = `
             CREATE TABLE IF NOT EXISTS signUp (
                 email STRING NOT NULL REFERENCES users,
                 eventID STRING NOT NULL REFERENCES events
-            )
+            );
+        `;
+        //keeps track of team scores in bounty
+        const tableTeamScores = `
+            CREATE TABLE IF NOT EXISTS team_scores (
+                team TEXT PRIMARY KEY,
+                score INTEGER NOT NULL DEFAULT 0
+            );
         `;
         
         // Execute queries
@@ -77,7 +86,8 @@ const createTables = () => {
         db.exec(tableEvents); 
         db.exec(tableCreateEvent); 
         db.exec(tableInteracts); 
-        db.exec(tableSignUp); 
+        db.exec(tableSignUp);
+        db.exec(tableTeamScores);
 
         console.log("Tables created.");
     } catch (error) {
