@@ -99,25 +99,25 @@ export default {
         return;
       }
 
-      if (!this.validateEmail(this.email)){
+      if (!this.validateEmail(this.username)){
         alert('Please enter a valid email address.');
         return;
       }
 
       try {
-      const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
-        email: this.username,
-        password: this.password
-      }); // Parameters to be sent are defined 
-      console.log('Login successful');
-      login(response.data.token); // Logging in the user with the received token
-      this.invalidLogin = false;
-      this.$router.push('/');
-    } catch (error) {
-      console.error('Error logging in: ', error);
-      this.invalidLogin = true;
-      alert('Invalid  email or password, Please try again.');
-    } // Error handling
+        const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
+          email: this.username,
+          password: this.password
+        }); // Parameters to be sent are defined 
+        console.log('Login successful');
+        login(response.data.token); // Logging in the user with the received token
+        this.invalidLogin = false;
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Error logging in: ', error);
+        this.invalidLogin = true;
+        alert('Invalid  email or password, Please try again.');
+      } // Error handling
     },
     // moves to the create account page
     createAccount() {
