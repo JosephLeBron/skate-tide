@@ -1,91 +1,103 @@
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
+import { MapSpot } from './Spot';
 import axios from 'axios'
 
-const emit = defineEmits(['marker-click', 'handleMapClick'])
+const props = defineProps(['showSubmitMarker'])
+const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
+defineExpose({createPin, deletePin})
 
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
-const debug = ref(false) // Displays error messages on screen when true (set manually)
-const spots = reactive([]) // Stores an array of spot objects created from database query
-
-// Store axios post response errors from service API calls
-const getError = ref(null)
-const setError = ref(null)
-const popError = ref(null)
-
-async function getSpots() {
-  // Queries the database for stored pins and converts them to spot objects in the
-  // format { name, pos: {lat, lng}, img}. This will be extended in the future
-  getError.value = null
-  await axios
-    .post('http://localhost:8000/map/api/get-pins') // API call
-    .then((response) => {
-      // Executed on successful response
-      spots.length = 0
-      // Convert each row from pins table to simpler objects in the format we were already using for spots.
-      response.data.forEach(element => {
-        spots.push({
-          name: element.name,
-          pos: { lat: element.lat, lng: element.lon },
-          img: element.picture,
-          difficulty: element.difficulty,
-          rating: element.rating,
-          show: true
-        })
-      })
+function createPin(name, desc, lat, lon, rating, picture, difficulty) {
+  axios.post('http://localhost:8000/pin/api/create-pin',
+      { name, desc, lat, lon, rating, picture, difficulty }
+    )
+    .then(() => {
+      spots.value.push(
+        new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
+      )
     })
-    .catch(error => getError.value = error) // Store message on error
+    .catch((error) => {
+      console.log("An error occurred during pin creation:", error)
+    })
 }
 
-async function createPin(name, lat, lon, rating, picture, difficulty) {
-  setError.value = null
-  try {
-    const response = await axios.post('http://localhost:8000/pin/api/create-pin', {
-      name, lat, lon, rating, picture, difficulty
-    });
-    return response.data;
-  } catch (error) {
-    setError.value = error;
-    throw error;
-  }
+function deletePin(spot) {
+  // Implement deletion logic here
+  axios.post('http://localhost:8000/pin/api/delete-pin',
+    { name: spot.name, lat: spot.lat, lon: spot.lng }
+  )
+  .then(() => {
+    // Handle deletion success
+    // console.log(`Pin " ${spot.name} "deleted Successfully`)
+
+    // Remove the deleted pin from the spots array
+    const delIndex = spots.value.indexOf(spot)
+    spots.value.splice(delIndex, 1)
+  })
+  .catch((error) => {
+    // Handle error here, if needed
+    console.error("An error occurred during pin deletion:", error)
+  })
 }
 
-async function handleMapClick(event) {
-  console.log("Map clicked at:", event.latLng.lat(), event.latLng.lng(),"!")
-  const confirmAdd = confirm("Do you want to add a pin here?")
-  if (confirmAdd) {
-    const name = prompt("Enter the name for the pin:")
-    const rating = prompt("Enter the rating for the pin (1-5):")
-    const picture = prompt("Enter the picture URL for the pin:")
-    const difficulty = prompt("Enter the difficulty for the pin:")
-    createPin(name, event.latLng.lat(), event.latLng.lng(), rating, picture, difficulty)
-      .then(() => {
-        // Add the newly created pin to the map
-        spots.push({
-          name: name,
-          pos: { lat: event.latLng.lat(), lng: event.latLng.lng() },
-          rating: rating,
-          img: picture,
-          difficulty: difficulty
-        })
-      })
-      .catch(error => setError.value = error)
-  }
-}
-
-async function populateSpots() {
+// Hardcode spots (for now), then convert database spots
+function hardcodeSpots() {
   // Inserts hard-coded spots into database if they don't already exist.
   // Mostly for debugging, this will change or be removed before deployment.
-  popError.value = null
-  await axios
-    .post('http://localhost:8000/map/api/hardcode-pins')
-    .catch(error => popError.value = error)
+  axios.post('http://localhost:8000/map/api/hardcode-pins')
+    .catch(error => console.log(error))
 }
-populateSpots()
-getSpots()
+hardcodeSpots()
+
+// Gets an array of spot objects created from database query
+const dbSpots = await axios
+    .post('http://localhost:8000/map/api/get-pins')
+    .then(response => {
+      return convertSpots(response.data)
+    })
+    .catch(error => console.log("Error getting spots: " + error))
+;
+
+function convertSpots(spotArr) {
+  // Convert each spot from database to a Spot object.
+  const newSpots = []
+  for (let i=0; i < spotArr.length; i++) {
+    const spot = spotArr[i]
+    newSpots.push(
+      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating)
+    )
+  }
+  return newSpots
+}
+
+// Reactive array to store spots pulled from database
+const spots = ref([])
+onMounted(() => {
+  // Assign database spots array to reactive spots array on mount
+  spots.value = dbSpots
+})
+
+function handleMapClick(event) {
+  // console.log("mapRef: " + mapRef.value)
+  emit('map-click', event.latLng)
+  updateSubmitPos(event)
+}
+function handleSubmitClick(event) {
+  emit('submit-click', event.latLng)
+  updateSubmitPos(event)
+}
+function handleSubmitDrag(event) {
+  emit('submit-drag', event.latLng)
+  updateSubmitPos(event)
+}
+function updateSubmitPos(event) {
+  activeSubmitSpot.setPosFromLatLng(event.latLng)
+}
 
 const showFilterMenu = ref(false)
 const useFilter = ref(false)
@@ -99,21 +111,18 @@ const FilterOptions = {
 const filter = ref({
   name: "",
   showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
-  ratingMin: 1
+  ratingMin: -1
 })
 
 function toggleFilter() {
   useFilter.value = !useFilter.value
-  if (useFilter.value) {
-    filterSpots()
-  } else {
-    getSpots()
-  }
+  filterSpots()
 }
 function toggleFilterMenu() {
   showFilterMenu.value = !showFilterMenu.value
 }
 function filterDifficulty(difficulty) {
+  useFilter.value = true
   if (difficulty) {
     if (filter.value.showDifficulty.includes(difficulty)) {
       // Removing difficulty filter array
@@ -126,19 +135,30 @@ function filterDifficulty(difficulty) {
   }
   filterSpots()
 }
-function filterSpots() {
-  useFilter.value = true
-  for (let i = 0; i < spots.length; i++) {
-    const spot = spots[i];
-    if (
-      filter.value.showDifficulty.includes(spot.difficulty) 
-      && spot.name.toLowerCase().includes(filter.value.name.toLowerCase())
-      && spot.rating >= filter.value.ratingMin
-      )
-    {
-      spot.show = true
-    } else {
-      spot.show = false
+function filterSpots(withEnable = false) {
+  if (withEnable) {
+    useFilter.value = true
+  }
+  if (useFilter.value) {
+    // Hide or show spots based on filter criteria
+    for (let i = 0; i < spots.value.length; i++) {
+      const spot = spots.value[i];
+      if (
+        filter.value.showDifficulty.includes(spot.difficulty) 
+        && spot.name.toString().toLowerCase().includes(filter.value.name.toLowerCase())
+        && spot.rating >= filter.value.ratingMin
+        )
+      {
+        spot.show()
+      } else {
+        spot.hide()
+      }
+    }
+  } else {
+    // No filter: show all spots
+    for (let i = 0; i < spots.value.length; i++) {
+      const spot = spots.value[i];
+      spot.show()
     }
   }
 }
@@ -146,6 +166,13 @@ function filterSpots() {
 // Map reference + setting styles
 const mapRef = ref(null)
 const center = { lat: 34.210249, lng: -77.887004 } // Map centered on wilmington
+// Region to restrict map panning
+const restrictionBounds = {
+  north: center['lat'] + 0.3,
+  south: center['lat'] - 0.3,
+  east: center['lng'] + 0.3,
+  west: center['lng'] - 0.3
+}
 const mapStyles = [
   {
     // Disable points of interest, assign this to a custom toggle in the future?
@@ -189,33 +216,53 @@ const shape = {
     api-key="AIzaSyCwzZFoGNcxoRMmQOlwrB81ShKfQNW1U6o"
     style="width: 100%; height: 100%"
     :center="center"
+    :restriction="{latLngBounds: restrictionBounds}"
     :zoom="13"
+    :minZoom="11"
     :styles="mapStyles"
     @click="handleMapClick"
   >
-    <!-- MarkerCluster -->
+    <!-- Submission marker -->
+    <Marker
+      v-if="props.showSubmitMarker"
+      :options="{
+        position: activeSubmitSpot.pos(),
+        draggable: true,
+        zIndex: 1
+      }"
+      @click="handleSubmitClick"
+      @drag="handleSubmitDrag"
+      @dragend="handleSubmitClick"
+    />
+
+    <!-- MarkerCluster: Viewable spots -->
     <MarkerCluster>
       <Marker
         v-for="(spot, i) in spots"
         :key="i"
         :options="{
-          position: spot['pos'],
-          // map: map,
+          position: spot.pos(),
           icon: markerIcon,
           shape: shape,
-          title: spot['name'],
-          visible: spot.show
+          title: spot.name.toString(),
+          visible: spot.visible,
+          zIndex: 0
         }"
         @click="emit('marker-click', spots[i])"
       />
     </MarkerCluster>
+
+    <!-- Button to expand filter menu -->
     <CustomControl position="RIGHT_TOP">
       <button class="filter-btn" @click="toggleFilterMenu">▼</button>
     </CustomControl>
+
+    <!-- Filter menu -->
     <CustomControl v-if="showFilterMenu" position="RIGHT_TOP">
       <div class="filter-menu">
         <div class="filter-wrapper">
           <div style="display: flex;">
+            <!-- Header: enable/disable filter -->
             <div class="filter-header" style="flex: 1">Filter:</div>
             <input type="checkbox" id="toggleFilterBox" v-model="useFilter" @click="toggleFilter" style="height: 70%; flex: auto; align-self: center;">
             <span class="filter-item" style="flex: 1; align-self: center; color: #333;">
@@ -223,25 +270,22 @@ const shape = {
               <p v-else>Off</p>
             </span>
           </div>
-
           <hr>
-          
+
+          <!-- Filter by name input -->
           <div class="filter-header">Name</div>
-          <input type="text" v-model="filter.name" @input="filterSpots" placeholder="Name" style="width: 100%; margin: auto">
+          <input type="text" v-model="filter.name" @input="filterSpots(true)" placeholder="Name" style="width: 100%; margin: auto">
 
+          <!-- Filter by rating input -->
           <div class="filter-header">Rating</div>
-
           <div style="display: flex;">
             <div class="filter-item" style="flex: initial; align-self: center;">≥&nbsp;</div>
             <span class="filter-item" style="flex: auto; align-self: center;">
-              <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
+              <input type="number" v-model="filter.ratingMin" min="-1" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
             </span>
           </div>
 
-          <!-- <span class="filter-item">
-            <input type="number" v-model="filter.ratingMin" min="1" max="5" @input="filterSpots" style="width: 100%; margin: auto">
-          </span> -->
-
+          <!-- Filter by difficulty input -->
           <div class="filter-header">Difficulty</div>
           <span class="filter-item">
             <input type="checkbox" id="beginnerBox" checked @click="filterDifficulty(FilterOptions.DIFF_BEGINNER)">
@@ -263,17 +307,10 @@ const shape = {
             <input type="checkbox" id="expertBox" checked @click="filterDifficulty(FilterOptions.DIFF_EXPERT)">
             <label for="expertBox"> Expert</label>
           </span>
-
         </div>
       </div>
     </CustomControl>
   </GoogleMap>
-  <div v-if="debug" style="display: grid; position: fixed; left: 700px; top: 200px; color:black; background-color: magenta;">
-    <div>setError: {{ setError }}</div>
-    <div>getError: {{ getError }}</div>
-    <div>popError: {{ popError }}</div>
-    <div>filter: {{ filter }}</div>
-  </div>
 </template>
 
 <style>
@@ -282,7 +319,6 @@ const shape = {
 
 .filter-header {
   flex: 1;
-  /* margin-bottom: -5px; */
   text-decoration: underline;
   font-size: 20px;
 }
@@ -290,7 +326,6 @@ const shape = {
 .filter-item {
   flex: 1;
   font-size: 16px;
-  /* height: 100%; */
 }
 
 .filter-wrapper {

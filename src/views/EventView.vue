@@ -10,88 +10,117 @@
     </div>
 
     <!-- Events -->
-    <div v-if="events.length > 0">
+    <div data-testid="events-container" v-if="events.length > 0">
       <ul class="event-list">
         <li v-for="(event, index) in events" :key="index" class="event-item">
           <p><strong>Title:</strong> {{ event.eventID }}</p>
+          <p><strong>Pin:</strong> {{ event.pinname }}</p>
           <p><strong>Date:</strong> {{ event.date }}</p>
+          <p><strong>Up/Down Votes:</strong> {{ event.vote }}</p>
           <p><strong>Time:</strong> {{ event.time }}</p>
           <p><strong>Description:</strong> {{ event.description }}</p>
-        </li>
+          <input class="admin-password-input" type="password" v-model="event.deletionPassword" placeholder="Admin password">
+          <button class="create-event-button" @click="deleteEvent(event)">Delete</button>
+          <div>
+            <button @click="upvoteEvent(event)">Upvote</button>
+            <button @click="downvoteEvent(event)">Downvote</button>
+          </div>
+        </li> 
       </ul>
-    </div>
-
-    <!-- Button for Create Event Form -->
-    <button @click="toggleForm" class="toggle-button">Create New Event</button>
-    
-    <!-- Create Event Form -->
-    <div v-if="showForm" class="create-event-form">
-      <h2>Create New Event</h2>
-      <form @submit.prevent="onCreateEvent">
-        <label for="eventID">Title:</label>
-        <input type="text" id="eventID" v-model="newEvent.eventID" required>
-        <br>
-
-        <label for="date">Date:</label>
-        <input type="text" id="date" v-model="newEvent.date" required>
-        <br>
-
-        <label for="time">Time:</label>
-        <input type="text" id="time" v-model="newEvent.time" required>
-        <br>
-
-        <label for="description">Description:</label>
-        <textarea id="description" v-model="newEvent.description" required></textarea>
-        <br>
-
-        <button type="submit">Create Event</button>
-      </form>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import axios from 'axios'
 
-const showForm = ref(false);
-const newEvent = ref({
-  eventID: '',
-  date: '',
-  time: '',
-  description: ''
-});
+const debug = ref(false) // Displays error messages on screen when true (set manually)
+const events = ref([]) // Stores an array of event objects created from database query
 
-function toggleForm() {
-  showForm.value = !showForm.value;
+const getError = ref(null)
+const setError = ref(null)
+const popError = ref(null)
+
+
+async function upvoteEvent(event) {
+  event.vote++
+  try {
+    await axios.post('http://localhost:8000/event/api/upvote', { eventId: event.eventID })
+    return { success: true, message: `Event ${event.eventID} upvoted successfully` }
+  } catch (error) {
+    console.error('Error upvoting event:', error)
+    return { success: false, message: `Error upvoting event: ${error.message}` }
+  }
 }
 
-//hard coded events
-const events = ref([
-  {
-    eventID: 'Skating Party Downtown',
-    date: '2024-04-10',
-    time: '18:00',
-    description: 'Join us for a fun evening of skating in the city'
-  },
-  {
-    eventID: 'Skate park competition',
-    date: '2024-04-15',
-    time: '14:00',
-    description: 'Compete in our annual skate park competition'
-  },
-  {
-    eventID: 'Skate park cleanup',
-    date: '2024-04-20',
-    time: '16:00',
-    description: 'Help us clean up the skate park and make it better for everyone'
+async function downvoteEvent(event) {
+  event.vote--
+  try {
+    await axios.post('http://localhost:8000/event/api/downvote', { eventId: event.eventID })
+    return { success: true, message: `Event ${event.eventID} downvoted successfully` }
+  } catch (error) {
+    console.error('Error downvoting event:', error)
+    return { success: false, message: `Error downvoting event: ${error.message}` }
   }
-]);
+}
 
-function onCreateEvent() {
+async function getEvents() {
+  getError.value = null
+  try {
+    const response = await axios.post('http://localhost:8000/event/api/get-pins')
+    events.value = response.data.map(event => ({
+      eventID: event.eventID,
+      pinname: event.pinname,
+      date: event.date,
+      time: event.time,
+      description: event.description,
+      password: event.password,
+      vote: event.vote,
+    }))
+  } catch (error) {
+    getError.value = error
+  }
+}
+getEvents()
+
+async function deleteEvent(event) {
+  if (event.deletionPassword.toString() === event.password.toString()) {
+    try {
+      // Send request to delete event from database
+      await axios.post('http://localhost:8000/event/api/delete-event', { eventID: event.eventID })
+      events.value = events.value.filter(e => e.eventID !== event.eventID)
+    } catch (error) {
+      setError.value = error
+    }
+  } else {
+    setError.value = new Error('Incorrect deletion password')
+  }
 }
 </script>
 
+
 <style scoped>
+.admin-password-input {
+    color: yellow; 
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px; 
+    border-radius: 4px; 
+}
+.admin-password-input::placeholder {
+    color: yellow;
+}
+
+.create-event-button {
+    color: yellow;
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px; 
+}
 /* Main color teal and secondary color gold */
 .main-container {
   font-family: "Poppins", sans-serif;
@@ -99,6 +128,7 @@ function onCreateEvent() {
   padding: 20px;
   background-color: teal;
   color: #fff;
+  width: 100%;
 }
 
 .event-list {
@@ -114,59 +144,5 @@ function onCreateEvent() {
   color: #fff;
 }
 
-.toggle-button {
-  background-color: gold;
-  color: teal;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.toggle-button:hover {
-  background-color: #ffd700; 
-}
-
-.create-event-form {
-  display: none;
-  margin-top: 20px;
-}
-
-.create-event-form.show {
-  display: block;
-}
-
-.create-event-form h2 {
-  color: gold;
-}
-
-.create-event-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.create-event-form input[type="text"],
-.create-event-form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #fff;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.create-event-form button {
-  background-color: gold;
-  color: teal;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.create-event-form button:hover {
-  background-color: #ffd700;
-}
 </style>
 

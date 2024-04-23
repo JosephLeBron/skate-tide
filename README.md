@@ -34,3 +34,12 @@ Roles
 - Ethan Harris (Map features)
 - Andrew Teague (Map features)
 - William Troscher (Map features)
+
+White-Box & Black-Box Test
+
+Sinclair DeYoung:
+  Start by installing the cypress library then running the cypress command to see the end-to-end testing menu
+  - run command "npx install cypress"
+  - then "npx cypress open"
+  - there with be the options for the e2e testing (end-to-end) or Component testing
+This process should display the error if the database is not running.
