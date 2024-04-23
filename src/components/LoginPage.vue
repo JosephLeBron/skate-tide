@@ -57,37 +57,81 @@ export default {
       userInfo: {},
     }
   },
-  methods: {
-  async login() { // Method for handling user login
-    if (!this.username || !this.password) {
-      alert('Please enter both username and password.');
-      return;
+  computed: {
+    passwordRequirements() {
+      return [
+        {
+          name: 'Must contain uppercase letters',
+          predicate: this.password.toLowerCase() !== this.password,
+        },
+        {
+          name: 'Must contain lowercase letters',
+          predicate: this.password.toUpperCase() !== this.password,
+        },
+        {
+          name: 'Must contain numbers',
+          predicate: /\d/.test(this.password),
+        },
+        {
+          name: 'Must contain symbols',
+          predicate: /\W/.test(this.password),
+        },
+        {
+          name: 'Must be at least 8 characters long',
+          predicate: this.password.length >= 8,
+        },
+        {
+          name: 'Must match',
+          predicate: this.password === this.repeatPassword,
+        }
+      ];
     }
-    try {
-      const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
-        email: this.username,
-        password: this.password
-      }); // Parameters to be sent are defined 
-      console.log('Login successful');
-      login(response.data.token); // Logging in the user with the received token
-      this.invalidLogin = false;
-      this.$router.push('/');
-    } catch (error) {
-      console.error('Error logging in: ', error);
-      this.invalidLogin = true;
-      alert('Invalid  email or password, Please try again.');
-    } // Error handling
   },
-  // moves to the create account page
-  createAccount() {
-    this.$router.push({ name: 'CreateAccount' });
+  watch: {
+    email(value) {
+      this.validateEmail(value)
+    }
   },
-  // clears the password
-  clearPassword() {
-    this.password = '';
+  methods: {
+    async login() { // Method for handling user login
+      if (!this.username || !this.password) {
+        alert('Please enter both username and password.');
+        return;
+      }
+
+      if (!this.validateEmail(this.username)){
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      try {
+        const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
+          email: this.username,
+          password: this.password
+        }); // Parameters to be sent are defined 
+        console.log('Login successful');
+        login(response.data.token); // Logging in the user with the received token
+        this.invalidLogin = false;
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Error logging in: ', error);
+        this.invalidLogin = true;
+        alert('Invalid  email or password, Please try again.');
+      } // Error handling
+    },
+    // moves to the create account page
+    createAccount() {
+      this.$router.push({ name: 'CreateAccount' });
+    },
+    // clears the password
+    clearPassword() {
+      this.password = '';
+    },
+    validateEmail(email){
+      return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);    
+    }
   }
-}
-}
+};
 </script>
 
 <style scoped>

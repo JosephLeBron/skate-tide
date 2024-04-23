@@ -4,14 +4,19 @@ import LoginView from '../views/LoginView.vue'
 import EventView from '../views/EventView.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import CreateAccountView from '@/views/CreateAccountView.vue'
-//Creation of all available pages. Importing their view and adding their URL to the router. 
+import BountyView from '@/views/BountyView.vue'
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/bounty',
+      name: 'bounty',
+      component: BountyView
     },
     {
       path: '/events',
