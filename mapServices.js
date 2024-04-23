@@ -35,6 +35,16 @@ app.post('/api/get-pins', (req, res) => {
 //     res.status(200).json({ message: 'Pin successfully inserted into table'});
 // });
 
+app.post('/api/create-event', (req, res) => {
+    console.log('Map services -- insert event request: ', req.body);
+    const {eventID, pinname,date, time, description, password } = req.body;
+    const pinQuery = `
+        INSERT OR IGNORE INTO events VALUES (?, ?, ?, ?, ?, ?, 0);
+    `;
+    db.prepare(pinQuery).run(eventID, pinname, date, time, description, password);
+    res.status(200).json({ message: 'Event successfully inserted into table'});
+});
+
 // Temporary handler for default pin values
 app.post('/api/hardcode-pins', (req, res) => {
     if (debug) {

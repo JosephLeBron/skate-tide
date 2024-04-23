@@ -1,6 +1,38 @@
 <script setup>
-    const props = defineProps(['spot'])
-    const emit = defineEmits(['close', 'delete'])
+import axios from 'axios'
+import { ref } from 'vue'
+
+const props = defineProps(['spot'])
+const emit = defineEmits(['close', 'delete'])
+
+const setError = ref(null);
+
+async function createEvent(eventID, pinname, date, time, description, password) {
+  setError.value = null;
+  try {
+    const response = await axios.post('http://localhost:8000/map/api/create-event', {
+      eventID, pinname, date, time, description, password
+    });
+    return response.data;
+  } catch (error) {
+    setError.value = error;
+    throw error;
+  }
+}
+
+async function CreatingEvent(event) {
+  const eventID = prompt("Enter the event's title:", "e.g.Joe's Skate Meetup");
+  const pinname = prompt("Enter the Pin's Name:", "Use slected pins name here");
+  const date = prompt("Enter the event's date:", "format:DD-MM-YYYY");
+  const time = prompt("Enter the event's time:", "format: 630");
+  const description = prompt("Enter the event's description:", "e.g. Skate meetup at the park");
+  const password = prompt("Enter an admin password to delete later:", "e.g. password123");
+  try {
+    await createEvent(eventID, pinname, date, time, description, password);
+  } catch (error) {
+    console.error('Error creating event:', error);
+  }
+}
 </script>
 
 <template>
@@ -23,6 +55,9 @@
             <!-- Rating -->
             <h2>Rating: {{ props.spot.rating === -1 ? "Unrated" : props.spot.rating }}</h2>
 
+            <div>
+                <button class="create-event-button" @click="CreatingEvent">Create Event For This Pin</button>
+            </div>
             <button class="delete-button" @click="emit('delete', spot)">Delete Pin</button>
         </div>
         <button class="close-button" @click="emit('close')">
@@ -31,7 +66,17 @@
     </div>
 </template>
 
+
 <style scoped>
+.create-event-button {
+    color: yellow;
+    background-color: teal; 
+    border: 2px solid yellow;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px; 
+}
+
 .close-button {
     grid-column: 2;
     grid-row: 1 / 3;

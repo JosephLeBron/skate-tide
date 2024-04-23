@@ -43,12 +43,15 @@ const createTables = () => {
         const tableEvents = `
             CREATE TABLE IF NOT EXISTS events (
                 eventID STRING PRIMARY KEY,
-                signedup BOOLEAN NOT NULL,
+                pinname STRING NOT NULL,
                 date STRING NOT NULL,
                 time INTEGER NOT NULL,
-                description STRING NOT NULL
+                description STRING NOT NULL,
+                password STRING NOT NULL,
+                vote INTEGER NOT NULL
             )
         `;
+        // signedup BOOLEAN NOT NULL, ^^^^
         const tableCreateEvent = `
             CREATE TABLE IF NOT EXISTS createEvent (
                 eventID STRING NOT NULL REFERENCES events,
@@ -82,6 +85,60 @@ const createTables = () => {
     }
 };
 
+    //     // execute query
+    // db.exec(tablePins);
+    // db.exec(tableUsers);
+    // db.exec(tableEvents); 
+    // db.exec(tableCreateEvent); 
+    // db.exec(tableInteracts); 
+    // db.exec(tableSignUp); 
+    // console.log("Tables created.");
+const insertEvents = () => {
+    try {
+        const events = [
+            {
+                eventID: 'event1',
+                pinname: 'College & Oleander',
+                date: '2024-04-10',
+                time: 1800,
+                description: 'Event 1 description here',
+                password: 'password1',
+                vote: 0
+            },
+            {
+                eventID: 'event2',
+                pinname: 'UNCW',
+                date: '2024-04-15',
+                time: 1400,
+                description: 'Event 2 description here',
+                password: 'password2',
+                vote: 0
+            },
+            {
+                eventID: 'event3',
+                pinname: 'Wrightsville',
+                date: '2024-04-20',
+                time: 1600,
+                description: 'Event 3 description here',
+                password: 'password3',
+                vote: 0
+            }
+        ];
+
+        const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description, password, vote) VALUES (@eventID, @pinname, @date, @time, @description, @password, @vote)');
+
+        db.transaction(() => {
+            for (const event of events) {
+                insertEventStmt.run(event);
+            }
+        })();
+
+        console.log("Events inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting events: ", error);
+    }
+};
+
 // Insert profile pictures
 const insertProfilePictures = () => {
     try {
@@ -110,6 +167,7 @@ const insertProfilePictures = () => {
 const initializeDatabase = () => {
     createTables();
     insertProfilePictures();
+    insertEvents();
 };
 
 initializeDatabase();
