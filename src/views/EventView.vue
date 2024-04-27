@@ -22,8 +22,8 @@
           <input class="admin-password-input" type="password" v-model="event.deletionPassword" placeholder="Admin password">
           <button class="create-event-button" @click="deleteEvent(event)">Delete</button>
           <div>
-            <button @click="upvoteEvent(event)">Upvote</button>
-            <button @click="downvoteEvent(event)">Downvote</button>
+            <button class="create-event-button" @click="upvoteEvent(event)">Upvote</button>
+            <button class="create-event-button" @click="downvoteEvent(event)">Downvote</button>
           </div>
         </li> 
       </ul>

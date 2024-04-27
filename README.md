@@ -43,3 +43,6 @@ Sinclair DeYoung:
   - then "npx cypress open"
   - there with be the options for the e2e testing (end-to-end) or Component testing
 This process should display the error if the database is not running.
+
+Joseph Lebron:
+ -To run the test frist npm install and then npm run test:unit
