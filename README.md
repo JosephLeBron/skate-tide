@@ -46,3 +46,8 @@ This process should display the error if the database is not running.
 
 Joseph Lebron:
  -To run the test frist npm install and then npm run test:unit
+
+William Troscher:
+  - Run node server.js
+  - Run npm install
+  - Navagate to /bounty and view testing output in console. 
