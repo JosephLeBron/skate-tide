@@ -14,9 +14,9 @@ defineExpose({createPin, deletePin})
 
 async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   // Insert a pin into the database
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('pins')
-    .insert([{ name:name, desc:desc, lat:lat, lon:lon, rating:rating, picture:picture, difficulty:difficulty }])
+    .insert([{ name: name, desc: desc, lat: lat, lon: lon, rating: rating, picture: picture, difficulty: difficulty }])
     .select()
   if (error) {
     console.error("Error inserting spot:", error)
@@ -30,7 +30,7 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
 
 async function deletePin(spot) {
   // Delete a pin from the database
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('pins')
     .delete()
     .match({ name: spot.name, lat: spot.lat, lon: spot.lng })
