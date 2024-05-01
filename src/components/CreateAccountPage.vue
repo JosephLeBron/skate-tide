@@ -44,6 +44,7 @@
  * @date Apr 1, 2024
  */
 //import User from './User';
+import { supabase } from '@/lib/supabaseClient';
 import axios from 'axios';
   
 export default {
@@ -108,30 +109,47 @@ export default {
         return;
       }
       
-      try {
-        const response = await axios.post('http://localhost:8000/user/api/create-account',{
-          email: this.email,
-          password: this.password
-        });
-        console.log('Account created successfully.');
-        this.$router.push('/');
-      }catch (error) {
+      ////// Axios/express implementation:
+      // try {
+      //   const response = await axios.post('http://localhost:8000/user/api/create-account',{
+      //     email: this.email,
+      //     password: this.password
+      //   });
+      //   console.log('Account created successfully.');
+      //   this.$router.push('/');
+      // } catch (error) {
+      //   console.error('Error creating account : ', error);
+      //   this.invalidInput = true;
+      //   alert('Error creating account. Please try again.');
+      //   this.clearPasswords();
+      // }
+
+      ////// Supabase implementation:
+      const { error } = await supabase
+        .from('users')
+        .insert([{ email: this.email, password: this.password}]);
+      if (error) {
+        // Error response
         console.error('Error creating account : ', error);
         this.invalidInput = true;
         alert('Error creating account. Please try again.');
         this.clearPasswords();
-        }
-      },
+      } else {
+        // Success
+        console.log('Account created successfully.');
+        this.$router.push('/');
+      }
+    },
       cancel() {
         this.$router.push('/login');
-      },
+    },
       clearPasswords(){
         this.password = '';
         this.repeatPassword = '';
-      },
+    },
       validateEmail(email){
         return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
-      } 
+    } 
   }
 };
 </script>

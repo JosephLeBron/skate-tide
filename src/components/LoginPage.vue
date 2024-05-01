@@ -46,6 +46,7 @@
  */
 import axios from 'axios';
 import { login, isLoggedIn } from './Auth';
+import { supabase } from '@/lib/supabaseClient';
 // Holdes the data for the blank spaces
 export default {
   data() {
@@ -104,20 +105,45 @@ export default {
         return;
       }
 
-      try {
-        const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
-          email: this.username,
-          password: this.password
-        }); // Parameters to be sent are defined 
-        console.log('Login successful');
-        login(response.data.token); // Logging in the user with the received token
-        this.invalidLogin = false;
-        this.$router.push('/');
-      } catch (error) {
+      ////// Axios/express implementation:
+      // try {
+      //   const response = await axios.post('http://localhost:8000/user/api/login', { //The axios post is employed to send the user response credentials to the end point
+      //     email: this.username,
+      //     password: this.password
+      //   }); // Parameters to be sent are defined 
+      //   console.log('Login successful');
+      //   login(response.data.token); // Logging in the user with the received token
+      //   this.invalidLogin = false;
+      //   this.$router.push('/');
+      // } catch (error) {
+      //   console.error('Error logging in: ', error);
+      //   this.invalidLogin = true;
+      //   alert('Invalid  email or password, Please try again.');
+      // } // Error handling
+      
+      ////// Supabase implementation:
+      const { count, error } = await supabase
+        .from('users')
+        .select('*', { count: 'exact' })
+        .match({ email: this.username, password: this.password });
+      if (error) {
+        // Error response
         console.error('Error logging in: ', error);
         this.invalidLogin = true;
+      } else if (count === 0) {
+        // No user found in DB with matching email/password
         alert('Invalid  email or password, Please try again.');
-      } // Error handling
+        this.invalidLogin = true;
+      } else {
+        // Success, user found
+        console.log('Login successful');
+
+        ////// Needs token implementation vvvv
+        // login(response.data.token); // Logging in the user with the received token
+
+        this.invalidLogin = false;
+        this.$router.push('/');
+      }
     },
     // moves to the create account page
     createAccount() {

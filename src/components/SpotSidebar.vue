@@ -1,4 +1,5 @@
 <script setup>
+import { supabase } from '@/lib/supabaseClient';
 import axios from 'axios'
 import { ref } from 'vue'
 
@@ -9,15 +10,36 @@ const setError = ref(null);
 
 async function createEvent(eventID, pinname, date, time, description, password) {
   setError.value = null;
-  try {
-    const response = await axios.post('http://localhost:8000/map/api/create-event', {
-      eventID, pinname, date, time, description, password
-    });
-    return response.data;
-  } catch (error) {
-    setError.value = error;
-    throw error;
-  }
+
+  ////// Axios/express implementation
+  // try {
+  //   const response = await axios.post('http://localhost:8000/map/api/create-event', {
+  //     eventID, pinname, date, time, description, password
+  //   });
+  //   return response.data;
+  // } catch (error) {
+  //   setError.value = error;
+  //   throw error;
+  // }
+
+  ////// Supabase implementation
+  const { error } = await supabase
+    .from('events')
+    .insert([
+      {
+        eventID: eventID,
+        pinname: pinname,
+        date: date,
+        time: time,
+        description: description,
+        password: password,
+        vote: '0'
+      }
+    ])
+    if (error) {
+      setError.value = error;
+      console.error("Error creating event:", error);
+    }
 }
 
 async function CreatingEvent(event) {
