@@ -139,6 +139,23 @@ export default {
         console.log('Account created successfully.');
         this.$router.push('/');
       }
+
+      ////// Supabase auth test
+      // const { error } = await supabase.auth.signUp({
+      //   email: this.email,
+      //   password: this.password
+      // })
+      // if (error) {
+      //   // Error response
+      //   console.error('Error creating account : ', error);
+      //   this.invalidInput = true;
+      //   alert('Error creating account. Please try again.');
+      //   this.clearPasswords();
+      // } else {
+      //   // Success
+      //   console.log('Account created successfully.');
+      //   this.$router.push('/');
+      // }
     },
       cancel() {
         this.$router.push('/login');
