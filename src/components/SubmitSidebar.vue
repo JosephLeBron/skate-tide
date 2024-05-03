@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { activeSubmitSpot } from '@/stores/activeSubmitSpot'
+import { supabase } from '@/lib/supabaseClient';
 const emit = defineEmits(['close', 'submit', 'cancel'])
 
 // TODO:
@@ -30,6 +31,9 @@ const showDescErr = ref(false)
 const diffErrMsg = ref("")
 const showDiffErr = ref(false)
 
+const posErrMsg = ref("")
+const showPosErr = ref(false)
+
 function loadImg() {
     // Try to load image from input URL in {activeSubmitSpot.img}
     if (activeSubmitSpot.img === '') {
@@ -54,7 +58,7 @@ function loadImg() {
     image.src = activeSubmitSpot.img
 }
 
-function trySubmit() {
+async function trySubmit() {
     // Attempt submit, set error refs where appropriate
     if (activeSubmitSpot.img === '') {
         // No image URL input
@@ -92,10 +96,36 @@ function trySubmit() {
         showDiffErr.value = false
     }
 
+    // Check if spot exists at this location in database
+    const { count, error } = await supabase
+        .from('pins')
+        .select('*', { count: 'exact' })
+        .match({
+            lat: activeSubmitSpot.fixedLat(),
+            lon: activeSubmitSpot.fixedLng()
+        })
+    if (count > 0) {
+        // If count > 0, an existing spot was found
+        showPosErr.value = true
+        posErrMsg.value = "Spot already exists at this location"
+    } else if (error) {
+        // Unexpected database error
+        showPosErr.value = true
+        posErrMsg.value = "Error submiting. Try again later."
+        console.error("Error testing submit:", error)
+    } else {
+        showPosErr.value = false
+    }
+
     // If no errors, submit
-    if ( !(showImgErr.value || showNameErr.value || showDescErr.value || showDiffErr.value) ) {
+    if ( noErrors() ) {
         emit('submit')
     }
+}
+
+function noErrors() {
+    // Returns true when all members are false
+    return ( !(showImgErr.value || showNameErr.value || showDescErr.value || showDiffErr.value || showPosErr.value) )
 }
 </script>
 
@@ -111,6 +141,7 @@ function trySubmit() {
                     <!-- Position header -->
                     <div>
                         <h3>Pos: {{ activeSubmitSpot.getDisplayPos() }}</h3>
+                        <span class="error-msg" v-if="showPosErr">&nbsp;&nbsp;{{ posErrMsg }}</span>
                     </div>
                     
                     <!-- Image upload -->

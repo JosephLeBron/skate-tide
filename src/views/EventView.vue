@@ -35,6 +35,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { supabase } from '@/lib/supabaseClient';
 
 const debug = ref(false) // Displays error messages on screen when true (set manually)
 const events = ref([]) // Stores an array of event objects created from database query
@@ -46,31 +47,82 @@ const popError = ref(null)
 
 async function upvoteEvent(event) {
   event.vote++
-  try {
-    await axios.post('http://localhost:8000/event/api/upvote', { eventId: event.eventID })
-    return { success: true, message: `Event ${event.eventID} upvoted successfully` }
-  } catch (error) {
+  ////// Axios/express implementation
+  // try {
+  //   await axios.post('http://localhost:8000/event/api/upvote', { eventId: event.eventID })
+  //   return { success: true, message: `Event ${event.eventID} upvoted successfully` }
+  // } catch (error) {
+  //   console.error('Error upvoting event:', error)
+  //   return { success: false, message: `Error upvoting event: ${error.message}` }
+  // }
+
+  ////// Supabase implementation
+  const { error } = await supabase
+    .from('events')
+    .update({ vote: event.vote })
+    .eq('eventID', event.eventID)
+    .select()
+  if (error) {
     console.error('Error upvoting event:', error)
     return { success: false, message: `Error upvoting event: ${error.message}` }
+  } else {
+    return { success: true, message: `Event ${event.eventID} upvoted successfully` }
   }
 }
 
 async function downvoteEvent(event) {
   event.vote--
-  try {
-    await axios.post('http://localhost:8000/event/api/downvote', { eventId: event.eventID })
-    return { success: true, message: `Event ${event.eventID} downvoted successfully` }
-  } catch (error) {
+  ////// Axios/express implementation
+  // try {
+  //   await axios.post('http://localhost:8000/event/api/downvote', { eventId: event.eventID })
+  //   return { success: true, message: `Event ${event.eventID} downvoted successfully` }
+  // } catch (error) {
+  //   console.error('Error downvoting event:', error)
+  //   return { success: false, message: `Error downvoting event: ${error.message}` }
+  // }
+
+  ////// Supabase implementation
+  const { error } = await supabase
+    .from('events')
+    .update({ vote: event.vote })
+    .eq('eventID', event.eventID)
+    .select()
+  if (error) {
     console.error('Error downvoting event:', error)
     return { success: false, message: `Error downvoting event: ${error.message}` }
+  } else {
+    return { success: true, message: `Event ${event.eventID} downvoted successfully` }
   }
 }
 
 async function getEvents() {
   getError.value = null
-  try {
-    const response = await axios.post('http://localhost:8000/event/api/get-pins')
-    events.value = response.data.map(event => ({
+
+  ////// Axios/express implementation
+  // try {
+  //   const response = await axios.post('http://localhost:8000/event/api/get-pins')
+  //   events.value = response.data.map(event => ({
+  //     eventID: event.eventID,
+  //     pinname: event.pinname,
+  //     date: event.date,
+  //     time: event.time,
+  //     description: event.description,
+  //     password: event.password,
+  //     vote: event.vote,
+  //   }))
+  // } catch (error) {
+  //   getError.value = error
+  // }
+
+  ////// Supabase implementation
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+  if (error) {
+    console.error('Error getting events:', error)
+    getError.value = error
+  } else {
+    events.value = data.map(event => ({
       eventID: event.eventID,
       pinname: event.pinname,
       date: event.date,
@@ -78,23 +130,39 @@ async function getEvents() {
       description: event.description,
       password: event.password,
       vote: event.vote,
+      deletionPassword: ''
     }))
-  } catch (error) {
-    getError.value = error
   }
 }
 getEvents()
 
 async function deleteEvent(event) {
-  if (event.deletionPassword.toString() === event.password.toString()) {
-    try {
-      // Send request to delete event from database
-      await axios.post('http://localhost:8000/event/api/delete-event', { eventID: event.eventID })
-      events.value = events.value.filter(e => e.eventID !== event.eventID)
-    } catch (error) {
+  if (event.deletionPassword.toString() === '') {
+    console.log("Please enter password")
+  } else if (event.deletionPassword.toString() === event.password.toString()) {
+    ////// Axios/express implementation
+    // try {
+    //   // Send request to delete event from database
+    //   await axios.post('http://localhost:8000/event/api/delete-event', { eventID: event.eventID })
+    //   events.value = events.value.filter(e => e.eventID !== event.eventID)
+    // } catch (error) {
+    //   setError.value = error
+    // }
+
+    ////// Supabase implementation
+    // Send request to delete event from database
+    const { error } = await supabase
+      .from('events')
+      .delete()
+      .eq('eventID', event.eventID)
+    if (error) {
+      console.error('Error deleting event:', error)
       setError.value = error
+    } else {
+      events.value = events.value.filter(e => e.eventID !== event.eventID)
     }
   } else {
+    console.log("Incorrect deletion password")
     setError.value = new Error('Incorrect deletion password')
   }
 }

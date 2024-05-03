@@ -58,9 +58,8 @@ function onSubmitClick(latLng) {
   mostRecentClick.value = sidebarMode.SUBMIT
 }
 function onSubmitDrag(latLng) {
-  // If no sidebar is showing, don't automatically show when dragging event starts.
-  // This makes the marker location jump. If no sidebar is showing when drag starts,
-  // the drag-end event (treated like a marker click) triggers it to display.
+  // If no sidebar is showing, don't automatically show when dragging event starts. That makes the marker location jump.
+  // If no sidebar is showing when drag starts, the drag-end event (treated like a marker click) triggers it to display.
   if (showSpotSidebar.value || showSubmitSidebar.value) {
     onSubmitClick(latLng)
   }

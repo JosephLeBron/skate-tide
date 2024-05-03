@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map'
-import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
-import { MapSpot } from './Spot';
-import axios from 'axios'
+import { activeSubmitSpot } from '@/stores/activeSubmitSpot'
+import { MapSpot } from './Spot'
+import { supabase } from '../lib/supabaseClient'
 
 const props = defineProps(['showSubmitMarker'])
 const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
@@ -12,56 +12,57 @@ defineExpose({createPin, deletePin})
 // Using vue3-google-map package to implement the Google Maps API
 // Repo + documentation: https://github.com/inocan-group/vue3-google-map
 
-function createPin(name, desc, lat, lon, rating, picture, difficulty) {
-  axios.post('http://localhost:8000/pin/api/create-pin',
-      { name, desc, lat, lon, rating, picture, difficulty }
+async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
+  // Insert a pin into the database
+  const { error } = await supabase
+    .from('pins')
+    .insert([{
+      name: name,
+      desc: desc,
+      lat: lat.toFixed(6),
+      lon: lon.toFixed(6),
+      rating: rating,
+      picture: picture,
+      difficulty: difficulty 
+    }])
+    .select()
+  if (error) {
+    console.error("Error inserting spot:", error)
+  } else {
+    // Create Spot object, add to spots array for populate/filter
+    spots.value.push(
+      new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
     )
-    .then(() => {
-      spots.value.push(
-        new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
-      )
-    })
-    .catch((error) => {
-      console.log("An error occurred during pin creation:", error)
-    })
+  }
 }
 
-function deletePin(spot) {
-  // Implement deletion logic here
-  axios.post('http://localhost:8000/pin/api/delete-pin',
-    { name: spot.name, lat: spot.lat, lon: spot.lng }
-  )
-  .then(() => {
-    // Handle deletion success
-    // console.log(`Pin " ${spot.name} "deleted Successfully`)
-
+async function deletePin(spot) {
+  // Delete a pin from the database
+  const { error } = await supabase
+    .from('pins')
+    .delete()
+    .match({ name: spot.name, lat: spot.lat, lon: spot.lng })
+  if (error) {
+    console.error("Error deleting spot:", error)
+  } else {
     // Remove the deleted pin from the spots array
     const delIndex = spots.value.indexOf(spot)
     spots.value.splice(delIndex, 1)
-  })
-  .catch((error) => {
-    // Handle error here, if needed
-    console.error("An error occurred during pin deletion:", error)
-  })
+  }
 }
 
-// Hardcode spots (for now), then convert database spots
-function hardcodeSpots() {
-  // Inserts hard-coded spots into database if they don't already exist.
-  // Mostly for debugging, this will change or be removed before deployment.
-  axios.post('http://localhost:8000/map/api/hardcode-pins')
-    .catch(error => console.log(error))
+const spots = ref([])  // Reactive array to store spots pulled from database
+async function getSpots() {
+  // Get pin entries from database as Spot objects
+  const { data, error } = await supabase
+    .from('pins')
+    .select('*')
+  if (error) {
+    console.error("Error getting spots:", error)
+  } else {
+    spots.value = convertSpots(data) 
+  }
 }
-hardcodeSpots()
-
-// Gets an array of spot objects created from database query
-const dbSpots = await axios
-    .post('http://localhost:8000/map/api/get-pins')
-    .then(response => {
-      return convertSpots(response.data)
-    })
-    .catch(error => console.log("Error getting spots: " + error))
-;
 
 function convertSpots(spotArr) {
   // Convert each spot from database to a Spot object.
@@ -75,15 +76,7 @@ function convertSpots(spotArr) {
   return newSpots
 }
 
-// Reactive array to store spots pulled from database
-const spots = ref([])
-onMounted(() => {
-  // Assign database spots array to reactive spots array on mount
-  spots.value = dbSpots
-})
-
 function handleMapClick(event) {
-  // console.log("mapRef: " + mapRef.value)
   emit('map-click', event.latLng)
   updateSubmitPos(event)
 }
@@ -208,6 +201,11 @@ const shape = {
   coords: [1, 1, 1, 20, 18, 20, 18, 1],
   type: 'poly'
 }
+
+onMounted(() => {
+  // Assign database spots array to reactive spots array on mount
+  getSpots()
+})
 </script>
 
 <template>

@@ -53,12 +53,21 @@ export default class Spot {
         // Returns Maps API Lat/Lng object literal as {lat, lng}.
         return {lat: this.lat, lng: this.lng};
     }
+    fixedLat() {
+        // Returns lat rounded to 6 decimal places;
+        // lat & lng stored in the database should be this length.
+        return this.lat.toFixed(6);
+    }
+    fixedLng() {
+        // Returns lng rounded to 6 decimal places
+        return this.lng.toFixed(6);
+    }
     getDisplayPos() {
         // Returns position as a string in the format "lat, lng" each rounded to 6 decimal places.
         return (
-            this.lat.toFixed(6).toString()
+            this.fixedLat().toString()
             + ", "
-            + this.lng.toFixed(6).toString()
+            + this.fixedLng().toString()
         );
     }
     getLogString() {
