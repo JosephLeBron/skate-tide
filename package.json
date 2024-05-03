@@ -43,7 +43,6 @@
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
-    "@vue/test-utils": "^2.4.4",
     "@vue/tsconfig": "^0.5.1",
     "create-vite": "^5.2.1",
     "cypress": "^13.8.0",
@@ -54,7 +53,6 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.25.0",
     "globals": "^15.0.0",
-    "jest": "^26.0.0",
     "jsdom": "^24.0.0",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.2.5",
@@ -62,7 +60,6 @@
     "vite": "^5.0.11",
     "vitest": "^1.2.2",
     "vue-tsc": "^1.8.27",
-    "webpack": "^5.91.0",
-    "vue-jest": "^5.0.0-alpha.10"
+    "webpack": "^5.91.0"
   }
 }
