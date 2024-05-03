@@ -103,81 +103,81 @@ const createTables = () => {
     // db.exec(tableInteracts); 
     // db.exec(tableSignUp); 
     // console.log("Tables created.");
-const insertEvents = () => {
-    try {
-        const events = [
-            {
-                eventID: 'event1',
-                pinname: 'College & Oleander',
-                date: '2024-04-10',
-                time: 1800,
-                description: 'Event 1 description here',
-                password: 'password1',
-                vote: 0
-            },
-            {
-                eventID: 'event2',
-                pinname: 'UNCW',
-                date: '2024-04-15',
-                time: 1400,
-                description: 'Event 2 description here',
-                password: 'password2',
-                vote: 0
-            },
-            {
-                eventID: 'event3',
-                pinname: 'Wrightsville',
-                date: '2024-04-20',
-                time: 1600,
-                description: 'Event 3 description here',
-                password: 'password3',
-                vote: 0
-            }
-        ];
+// const insertEvents = () => {
+//     try {
+//         const events = [
+//             {
+//                 eventID: 'event1',
+//                 pinname: 'College & Oleander',
+//                 date: '2024-04-10',
+//                 time: 1800,
+//                 description: 'Event 1 description here',
+//                 password: 'password1',
+//                 vote: 0
+//             },
+//             {
+//                 eventID: 'event2',
+//                 pinname: 'UNCW',
+//                 date: '2024-04-15',
+//                 time: 1400,
+//                 description: 'Event 2 description here',
+//                 password: 'password2',
+//                 vote: 0
+//             },
+//             {
+//                 eventID: 'event3',
+//                 pinname: 'Wrightsville',
+//                 date: '2024-04-20',
+//                 time: 1600,
+//                 description: 'Event 3 description here',
+//                 password: 'password3',
+//                 vote: 0
+//             }
+//         ];
 
-        const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description, password, vote) VALUES (@eventID, @pinname, @date, @time, @description, @password, @vote)');
+//         const insertEventStmt = db.prepare('INSERT INTO events (eventID, pinname, date, time, description, password, vote) VALUES (@eventID, @pinname, @date, @time, @description, @password, @vote)');
 
-        db.transaction(() => {
-            for (const event of events) {
-                insertEventStmt.run(event);
-            }
-        })();
+//         db.transaction(() => {
+//             for (const event of events) {
+//                 insertEventStmt.run(event);
+//             }
+//         })();
 
-        console.log("Events inserted successfully.");
-    } catch (error) {
-        console.error("Error inserting events: ", error);
-    }
-};
+//         console.log("Events inserted successfully.");
+//     } catch (error) {
+//         console.error("Error inserting events: ", error);
+//     }
+// };
 
-// Insert profile pictures
-const insertProfilePictures = () => {
-    try {
-        const profilePictures = [
-            { email: "user1@example.com", picturePath: "./src/assets/images/user1.jpg"  },
-            { email: "user2@example.com", picturePath: "./src/assets/images/user2.jpg"  },
-            // Add more profile pictures as needed
-        ];
+// // Insert profile pictures
+// const insertProfilePictures = () => {
+//     try {
+//         const profilePictures = [
+//             { email: "user1@example.com", picturePath: "./src/assets/images/user1.jpg"  },
+//             { email: "user2@example.com", picturePath: "./src/assets/images/user2.jpg"  },
+//             // Add more profile pictures as needed
+//         ];
 
-        const insertProfilePicture = db.prepare('INSERT INTO users (email, profilepicture) VALUES (?, ?)');
+//         const insertProfilePicture = db.prepare('INSERT INTO users (email, profilepicture) VALUES (?, ?)');
 
-        profilePictures.forEach((profile) => {
-            const imageData = readImage(profile.picturePath);
-            if (imageData) {
-                insertProfilePicture.run(profile.email, imageData);
-            }
-        });
+//         profilePictures.forEach((profile) => {
+//             const imageData = readImage(profile.picturePath);
+//             if (imageData) {
+//                 insertProfilePicture.run(profile.email, imageData);
+//             }
+//         });
 
-        console.log("Profile pictures inserted.");
-    } catch (error) {
-        console.error("Error inserting profile pictures: ", error);
-    }
-};
+//         console.log("Profile pictures inserted.");
+//     } catch (error) {
+//         console.error("Error inserting profile pictures: ", error);
+//     }
+// };
 
 // Initialize database
 const initializeDatabase = () => {
     createTables();
-    insertProfilePictures();
-    insertEvents();
+    //insertProfilePictures();
+    //insertEvents();
 };
 
 initializeDatabase();
