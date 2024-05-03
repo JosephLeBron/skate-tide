@@ -37,13 +37,11 @@ Roles
 
 White-Box & Black-Box Test
 
-Sinclair DeYoung:
-  Start by installing the cypress library then running the cypress command to see the end-to-end testing menu
-  - run command "npx install cypress"
-  - then "npx cypress open"
-  - there with be the options for the e2e testing (end-to-end) or Component testing
-This process should display the error if the database is not running.
-
+Sinclair DeYoung: Black-Box Test
+  run the command "node server.js" next run the vue.js server "npm run dev"
+  travel to the logn in page then the create account button
+  Enter a valid email and two not matching passwords and when submitting see if the error mesage says not matching passwords
+  
 Joseph Lebron:
  -To run the test frist npm install and then npm run test:unit
 
