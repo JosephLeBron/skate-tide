@@ -16,7 +16,15 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   // Insert a pin into the database
   const { error } = await supabase
     .from('pins')
-    .insert([{ name: name, desc: desc, lat: lat, lon: lon, rating: rating, picture: picture, difficulty: difficulty }])
+    .insert([{
+      name: name,
+      desc: desc,
+      lat: lat.toFixed(6),
+      lon: lon.toFixed(6),
+      rating: rating,
+      picture: picture,
+      difficulty: difficulty 
+    }])
     .select()
   if (error) {
     console.error("Error inserting spot:", error)
@@ -69,7 +77,6 @@ function convertSpots(spotArr) {
 }
 
 function handleMapClick(event) {
-  // console.log("mapRef: " + mapRef.value)
   emit('map-click', event.latLng)
   updateSubmitPos(event)
 }
