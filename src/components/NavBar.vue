@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
 })
 
 async function logoutClick() {
-  if (confirm("Press a button!")) {
+  if (confirm("Are you sure you want to log out?")) {
     // activeUser.logOut()
     const { error } = await supabase.auth.signOut()
       if (error) {
