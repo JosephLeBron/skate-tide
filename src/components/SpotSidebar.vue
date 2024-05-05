@@ -2,6 +2,7 @@
 import { supabase } from '@/lib/supabaseClient';
 import axios from 'axios'
 import { ref } from 'vue'
+import { activeUser } from '@/stores/activeUser';
 
 const props = defineProps(['spot'])
 const emit = defineEmits(['close', 'delete'])
@@ -59,10 +60,13 @@ async function CreatingEvent(event) {
 
 <template>
     <div class="sidebar-container">
-        <img class="sidebar-img" :src="props.spot['img']" />
+        <img class="sidebar-img" :src="props.spot.img" />
         <div class="sidebar-contents">
             <!-- Name -->
             <h1>{{ props.spot.name || "Null" }}</h1>
+
+            <!-- Posted by -->
+            <h3 v-if="props.spot.email">Posted by: {{ props.spot.email }}</h3>
 
             <!-- Description -->
             <h2 v-if="props.spot.description"> {{ props.spot.description }}</h2>
@@ -77,10 +81,11 @@ async function CreatingEvent(event) {
             <!-- Rating -->
             <h2>Rating: {{ props.spot.rating === -1 ? "Unrated" : props.spot.rating }}</h2>
 
-            <div>
+            <div v-if="activeUser.loggedIn">
                 <button class="create-event-button" @click="CreatingEvent">Create Event For This Pin</button>
+                &nbsp;
+                <button v-if="props.spot.email === activeUser.email" class="delete-button" @click="emit('delete', spot)">Delete Pin</button>
             </div>
-            <button class="delete-button" @click="emit('delete', spot)">Delete Pin</button>
         </div>
         <button class="close-button" @click="emit('close')">
             &lt;
@@ -94,6 +99,14 @@ async function CreatingEvent(event) {
     color: yellow;
     background-color: teal; 
     border: 2px solid yellow;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px; 
+}
+.delete-button {
+    color: orange;
+    background-color: teal; 
+    border: 2px solid orange;
     padding: 8px 16px;
     cursor: pointer;
     border-radius: 4px; 

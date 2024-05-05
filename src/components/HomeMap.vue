@@ -33,7 +33,7 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   } else {
     // Create Spot object, add to spots array for populate/filter
     spots.value.push(
-      new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
+      new MapSpot(name, desc, lat, lon, picture, difficulty, rating, activeUser.email)
     )
   }
 }
@@ -72,7 +72,7 @@ function convertSpots(spotArr) {
   for (let i=0; i < spotArr.length; i++) {
     const spot = spotArr[i]
     newSpots.push(
-      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating)
+      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating, spot.created_by)
     )
   }
   return newSpots
