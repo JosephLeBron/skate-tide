@@ -46,7 +46,6 @@
  */
 // import axios from 'axios';
 // import { login, isLoggedIn } from './Auth';
-import { activeUser } from '@/stores/activeUser';
 import { supabase } from '@/lib/supabaseClient';
 // Holdes the data for the blank spaces
 export default {

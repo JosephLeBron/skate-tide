@@ -34,7 +34,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
 import { supabase } from '@/lib/supabaseClient';
 
 const debug = ref(false) // Displays error messages on screen when true (set manually)

@@ -4,6 +4,7 @@ import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map
 import { activeSubmitSpot } from '@/stores/activeSubmitSpot'
 import { MapSpot } from './Spot'
 import { supabase } from '../lib/supabaseClient'
+import { activeUser } from '@/stores/activeUser'
 
 const props = defineProps(['showSubmitMarker'])
 const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
@@ -23,7 +24,8 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
       lon: lon.toFixed(6),
       rating: rating,
       picture: picture,
-      difficulty: difficulty 
+      difficulty: difficulty,
+      created_by: activeUser.email
     }])
     .select()
   if (error) {

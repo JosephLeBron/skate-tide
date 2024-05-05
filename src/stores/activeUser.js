@@ -13,15 +13,15 @@ class User {
     }
 
     logIn(email) {
-        console.log("Logging in as user ", this.email)
         this.loggedIn = true;
-        this.email = email;        
+        this.email = email;
+        console.log("Logging in as user ", this.email)
     }
 
     logOut() {
-        console.log("Logging out")
         this.loggedIn = false;
         this.email = null;
+        console.log("Logging out")
     }
 }
 
