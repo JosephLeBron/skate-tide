@@ -77,14 +77,17 @@ function convertSpots(spotArr) {
 }
 
 function handleMapClick(event) {
+  // Clicking on the map
   emit('map-click', event.latLng)
   updateSubmitPos(event)
 }
 function handleSubmitClick(event) {
+  // Clicking on the submission marker
   emit('submit-click', event.latLng)
   updateSubmitPos(event)
 }
 function handleSubmitDrag(event) {
+  // Dragging the submission marker
   emit('submit-drag', event.latLng)
   updateSubmitPos(event)
 }
