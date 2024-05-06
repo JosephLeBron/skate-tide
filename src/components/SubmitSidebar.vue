@@ -28,6 +28,9 @@ const showNameErr = ref(false)
 const descErrMsg = ref("")
 const showDescErr = ref(false)
 
+const rateErrMsg = ref("")
+const showRateErr = ref(false)
+
 const diffErrMsg = ref("")
 const showDiffErr = ref(false)
 
@@ -86,6 +89,14 @@ async function trySubmit() {
         descErrMsg.value = "Please enter description"
     } else {
         showDescErr.value = false
+    }
+
+    if (activeSubmitSpot.rating === "") {
+        // No difficulty selected
+        showRateErr.value = true
+        rateErrMsg.value = "Please select a rating"
+    } else {
+        showRateErr.value = false
     }
 
     if (activeSubmitSpot.difficulty === '') {
@@ -150,7 +161,7 @@ function noErrors() {
                         <input type="file" accept="image/*" id="file" name="file" />
                     </div> -->
 
-                    <!-- Temp: image url input -->
+                    <!-- Image url input -->
                     <div>
                         <label for="img">Image URL:</label>
                         <span class="error-msg" v-if="showImgErr">&nbsp;&nbsp;{{ imgErrMsg }}</span>
@@ -169,6 +180,13 @@ function noErrors() {
                         <label for="description">Description:</label>
                         <span class="error-msg" v-if="showDescErr">&nbsp;&nbsp;{{ descErrMsg }}</span>
                         <textarea id="description" v-model="activeSubmitSpot.description" maxlength="250" style="resize:vertical" :class="{ 'err-highlight' : showDescErr}"></textarea>
+                    </div>
+
+                    <!-- Rating -->
+                    <div>
+                        <label for="rating">Rating:</label>
+                        <span class="error-msg" v-if="showRateErr">&nbsp;&nbsp;{{ rateErrMsg }}</span>
+                        <input type="number" id="rating" v-model="activeSubmitSpot.rating" min="1" max="5" style="width: 100%; border: 1px solid #ccc; border-radius: 5px;" :class="{ 'err-highlight' : showRateErr}" />
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->

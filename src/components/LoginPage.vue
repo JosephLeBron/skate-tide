@@ -44,8 +44,8 @@
  * @purpose Login page that handles users login system and create account page button
  * @date Apr 1, 2024
  */
-import axios from 'axios';
-import { login, isLoggedIn } from './Auth';
+// import axios from 'axios';
+// import { login, isLoggedIn } from './Auth';
 import { supabase } from '@/lib/supabaseClient';
 // Holdes the data for the blank spaces
 export default {
@@ -120,28 +120,19 @@ export default {
       //   this.invalidLogin = true;
       //   alert('Invalid  email or password, Please try again.');
       // } // Error handling
-      
-      ////// Supabase implementation:
-      const { count, error } = await supabase
-        .from('users')
-        .select('*', { count: 'exact' })
-        .match({ email: this.username, password: this.password });
+
+      ////// Supabase auth:
+      const { error } = await supabase.auth.signInWithPassword({
+        email: this.username,
+        password: this.password
+      })
       if (error) {
         // Error response
-        console.error('Error logging in: ', error);
-        this.invalidLogin = true;
-      } else if (count === 0) {
-        // No user found in DB with matching email/password
+        console.error('Error logging in: ', error)
         alert('Invalid  email or password, Please try again.');
-        this.invalidLogin = true;
+        this.invalidLogin = true
       } else {
-        // Success, user found
-        console.log('Login successful');
-
-        ////// Needs token implementation vvvv
-        // login(response.data.token); // Logging in the user with the received token
-
-        this.invalidLogin = false;
+        this.invalidLogin = false
         this.$router.push('/');
       }
     },

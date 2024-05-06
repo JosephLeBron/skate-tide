@@ -5,7 +5,7 @@
  * @date Apr 17, 2024
  */
 export default class Spot {
-    constructor(name, description, lat, lng, img, difficulty, rating) {
+    constructor(name, description, lat, lng, img, difficulty, rating, email) {
         this.name = name;
         this.description = description;
         this.lat = lat;
@@ -13,6 +13,7 @@ export default class Spot {
         this.img = img;
         this.difficulty = difficulty;
         this.rating = rating;
+        this.email = email;
     }
     
     // Setters
@@ -47,6 +48,9 @@ export default class Spot {
     setRating(rating) {
         this.rating = rating;
     }
+    setCreatedBy(email) {
+        this.email = email;
+    }
 
     // Getters
     pos() {
@@ -78,14 +82,15 @@ export default class Spot {
             "\tPos: " + this.getDisplayPos() + "\n" +
             "\tImg: " + this.img + "\n" +
             "\tDiff: " + this.difficulty + "\n" +
-            "\tRating: " + this.rating + "\n"
+            "\tRating: " + this.rating + "\n" +
+            "\tCreated by: " + this.email + "\n"
         );
     }
 }
 
 export class MapSpot extends Spot {
-    constructor(name, description, lat, lng, img, difficulty, rating) {
-        super(name, description, lat, lng, img, difficulty, rating);
+    constructor(name, description, lat, lng, img, difficulty, rating, email) {
+        super(name, description, lat, lng, img, difficulty, rating, email);
         this.visible = true;
     }
 

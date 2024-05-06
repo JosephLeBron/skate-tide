@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { activeSubmitSpot } from '@/stores/activeSubmitSpot';
+import { activeUser } from '@/stores/activeUser'
 import HomeMap from '../components/HomeMap.vue';
 import SpotSideBar from '../components/SpotSidebar.vue'
 import SubmitSidebar from '../components/SubmitSidebar.vue'
@@ -48,14 +49,16 @@ function onMarkerClick(selected) {
   viewSpot.value = selected
 }
 function onSubmitClick(latLng) {
-  // Begin or resume submit
-  // if (!showSubmitMarker.value) {
-    // Showing sidebar either for the first time or resuming after cancel
-  // }
-  activeSubmitSpot.setPosFromLatLng(latLng)
-  showSubmitSidebar.value = true
-  showSubmitMarker.value = true
-  mostRecentClick.value = sidebarMode.SUBMIT
+  if (activeUser.loggedIn) {
+    // Begin or resume submit
+    // if (!showSubmitMarker.value) {
+      // Showing sidebar either for the first time or resuming after cancel
+    // }
+    activeSubmitSpot.setPosFromLatLng(latLng)
+    showSubmitSidebar.value = true
+    showSubmitMarker.value = true
+    mostRecentClick.value = sidebarMode.SUBMIT
+  }
 }
 function onSubmitDrag(latLng) {
   // If no sidebar is showing, don't automatically show when dragging event starts. That makes the marker location jump.
@@ -73,6 +76,7 @@ function onSubmitCancel() {
 }
 function onSubmit() {
   // Submit button pressed
+  activeSubmitSpot.setCreatedBy(activeUser.email)
   console.log(
     "Submitting spot:\n" +
     activeSubmitSpot.getLogString()
@@ -84,7 +88,8 @@ function onSubmit() {
     activeSubmitSpot.lng,
     activeSubmitSpot.rating,
     activeSubmitSpot.img,
-    activeSubmitSpot.difficulty
+    activeSubmitSpot.difficulty,
+    activeUser.email
   )
   onSubmitCancel()
 }
@@ -101,6 +106,13 @@ function onDelete(spot) {
     onSpotCloseBtnClick()
   }
 }
+
+watch(activeUser, (newVal) => {
+  //activeUser changed; probably means user has logged out. Hide submit sidebar
+  if (!newVal.loggedIn) {
+    onSubmitCancel()
+  }
+})
 </script>
 
 <template>

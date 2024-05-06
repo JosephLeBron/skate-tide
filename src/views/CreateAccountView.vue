@@ -1,7 +1,7 @@
 <template>
-    <div class="create-account">
+  <div class="create-account">
     <CreateAccountPage />
-    </div>
+  </div>
 </template>
   
 <script setup lang="ts">
@@ -14,11 +14,10 @@ import CreateAccountPage from '../components/CreateAccountPage.vue'
 </script>
   
 <style>
-@media (min-width: 1024px) {
-    .create-account {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-    }
+.create-account {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

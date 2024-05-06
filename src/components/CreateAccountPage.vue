@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <form @submit.prevent="createAccount" novalidate>
+      <form @submit.prevent="createAccount" novalidate style="display: flex; flex-direction: column; align-items: center;">
         <h1>Create Account</h1>
         <div>
         <h2>
@@ -29,7 +29,7 @@
               <button type="button" @click="cancel">Cancel</button>
             </div>
             <div v-if="invalidInput" class="error-message">
-              Invalid email or password. Please try again.
+              {{ invalidInputMsg }}
             </div>
         </h2>
         </div>
@@ -45,7 +45,7 @@
  */
 //import User from './User';
 import { supabase } from '@/lib/supabaseClient';
-import axios from 'axios';
+// import axios from 'axios';
   
 export default {
   data() {
@@ -54,6 +54,7 @@ export default {
         password: '',
         repeatPassword: '',
         invalidInput: false,
+        invalidInputMsg: ''
         };
   },
   computed: {
@@ -93,7 +94,7 @@ export default {
   },
   methods: {
     async createAccount() {
-      console.log('Button Clicked');
+      // console.log('Button Clicked');
       if (!this.email || !this.password || !this.repeatPassword) {
           alert('Please enter your email and create a password.');
           return;
@@ -129,11 +130,17 @@ export default {
         .from('users')
         .insert([{ email: this.email, password: this.password}]);
       if (error) {
-        // Error response
+        if (error.code === "23505") {
+          // Error response for email already in use
+          this.invalidInput = true;
+          this.invalidInputMsg = "Account with this email already exists."
+        } else {
+          // Other error responses
         console.error('Error creating account : ', error);
         this.invalidInput = true;
-        alert('Error creating account. Please try again.');
+        this.invalidInputMsg = "Error creating account. Please try again."
         this.clearPasswords();
+        }
       } else {
         // Success
         console.log('Account created successfully.');

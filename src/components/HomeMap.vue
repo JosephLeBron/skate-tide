@@ -4,6 +4,7 @@ import { GoogleMap, Marker, MarkerCluster, CustomControl } from 'vue3-google-map
 import { activeSubmitSpot } from '@/stores/activeSubmitSpot'
 import { MapSpot } from './Spot'
 import { supabase } from '../lib/supabaseClient'
+import { activeUser } from '@/stores/activeUser'
 
 const props = defineProps(['showSubmitMarker'])
 const emit = defineEmits(['map-click', 'marker-click', 'submit-click', 'submit-drag'])
@@ -23,7 +24,8 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
       lon: lon.toFixed(6),
       rating: rating,
       picture: picture,
-      difficulty: difficulty 
+      difficulty: difficulty,
+      created_by: activeUser.email
     }])
     .select()
   if (error) {
@@ -31,7 +33,7 @@ async function createPin(name, desc, lat, lon, rating, picture, difficulty) {
   } else {
     // Create Spot object, add to spots array for populate/filter
     spots.value.push(
-      new MapSpot(name, desc, lat, lon, picture, difficulty, rating)
+      new MapSpot(name, desc, lat, lon, picture, difficulty, rating, activeUser.email)
     )
   }
 }
@@ -70,21 +72,24 @@ function convertSpots(spotArr) {
   for (let i=0; i < spotArr.length; i++) {
     const spot = spotArr[i]
     newSpots.push(
-      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating)
+      new MapSpot(spot.name, spot.desc, spot.lat, spot.lon, spot.picture, spot.difficulty, spot.rating, spot.created_by)
     )
   }
   return newSpots
 }
 
 function handleMapClick(event) {
+  // Clicking on the map
   emit('map-click', event.latLng)
   updateSubmitPos(event)
 }
 function handleSubmitClick(event) {
+  // Clicking on the submission marker
   emit('submit-click', event.latLng)
   updateSubmitPos(event)
 }
 function handleSubmitDrag(event) {
+  // Dragging the submission marker
   emit('submit-drag', event.latLng)
   updateSubmitPos(event)
 }
@@ -104,7 +109,7 @@ const FilterOptions = {
 const filter = ref({
   name: "",
   showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
-  ratingMin: -1
+  ratingMin: 0
 })
 
 function toggleFilter() {
@@ -252,7 +257,7 @@ onMounted(() => {
 
     <!-- Button to expand filter menu -->
     <CustomControl position="RIGHT_TOP">
-      <button class="filter-btn" @click="toggleFilterMenu">▼</button>
+      <button class="filter-btn" @click="toggleFilterMenu"></button>
     </CustomControl>
 
     <!-- Filter menu -->
@@ -279,7 +284,7 @@ onMounted(() => {
           <div style="display: flex;">
             <div class="filter-item" style="flex: initial; align-self: center;">≥&nbsp;</div>
             <span class="filter-item" style="flex: auto; align-self: center;">
-              <input type="number" v-model="filter.ratingMin" min="-1" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
+              <input type="number" v-model="filter.ratingMin" min="0" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
             </span>
           </div>
 
@@ -355,6 +360,8 @@ onMounted(() => {
 .filter-btn {
   box-sizing: border-box;
   background: white;
+  background-image: url("https://i.imgur.com/aYX5XvU.png");
+  background-size: 40px 40px;
   height: 40px;
   width: 40px;
   border-radius: 2px;

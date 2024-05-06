@@ -1,9 +1,11 @@
 <template>
   <nav class="navbar" :class="{ 'full-screen': isFullScreen }">
     <RouterLink to="/">Home</RouterLink>
-    <RouterLink to="/login">Login</RouterLink>
     <RouterLink to="/events">Events</RouterLink>
-    <RouterLink to="/profile">Profile</RouterLink>
+    <RouterLink to="/bounty">Bounty</RouterLink>
+    <RouterLink v-if="!activeUser.loggedIn" to="/login">Log in</RouterLink>
+    <a v-else @click="logoutClick" style="cursor: pointer;">Log out</a>
+    <!-- <span v-else>test</span> -->
   </nav>
 </template>
 
@@ -14,6 +16,11 @@
  * @date Apr 1, 2024
  */
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { activeUser } from '@/stores/activeUser';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const isFullScreen = ref(window.innerWidth >= 1026)
 
@@ -28,6 +35,21 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
 })
+
+async function logoutClick() {
+  if (confirm("Are you sure you want to log out?")) {
+    // activeUser.logOut()
+    const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Error logging out: ', error)
+      } else {
+        console.log("Logging out")
+        router.push('/')
+      }
+  } else {
+    console.log("Cancelling")
+  }
+}
 </script>
 
 <style scoped>
@@ -57,7 +79,6 @@ onBeforeUnmount(() => {
   color: inherit;
   background-color: transparent;
 }
-
 .navbar a:hover {
   text-shadow: 0px 0px 2px rgb(71, 240, 184, 0.6);
   color: rgba(13, 226, 180);
