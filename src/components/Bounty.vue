@@ -27,7 +27,7 @@
               <option v-for="trick in tricks" :key="trick">{{ trick }}</option>
             </select>
           </label>
-          <span>for</span>
+          <span> for </span>
           <label>
             <input type="radio" v-model="selectedTeam" value="red"> Red
           </label>
@@ -43,7 +43,8 @@
     </template>
     
     <script>
-    import axios from 'axios';
+    import { supabase } from '@/lib/supabaseClient';
+// import axios from 'axios';
     
     export default {
       data() {
@@ -57,60 +58,105 @@
       },
       
       async created() {
-        try {
-          const response = await axios.get('http://localhost:8000/user/api/bounty');
-          const { redScore, blueScore, yellowScore } = response.data;
-          this.redScore = redScore;
-          this.blueScore = blueScore;
-          this.yellowScore = yellowScore;
-        } catch (error) {
-          console.error('Error fetching team scores: ', error);
+        // try {
+        //   const response = await axios.get('http://localhost:8000/user/api/bounty');
+        //   const { redScore, blueScore, yellowScore } = response.data;
+        //   this.redScore = redScore;
+        //   this.blueScore = blueScore;
+        //   this.yellowScore = yellowScore;
+        // } catch (error) {
+        //   console.error('Error fetching team scores: ', error);
+        // }
+        const { data: redData, error: redErr } = await supabase
+          .from('team_scores')
+          .select('score')
+          .eq('team', 'red')
+        if (redErr) {
+          console.error("Error getting red team score:", error)
+        } else {
+          // console.log('red score: ', redData[0].score)
+          this.redScore = redData[0].score
         }
+
+        const { data: blueData, error: blueErr } = await supabase
+          .from('team_scores')
+          .select('score')
+          .eq('team', 'blue')
+        if (blueErr) {
+          console.error("Error getting blue team score:", error)
+        } else {
+          // console.log('blue score: ', blueData[0].score)
+          this.blueScore = blueData[0].score
+        }
+
+        const { data: yellowData, error: yellowErr } = await supabase
+          .from('team_scores')
+          .select('score')
+          .eq('team', 'yellow')
+        if (yellowErr) {
+          console.error("Error getting yellow team score:", error)
+        } else {
+          // console.log('yellow score: ', yellowData[0].score)
+          this.yellowScore = yellowData[0].score
+        }
+        
       },
       
       methods: {
         async submitForm() {
-          try {
-            switch (this.selectedTeam) {
-              case 'red':
-                this.redScore++;
-                break;
-              case 'blue':
-                this.blueScore++;
-                break;
-              case 'yellow':
-                this.yellowScore++;
-                break;
-              default:
-                break;
-            }
-    
-            const userEmail = this.getUserEmail();
-    
-            if (userEmail) {
-              const isTeamed = await axios.post('http://localhost:8000/isTeamed', {
-                email: userEmail
-              });
-    
-              if (isTeamed && isTeamed.data && isTeamed.data.team) {
-                this.selectedTeam = isTeamed.data.team;
-              }
-            }
-    
-            await axios.post('http://localhost:8000/updateTeamScores', {
-              team: this.selectedTeam,
-              score: 1
-            });
-    
-            console.log('Form submitted successfully');
-          } catch (error) {
-            console.error('Error submitting form: ', error);
+          // try {
+          let selectedScore = 0;
+          switch (this.selectedTeam) {
+            case 'red':
+              this.redScore++;
+              selectedScore = this.redScore;
+              break;
+            case 'blue':
+              this.blueScore++;
+              selectedScore = this.blueScore;
+              break;
+            case 'yellow':
+              this.yellowScore++;
+              selectedScore = this.yellowScore;
+              break;
+            default:
+              return;
           }
+
+          const { error } = await supabase
+            .from('team_scores')
+            .update({ score: selectedScore})
+            .eq('team', this.selectedTeam)
+          if (error) {
+            console.error("Error updating red team score:", error)
+          }
+    
+            // const userEmail = this.getUserEmail();
+    
+            // if (userEmail) {
+            //   const isTeamed = await axios.post('http://localhost:8000/isTeamed', {
+            //     email: userEmail
+            //   });
+    
+            //   if (isTeamed && isTeamed.data && isTeamed.data.team) {
+            //     this.selectedTeam = isTeamed.data.team;
+            //   }
+            // }
+    
+            // await axios.post('http://localhost:8000/updateTeamScores', {
+            //   team: this.selectedTeam,
+            //   score: 1
+            // });
+    
+            // console.log('Form submitted successfully');
+          // } catch (error) {
+          //   console.error('Error submitting form: ', error);
+          // }
         },
         
-        getUserEmail() {
-          return 'firstentry@gmail.com';
-        },
+        // getUserEmail() {
+        //   return 'firstentry@gmail.com';
+        // },
     
         // =============
         // Whitebox Testing
@@ -174,9 +220,9 @@
       },
     
       mounted() {
-        this.testSubmitForm('red');
-        this.testSubmitForm('blue');
-        this.testSubmitForm('yellow');
+        // this.testSubmitForm('red');
+        // this.testSubmitForm('blue');
+        // this.testSubmitForm('yellow');
       }
     }; //End of Whitebox testing
     </script>
