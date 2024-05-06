@@ -45,7 +45,8 @@ async function createEvent(eventID, pinname, date, time, description, password) 
 
 async function CreatingEvent(event) {
   const eventID = prompt("Enter the event's title:", "e.g.Joe's Skate Meetup");
-  const pinname = prompt("Enter the Pin's Name:", "Use slected pins name here");
+  // const pinname = prompt("Enter the Pin's Name:", "Use slected pins name here");
+  const pinname = props.spot.name;
   const date = prompt("Enter the event's date:", "format:DD-MM-YYYY");
   const time = prompt("Enter the event's time:", "format: 630");
   const description = prompt("Enter the event's description:", "e.g. Skate meetup at the park");

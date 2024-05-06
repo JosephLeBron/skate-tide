@@ -15,7 +15,7 @@ class User {
     logIn(email) {
         this.loggedIn = true;
         this.email = email;
-        console.log("Logging in as user ", this.email)
+        console.log("Logging in as user", this.email)
     }
 
     logOut() {
@@ -30,14 +30,11 @@ class User {
 export const activeUser = reactive(new User());
 
 supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN')
-    {
-        console.log('SIGNED_IN', session);
+    if (event === 'SIGNED_IN') {
+        // console.log('SIGNED_IN', session);
         activeUser.logIn(session.user.email)
-    }
-    else if (event === 'SIGNED_OUT')
-    {
-        console.log('SIGNED_OUT', session);
+    } else if (event === 'SIGNED_OUT') {
+        // console.log('SIGNED_OUT', session);
         activeUser.logOut()
     }
 });
