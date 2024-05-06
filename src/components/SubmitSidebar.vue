@@ -91,7 +91,7 @@ async function trySubmit() {
         showDescErr.value = false
     }
 
-    if (activeSubmitSpot.rating === -1) {
+    if (activeSubmitSpot.rating === "") {
         // No difficulty selected
         showRateErr.value = true
         rateErrMsg.value = "Please select a rating"
@@ -186,7 +186,7 @@ function noErrors() {
                     <div>
                         <label for="rating">Rating:</label>
                         <span class="error-msg" v-if="showRateErr">&nbsp;&nbsp;{{ rateErrMsg }}</span>
-                        <input type="number" id="rating" v-model="activeSubmitSpot.rating" min="1" max="5" :class="{ 'err-highlight' : showRateErr}" />
+                        <input type="number" id="rating" v-model="activeSubmitSpot.rating" min="1" max="5" style="width: 100%; border: 1px solid #ccc; border-radius: 5px;" :class="{ 'err-highlight' : showRateErr}" />
                     </div>
 
                     <!-- Drop down menu for the difficulty: beginner, intermediate, or advanced -->
