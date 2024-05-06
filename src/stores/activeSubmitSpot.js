@@ -19,7 +19,7 @@ class SubmitSpot extends Spot {
         this.lng = -1;
         this.img = "";
         this.difficulty = "";
-        this.rating = -1;
+        this.rating = "";
     }
 }
 

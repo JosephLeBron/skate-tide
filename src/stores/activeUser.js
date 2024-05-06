@@ -31,7 +31,7 @@ export const activeUser = reactive(new User());
 
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
-        // console.log('SIGNED_IN', session);
+        console.log('SIGNED_IN', session);
         activeUser.logIn(session.user.email)
     } else if (event === 'SIGNED_OUT') {
         // console.log('SIGNED_OUT', session);

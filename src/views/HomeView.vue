@@ -76,6 +76,7 @@ function onSubmitCancel() {
 }
 function onSubmit() {
   // Submit button pressed
+  activeSubmitSpot.setCreatedBy(activeUser.email)
   console.log(
     "Submitting spot:\n" +
     activeSubmitSpot.getLogString()
@@ -87,7 +88,8 @@ function onSubmit() {
     activeSubmitSpot.lng,
     activeSubmitSpot.rating,
     activeSubmitSpot.img,
-    activeSubmitSpot.difficulty
+    activeSubmitSpot.difficulty,
+    activeUser.email
   )
   onSubmitCancel()
 }
