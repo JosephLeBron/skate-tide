@@ -109,7 +109,7 @@ const FilterOptions = {
 const filter = ref({
   name: "",
   showDifficulty: [FilterOptions.DIFF_BEGINNER, FilterOptions.DIFF_EASY, FilterOptions.DIFF_MEDIUM, FilterOptions.DIFF_HARD, FilterOptions.DIFF_EXPERT],
-  ratingMin: -1
+  ratingMin: 0
 })
 
 function toggleFilter() {
@@ -257,7 +257,7 @@ onMounted(() => {
 
     <!-- Button to expand filter menu -->
     <CustomControl position="RIGHT_TOP">
-      <button class="filter-btn" @click="toggleFilterMenu">▼</button>
+      <button class="filter-btn" @click="toggleFilterMenu"></button>
     </CustomControl>
 
     <!-- Filter menu -->
@@ -284,7 +284,7 @@ onMounted(() => {
           <div style="display: flex;">
             <div class="filter-item" style="flex: initial; align-self: center;">≥&nbsp;</div>
             <span class="filter-item" style="flex: auto; align-self: center;">
-              <input type="number" v-model="filter.ratingMin" min="-1" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
+              <input type="number" v-model="filter.ratingMin" min="0" max="5" @input="filterSpots(true)" style="width: 100%; margin: auto">
             </span>
           </div>
 
@@ -316,7 +316,7 @@ onMounted(() => {
   </GoogleMap>
 </template>
 
-<style>
+<style scoped>
 /* This line removes the annoying blue focus border around the map element */
 .gm-style iframe + div { border:none!important; }
 
@@ -360,6 +360,8 @@ onMounted(() => {
 .filter-btn {
   box-sizing: border-box;
   background: white;
+  background-image: url("https://i.imgur.com/aYX5XvU.png");
+  background-size: 40px 40px;
   height: 40px;
   width: 40px;
   border-radius: 2px;
